@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer;
 using BusinessContractLayer;
+using System.Collections.Generic;
 
 namespace BusinessLogicLayer
 {
@@ -12,13 +13,25 @@ namespace BusinessLogicLayer
             _applicationDbContext = applicationDbContext;
         }
 
-        public void Do(int id, string name)
+        public bool Do(string name, List<Movie> movies)
         {
-            _applicationDbContext.Companies.Add(new BusinessContractLayer.Company
+            bool status = false;
+
+            try
             {
-                ID = id,
-                Name = name
-            });
+                _applicationDbContext.Companies.Add(new Company
+                {
+                    Name = name,
+                    Movies = movies
+                });
+                status = true;
+            }
+            catch (System.Exception)
+            {
+
+            }
+
+            return status;
         }
     }
 }
