@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer;
 using BusinessContractLayer;
+using System.Linq;
 
 namespace BusinessLogicLayer
 {
@@ -14,12 +15,7 @@ namespace BusinessLogicLayer
 
         public Company Do(int id)
         {
-            Company company = null;
-
-            if (id == 1) return new Company { ID = id, Name = "New Republic Pictures" };
-            if (id == 2) return new Company { ID = id, Name = "Paramount Pictures" };
-
-            return company;
+            return _applicationDbContext.Companies.Where(c => c.ID == id).FirstOrDefault();
         }
     }
 }

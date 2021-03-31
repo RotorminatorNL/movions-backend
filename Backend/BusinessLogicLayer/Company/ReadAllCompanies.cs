@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer;
 using BusinessContractLayer;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BusinessLogicLayer
 {
@@ -13,16 +14,9 @@ namespace BusinessLogicLayer
             _applicationDbContext = applicationDbContext;
         }
 
-        public List<Company> Do()
+        public IEnumerable<Company> Do()
         {
-            List<Company> companies = null;
-
-            companies = new List<Company> {
-                new Company { ID = 1, Name = "New Republic Pictures" },
-                new Company { ID = 2, Name = "Paramount Pictures"}
-            };
-
-            return companies;
+            return _applicationDbContext.Companies.ToList();
         }
     }
 }
