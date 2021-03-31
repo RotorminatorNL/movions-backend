@@ -8,6 +8,6 @@ namespace BusinessContractLayer
     {
         public int ID { get; set; }
         public string Name { get; set; }
-        public List<Movie> Movies { get; set; }
+        public IEnumerable<Movie> Movies { get; set; }
     }
 }
