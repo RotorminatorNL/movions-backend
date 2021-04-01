@@ -1,5 +1,4 @@
-﻿using BusinessContractLayer;
-using BusinessLogicLayer;
+﻿using BusinessLogicLayer;
 using DataAccessLayer;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
