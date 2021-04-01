@@ -1,5 +1,4 @@
 ﻿using DataAccessLayer;
-using Domain;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,7 +13,7 @@ namespace BusinessLogicLayer
             _applicationDbContext = applicationDbContext;
         }
 
-        public bool Create(string name, List<Movie> movies)
+        public bool Create(string name, List<Domain.Movie> movies)
         {
             bool status = false;
 

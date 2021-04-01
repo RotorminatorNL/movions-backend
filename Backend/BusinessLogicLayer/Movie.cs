@@ -1,20 +1,19 @@
 ﻿using DataAccessLayer;
-using Domain;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace BusinessLogicLayer
 {
-    public class ReadAllMovies
+    public class Movie
     {
         private readonly ApplicationDbContext _applicationDbContext;
 
-        public ReadAllMovies(ApplicationDbContext applicationDbContext)
+        public Movie(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }
 
-        public IEnumerable<Movie> Do()
+        public IEnumerable<Domain.Movie> ReadAll()
         {
             return _applicationDbContext.Movies.ToList();
         }
