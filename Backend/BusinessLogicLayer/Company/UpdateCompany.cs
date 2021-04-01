@@ -1,5 +1,5 @@
 ﻿using DataAccessLayer;
-using BusinessContractLayer;
+using Domain;
 
 namespace BusinessLogicLayer
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BusinessContractLayer
+namespace Domain
 {
     public class CrewRole
     {

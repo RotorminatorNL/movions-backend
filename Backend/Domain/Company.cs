@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BusinessContractLayer
+namespace Domain
 {
-    public class Gender
+    public class Company
     {
         public int ID { get; set; }
         public string Name { get; set; }
+        public IEnumerable<Movie> Movies { get; set; }
     }
 }
