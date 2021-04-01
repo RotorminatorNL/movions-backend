@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{139FE74E-EDCE-4586-A4C4-0955698B04A6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessContractLayer", "BusinessContractLayer\BusinessContractLayer.csproj", "{ACE923E6-3866-408E-9E8A-AA62F459E808}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{46B1EA1E-2D7C-4AB7-92DF-1840A4D10ADD}"
 EndProject
 Global
@@ -31,10 +29,6 @@ Global
 		{139FE74E-EDCE-4586-A4C4-0955698B04A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{139FE74E-EDCE-4586-A4C4-0955698B04A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{139FE74E-EDCE-4586-A4C4-0955698B04A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ACE923E6-3866-408E-9E8A-AA62F459E808}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ACE923E6-3866-408E-9E8A-AA62F459E808}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ACE923E6-3866-408E-9E8A-AA62F459E808}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ACE923E6-3866-408E-9E8A-AA62F459E808}.Release|Any CPU.Build.0 = Release|Any CPU
 		{46B1EA1E-2D7C-4AB7-92DF-1840A4D10ADD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{46B1EA1E-2D7C-4AB7-92DF-1840A4D10ADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46B1EA1E-2D7C-4AB7-92DF-1840A4D10ADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
