@@ -1,11 +1,7 @@
-﻿using BusinessContractLayer;
-using BusinessLogicLayer;
+﻿using BusinessLogicLayer;
 using DataAccessLayer;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.Controllers
 {
@@ -21,21 +17,21 @@ namespace API.Controllers
         }
 
         [HttpPost("[action]")]
-        public bool Create(string name, [FromBody]List<Movie> movies)
+        public bool Create(string name, [FromBody]List<Domain.Movie> movies)
         {
-            return new CreateCompany(_applicationDbContext).Do(name, movies);
+            return new Company(_applicationDbContext).Create(name, movies);
         }
 
         [HttpGet("[action]/{id}")]
-        public Company Read(int id)
+        public Domain.Company Read(int id)
         {
-            return new ReadCompany(_applicationDbContext).Do(id);
+            return new Company(_applicationDbContext).Read(id);
         }
 
         [HttpGet("[action]")]
-        public IEnumerable<Company> ReadAll()
+        public IEnumerable<Domain.Company> ReadAll()
         {
-            return new ReadAllCompanies(_applicationDbContext).Do();
+            return new Company(_applicationDbContext).ReadAll();
         }
     }
 }

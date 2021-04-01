@@ -18,9 +18,9 @@ namespace API.Controllers
         }
 
         [HttpGet("[action]")]
-        public IEnumerable<Movie> ReadAll()
+        public IEnumerable<Domain.Movie> ReadAll()
         {
-            return new ReadAllMovies(_applicationDbContext).Do();
+            return new Movie(_applicationDbContext).ReadAll();
         }
     }
 }
