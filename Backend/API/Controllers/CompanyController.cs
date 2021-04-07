@@ -1,5 +1,6 @@
 ﻿using BusinessLogicLayer;
 using DataAccessLayer;
+using DataAccessLayerInterface;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -17,7 +18,7 @@ namespace API.Controllers
         }
 
         [HttpPost("[action]")]
-        public bool Create(string name, [FromBody]List<Domain.Movie> movies)
+        public bool Create(string name, [FromBody]List<Domain.MovieCompany> movies)
         {
             return new Company(_applicationDbContext).Create(name, movies);
         }
