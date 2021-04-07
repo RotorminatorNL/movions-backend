@@ -12,7 +12,6 @@ namespace DataAccessLayer
 
         public DbSet<Company> Companies { get; set; }
         public DbSet<CrewRole> CrewRoles { get; set; }
-        public DbSet<Gender> Genders { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Language> Languages { get; set; }
         public DbSet<MovieCompany> MovieCompanies { get; set; }
