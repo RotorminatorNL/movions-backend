@@ -14,6 +14,6 @@ namespace Domain
         public IEnumerable<MovieCompany> Companies { get; set; }
         public IEnumerable<CrewRole> Crew { get; set; }
         public IEnumerable<MovieGenre> Genres { get; set; }
-        public IEnumerable<MovieLanguage> Languages { get; set; }
+        public Language Language { get; set; }
     }
 }

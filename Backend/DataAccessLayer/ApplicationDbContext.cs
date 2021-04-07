@@ -15,10 +15,9 @@ namespace DataAccessLayer
         public DbSet<Gender> Genders { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Language> Languages { get; set; }
-        public DbSet<Movie> Movies { get; set; }
         public DbSet<MovieCompany> MovieCompanies { get; set; }
         public DbSet<MovieGenre> MovieGenres { get; set; }
-        public DbSet<MovieLanguage> MovieLanguages { get; set; }
+        public DbSet<Movie> Movies { get; set; }
         public DbSet<Person> Persons { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -46,17 +45,6 @@ namespace DataAccessLayer
                 .HasOne(mc => mc.Genre)
                 .WithMany(c => c.Movies)
                 .HasForeignKey(mc => mc.GenreID);
-
-            modelBuilder.Entity<MovieLanguage>()
-                .HasKey(mc => new { mc.MovieID, mc.LanguageID });
-            modelBuilder.Entity<MovieLanguage>()
-                .HasOne(mc => mc.Movie)
-                .WithMany(m => m.Languages)
-                .HasForeignKey(mc => mc.MovieID);
-            modelBuilder.Entity<MovieLanguage>()
-                .HasOne(mc => mc.Language)
-                .WithMany(c => c.Movies)
-                .HasForeignKey(mc => mc.LanguageID);
         }
     }
 }
