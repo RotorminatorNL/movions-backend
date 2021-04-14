@@ -123,8 +123,8 @@ namespace DataAccessLayer.Migrations
                     b.Property<int?>("LanguageID")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Length")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("Length")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DataAccessLayer.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -52,24 +52,12 @@ namespace DataAccessLayer.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Companies", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Genders",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Genders", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -99,19 +87,20 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Movies",
+                name: "Persons",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BirthPlace = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Length = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Movies", x => x.ID);
+                    table.PrimaryKey("PK_Persons", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -221,97 +210,47 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Persons",
+                name: "Movies",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Age = table.Column<int>(type: "int", nullable: false),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    BirthPlace = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GenderID = table.Column<int>(type: "int", nullable: true)
+                    Length = table.Column<int>(type: "int", nullable: false),
+                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LanguageID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Persons", x => x.ID);
+                    table.PrimaryKey("PK_Movies", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Persons_Genders_GenderID",
-                        column: x => x.GenderID,
-                        principalTable: "Genders",
+                        name: "FK_Movies_Languages_LanguageID",
+                        column: x => x.LanguageID,
+                        principalTable: "Languages",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "MovieCompanies",
+                name: "CompanyMovie",
                 columns: table => new
                 {
-                    MovieID = table.Column<int>(type: "int", nullable: false),
-                    CompanyID = table.Column<int>(type: "int", nullable: false)
+                    CompaniesID = table.Column<int>(type: "int", nullable: false),
+                    MoviesID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MovieCompanies", x => new { x.MovieID, x.CompanyID });
+                    table.PrimaryKey("PK_CompanyMovie", x => new { x.CompaniesID, x.MoviesID });
                     table.ForeignKey(
-                        name: "FK_MovieCompanies_Companies_CompanyID",
-                        column: x => x.CompanyID,
+                        name: "FK_CompanyMovie_Companies_CompaniesID",
+                        column: x => x.CompaniesID,
                         principalTable: "Companies",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MovieCompanies_Movies_MovieID",
-                        column: x => x.MovieID,
-                        principalTable: "Movies",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MovieGenres",
-                columns: table => new
-                {
-                    MovieID = table.Column<int>(type: "int", nullable: false),
-                    GenreID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MovieGenres", x => new { x.MovieID, x.GenreID });
-                    table.ForeignKey(
-                        name: "FK_MovieGenres_Genres_GenreID",
-                        column: x => x.GenreID,
-                        principalTable: "Genres",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_MovieGenres_Movies_MovieID",
-                        column: x => x.MovieID,
-                        principalTable: "Movies",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MovieLanguages",
-                columns: table => new
-                {
-                    MovieID = table.Column<int>(type: "int", nullable: false),
-                    LanguageID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MovieLanguages", x => new { x.MovieID, x.LanguageID });
-                    table.ForeignKey(
-                        name: "FK_MovieLanguages_Languages_LanguageID",
-                        column: x => x.LanguageID,
-                        principalTable: "Languages",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_MovieLanguages_Movies_MovieID",
-                        column: x => x.MovieID,
+                        name: "FK_CompanyMovie_Movies_MoviesID",
+                        column: x => x.MoviesID,
                         principalTable: "Movies",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -343,6 +282,30 @@ namespace DataAccessLayer.Migrations
                         principalTable: "Persons",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GenreMovie",
+                columns: table => new
+                {
+                    GenresID = table.Column<int>(type: "int", nullable: false),
+                    MoviesID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GenreMovie", x => new { x.GenresID, x.MoviesID });
+                    table.ForeignKey(
+                        name: "FK_GenreMovie_Genres_GenresID",
+                        column: x => x.GenresID,
+                        principalTable: "Genres",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GenreMovie_Movies_MoviesID",
+                        column: x => x.MoviesID,
+                        principalTable: "Movies",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -385,6 +348,11 @@ namespace DataAccessLayer.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CompanyMovie_MoviesID",
+                table: "CompanyMovie",
+                column: "MoviesID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CrewRoles_MovieID",
                 table: "CrewRoles",
                 column: "MovieID");
@@ -395,24 +363,14 @@ namespace DataAccessLayer.Migrations
                 column: "PersonID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MovieCompanies_CompanyID",
-                table: "MovieCompanies",
-                column: "CompanyID");
+                name: "IX_GenreMovie_MoviesID",
+                table: "GenreMovie",
+                column: "MoviesID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MovieGenres_GenreID",
-                table: "MovieGenres",
-                column: "GenreID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MovieLanguages_LanguageID",
-                table: "MovieLanguages",
+                name: "IX_Movies_LanguageID",
+                table: "Movies",
                 column: "LanguageID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Persons_GenderID",
-                table: "Persons",
-                column: "GenderID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -433,16 +391,13 @@ namespace DataAccessLayer.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CompanyMovie");
+
+            migrationBuilder.DropTable(
                 name: "CrewRoles");
 
             migrationBuilder.DropTable(
-                name: "MovieCompanies");
-
-            migrationBuilder.DropTable(
-                name: "MovieGenres");
-
-            migrationBuilder.DropTable(
-                name: "MovieLanguages");
+                name: "GenreMovie");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -451,22 +406,19 @@ namespace DataAccessLayer.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Persons");
+                name: "Companies");
 
             migrationBuilder.DropTable(
-                name: "Companies");
+                name: "Persons");
 
             migrationBuilder.DropTable(
                 name: "Genres");
 
             migrationBuilder.DropTable(
-                name: "Languages");
-
-            migrationBuilder.DropTable(
                 name: "Movies");
 
             migrationBuilder.DropTable(
-                name: "Genders");
+                name: "Languages");
         }
     }
 }
