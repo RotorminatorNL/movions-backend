@@ -51,21 +51,21 @@ namespace BusinessLogicLayer
                     Length = movie.Length,
                     ReleaseDate = movie.ReleaseDate,
                     Title = movie.Title,
-                    //Crew = m.Crew.Select(cr => new CrewRoleModel
+                    //Crew = movie.Crew.Select(crewRole => new CrewRoleModel
                     //{
-                    //    ID = cr.ID,
-                    //    CharacterName = cr.CharacterName,
-                    //    Role = cr.Role.ToString()
+                    //    ID = crewRole.ID,
+                    //    CharacterName = crewRole.CharacterName,
+                    //    Role = crewRole.Role.ToString()
                     //}),
-                    //Genres = m.Genres.Select(g => new GenreModel
+                    //Genres = movie.Genres.Select(genre => new GenreModel
                     //{
-                    //    ID = g.ID,
-                    //    Name = g.Name
+                    //    ID = genre.ID,
+                    //    Name = genre.Name
                     //}),
                     //Language = new LanguageModel
                     //{
-                    //    ID = m.Language.ID,
-                    //    Name = m.Language.Name
+                    //    ID = movie.Language.ID,
+                    //    Name = movie.Language.Name
                     //}
                 }),
             });
