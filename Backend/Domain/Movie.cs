@@ -11,9 +11,9 @@ namespace Domain
         public DateTime Length { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string Title { get; set; }
-        public IEnumerable<MovieCompany> Companies { get; set; }
+        public IEnumerable<Company> Companies { get; set; }
         public IEnumerable<CrewRole> Crew { get; set; }
-        public IEnumerable<MovieGenre> Genres { get; set; }
+        public IEnumerable<Genre> Genres { get; set; }
         public Language Language { get; set; }
     }
 }
