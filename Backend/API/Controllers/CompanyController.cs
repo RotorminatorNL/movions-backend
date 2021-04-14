@@ -3,6 +3,7 @@ using DataAccessLayer;
 using DataAccessLayerInterface;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace API.Controllers
 {
@@ -10,29 +11,35 @@ namespace API.Controllers
     [Route("[controller]")]
     public class CompanyController : Controller
     {
-        private readonly ApplicationDbContext _applicationDbContext;
+        private readonly Company Company;
 
         public CompanyController(ApplicationDbContext applicationDbContext)
         {
-            _applicationDbContext = applicationDbContext;
+            Company = new Company(applicationDbContext);
         }
 
         [HttpPost("[action]")]
-        public bool Create(string name, [FromBody]List<Domain.MovieCompany> movies)
+        public async Task<IActionResult> Create(AdminCompanyModel adminCompanyModel)
         {
-            return new Company(_applicationDbContext).Create(name, movies);
+            return Ok(await Company.Create(adminCompanyModel));
         }
 
         [HttpGet("[action]/{id}")]
-        public Domain.Company Read(int id)
+        public IActionResult Read(int id)
         {
-            return new Company(_applicationDbContext).Read(id);
+            return Ok(Company.Read(id));
         }
 
         [HttpGet("[action]")]
-        public IEnumerable<Domain.Company> ReadAll()
+        public IActionResult ReadAll()
         {
-            return new Company(_applicationDbContext).ReadAll();
+            return Ok(Company.ReadAll());
+        }
+
+        [HttpDelete("[action]/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            return Ok(await Company.Delete(id));
         }
     }
 }
