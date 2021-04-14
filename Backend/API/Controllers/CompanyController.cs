@@ -36,7 +36,13 @@ namespace API.Controllers
             return Ok(Company.ReadAll());
         }
 
-        [HttpDelete("[action]/{id}")]
+        [HttpPut("[action]")]
+        public async Task<IActionResult> Update(AdminCompanyModel adminCompanyModel)
+        {
+            return Ok(await Company.Update(adminCompanyModel));
+        }
+
+        [HttpDelete("[action]")]
         public async Task<IActionResult> Delete(int id)
         {
             return Ok(await Company.Delete(id));
