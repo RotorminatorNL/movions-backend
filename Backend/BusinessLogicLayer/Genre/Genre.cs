@@ -8,62 +8,57 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer
 {
-    public class Company
+    public class Genre
     {
         private readonly ApplicationDbContext _applicationDbContext;
 
-        public Company(ApplicationDbContext applicationDbContext)
+        public Genre(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }
 
-        public async Task<AdminCompanyModel> Create(AdminCompanyModel adminCompanyModel)
+        public async Task<AdminGenreModel> Create(AdminGenreModel adminGenreModel)
         {
-            var company = new Domain.Company
+            var genre = new Domain.Genre
             {
-                Name = adminCompanyModel.Name,
-                Type = (Domain.Company.Types)adminCompanyModel.Type
+                Name = adminGenreModel.Name
             };
 
-            _applicationDbContext.Companies.Add(company);
+            _applicationDbContext.Genres.Add(genre);
 
             await _applicationDbContext.SaveChangesAsync();
 
-            return new AdminCompanyModel 
+            return new AdminGenreModel
             {
-                ID = company.ID,
-                Name = company.Name,
-                Type = (AdminCompanyModel.Types)company.Type
+                ID = genre.ID,
+                Name = genre.Name
             };
         }
 
-        public IEnumerable<CompanyModel> ReadAll()
+        public IEnumerable<GenreModel> ReadAll()
         {
-            return _applicationDbContext.Companies
-            .Include(companies => companies.Movies)
-            .ToList()
-            .Select(company => new CompanyModel
+            return _applicationDbContext.Genres.Include(genres => genres.Movies).ToList().Select(genre => new GenreModel
             {
-                ID = company.ID,
-                Name = company.Name,
-                Type = company.Type.ToString(),
-                Movies = company.Movies.Select(movie => new MovieModel
+                ID = genre.ID,
+                Name = genre.Name,
+                Movies = genre.Movies.Select(movie => new MovieModel
                 {
                     ID = movie.ID,
                     Description = movie.Description,
                     Length = movie.Length,
                     ReleaseDate = movie.ReleaseDate,
                     Title = movie.Title,
+                    //Companies = movie.Companies.Select(company => new CompanyModel
+                    //{
+                    //    ID = company.ID,
+                    //    Name = company.Name,
+                    //    Type = company.Type.ToString()
+                    //}),
                     //Crew = movie.Crew.Select(crewRole => new CrewRoleModel
                     //{
                     //    ID = crewRole.ID,
                     //    CharacterName = crewRole.CharacterName,
                     //    Role = crewRole.Role.ToString()
-                    //}),
-                    //Genres = movie.Genres.Select(genre => new GenreModel
-                    //{
-                    //    ID = genre.ID,
-                    //    Name = genre.Name
                     //}),
                     //Language = new LanguageModel
                     //{
@@ -74,29 +69,29 @@ namespace BusinessLogicLayer
             });
         }
 
-        public CompanyModel Read(int id)
+        public GenreModel Read(int id)
         {
-            return _applicationDbContext.Companies.Select(company => new CompanyModel
+            return _applicationDbContext.Genres.Select(genre => new GenreModel
             {
-                ID = company.ID,
-                Name = company.Name,
-                Type = company.Type.ToString(),
-                Movies = company.Movies.Select(movie => new MovieModel
+                ID = genre.ID,
+                Name = genre.Name,
+                Movies = genre.Movies.Select(movie => new MovieModel
                 {
                     ID = movie.ID,
                     Description = movie.Description,
                     Length = movie.Length,
                     ReleaseDate = movie.ReleaseDate,
                     Title = movie.Title,
+                    Companies = movie.Companies.Select(company => new CompanyModel
+                    {
+                        ID = company.ID,
+                        Name = company.Name,
+                        Type = company.Type.ToString()
+                    }),
                     Crew = movie.Crew.Select(crewRole => new CrewRoleModel { 
                         ID = crewRole.ID,
                         CharacterName = crewRole.CharacterName,
                         Role = crewRole.Role.ToString()
-                    }),
-                    Genres = movie.Genres.Select(genre => new GenreModel
-                    {
-                        ID = genre.ID,
-                        Name = genre.Name
                     }),
                     Language = new LanguageModel
                     {
@@ -107,28 +102,26 @@ namespace BusinessLogicLayer
             }).FirstOrDefault(c => c.ID == id);
         }
 
-        public async Task<AdminCompanyModel> Update(AdminCompanyModel adminCompanyModel) 
+        public async Task<AdminGenreModel> Update(AdminGenreModel adminGenreModel) 
         {
-            var company = _applicationDbContext.Companies.FirstOrDefault(x => x.ID == adminCompanyModel.ID);
+            var genre = _applicationDbContext.Genres.FirstOrDefault(x => x.ID == adminGenreModel.ID);
 
-            company.Name = adminCompanyModel.Name;
-            company.Type = (Domain.Company.Types)adminCompanyModel.Type;
+            genre.Name = adminGenreModel.Name;
 
             await _applicationDbContext.SaveChangesAsync();
 
-            return new AdminCompanyModel
+            return new AdminGenreModel
             {
-                ID = company.ID,
-                Name = company.Name,
-                Type = (AdminCompanyModel.Types)company.Type
+                ID = genre.ID,
+                Name = genre.Name
             };
         }
 
         public async Task<bool> Delete(int id) 
         {
-            var company = _applicationDbContext.Companies.FirstOrDefault(x => x.ID == id);
+            var genre = _applicationDbContext.Genres.FirstOrDefault(x => x.ID == id);
 
-            _applicationDbContext.Companies.Remove(company);
+            _applicationDbContext.Genres.Remove(genre);
  
             try
             {
