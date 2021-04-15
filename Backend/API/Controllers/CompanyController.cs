@@ -19,7 +19,7 @@ namespace API.Controllers
         }
 
         [HttpPost()]
-        public async Task<IActionResult> Create(AdminPersonModel adminCompanyModel)
+        public async Task<IActionResult> Create(AdminCompanyModel adminCompanyModel)
         {
             return Ok(await Company.Create(adminCompanyModel));
         }
@@ -37,7 +37,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(AdminPersonModel adminCompanyModel)
+        public async Task<IActionResult> Update(AdminCompanyModel adminCompanyModel)
         {
             return Ok(await Company.Update(adminCompanyModel));
         }

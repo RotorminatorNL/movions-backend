@@ -19,7 +19,7 @@ namespace API.Controllers
         }
 
         [HttpPost()]
-        public async Task<IActionResult> Create(AdminPersonModel adminCrewRoleModel)
+        public async Task<IActionResult> Create(AdminCrewRoleModel adminCrewRoleModel)
         {
             return Ok(await Genre.Create(adminCrewRoleModel));
         }
@@ -37,7 +37,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(AdminPersonModel adminCompanyModel)
+        public async Task<IActionResult> Update(AdminCrewRoleModel adminCompanyModel)
         {
             return Ok(await Genre.Update(adminCompanyModel));
         }

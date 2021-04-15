@@ -19,7 +19,7 @@ namespace API.Controllers
         }
 
         [HttpPost()]
-        public async Task<IActionResult> Create(AdminPersonModel adminLanguageModel)
+        public async Task<IActionResult> Create(AdminLanguageModel adminLanguageModel)
         {
             return Ok(await Language.Create(adminLanguageModel));
         }
@@ -37,7 +37,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(AdminPersonModel adminCompanyModel)
+        public async Task<IActionResult> Update(AdminLanguageModel adminCompanyModel)
         {
             return Ok(await Language.Update(adminCompanyModel));
         }
