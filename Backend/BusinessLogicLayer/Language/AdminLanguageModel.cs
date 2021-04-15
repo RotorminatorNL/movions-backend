@@ -8,6 +8,6 @@ namespace BusinessLogicLayer
     {
         public int ID { get; set; }
         public string Name { get; set; }
-        public IEnumerable<MovieModel> Movies { get; set; }
+        public IEnumerable<AdminMovieModel> Movies { get; set; }
     }
 }

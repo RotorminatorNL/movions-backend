@@ -9,6 +9,10 @@ namespace BusinessLogicLayer
         public int ID { get; set; }
         public Roles Role { get; set; }
         public string CharacterName { get; set; }
+        public int MovieID { get; set; }
+        public AdminMovieModel Movie { get; set; }
+        public int PersonID { get; set; }
+        public AdminPersonModel Person { get; set; }
 
         public enum Roles
         {

@@ -11,6 +11,6 @@ namespace BusinessLogicLayer
         public string Description { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public IEnumerable<CrewRoleModel> Roles { get; set; }
+        public IEnumerable<AdminCrewRoleModel> Roles { get; set; }
     }
 }

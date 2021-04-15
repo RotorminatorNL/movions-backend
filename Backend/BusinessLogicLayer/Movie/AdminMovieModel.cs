@@ -11,9 +11,9 @@ namespace BusinessLogicLayer
         public int Length { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string Title { get; set; }
-        public IEnumerable<CompanyModel> Companies { get; set; }
-        public IEnumerable<CrewRoleModel> Crew { get; set; }
-        public IEnumerable<GenreModel> Genres { get; set; }
-        public LanguageModel Language { get; set; }
+        public IEnumerable<AdminCompanyModel> Companies { get; set; }
+        public IEnumerable<AdminCrewRoleModel> Crew { get; set; }
+        public IEnumerable<AdminGenreModel> Genres { get; set; }
+        public AdminLanguageModel Language { get; set; }
     }
 }

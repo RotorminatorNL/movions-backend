@@ -9,7 +9,7 @@ namespace BusinessLogicLayer
         public int ID { get; set; }
         public string Name { get; set; }
         public Types Type { get; set; }
-        public IEnumerable<MovieModel> Movies { get; set; }
+        public IEnumerable<AdminMovieModel> Movies { get; set; }
 
         public enum Types
         {
