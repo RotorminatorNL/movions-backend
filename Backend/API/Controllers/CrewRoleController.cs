@@ -9,43 +9,43 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class CompanyController : Controller
+    public class CrewRoleController : Controller
     {
-        private readonly Company Company;
+        private readonly CrewRole Genre;
 
-        public CompanyController(ApplicationDbContext applicationDbContext)
+        public CrewRoleController(ApplicationDbContext applicationDbContext)
         {
-            Company = new Company(applicationDbContext);
+            Genre = new CrewRole(applicationDbContext);
         }
 
         [HttpPost()]
-        public async Task<IActionResult> Create(AdminPersonModel adminCompanyModel)
+        public async Task<IActionResult> Create(AdminPersonModel adminCrewRoleModel)
         {
-            return Ok(await Company.Create(adminCompanyModel));
+            return Ok(await Genre.Create(adminCrewRoleModel));
         }
 
         [HttpGet()]
         public IActionResult ReadAll()
         {
-            return Ok(Company.ReadAll());
+            return Ok(Genre.ReadAll());
         }
 
         [HttpGet("{id}")]
         public IActionResult Read(int id)
         {
-            return Ok(Company.Read(id));
+            return Ok(Genre.Read(id));
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(AdminPersonModel adminCompanyModel)
         {
-            return Ok(await Company.Update(adminCompanyModel));
+            return Ok(await Genre.Update(adminCompanyModel));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok(await Company.Delete(id));
+            return Ok(await Genre.Delete(id));
         }
     }
 }
