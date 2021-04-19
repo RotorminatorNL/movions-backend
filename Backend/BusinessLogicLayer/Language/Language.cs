@@ -61,13 +61,26 @@ namespace BusinessLogicLayer
                     //{
                     //    ID = crewRole.ID,
                     //    CharacterName = crewRole.CharacterName,
-                    //    Role = crewRole.Role.ToString()
+                    //    Role = crewRole.Role.ToString(),
+                    //    MovieID = crewRole.MovieID,
+                    //    Movie = null, // already displayed
+                    //    PersonID = crewRole.PersonID,
+                    //    Person = new PersonModel
+                    //    {
+                    //        ID = crewRole.Person.ID,
+                    //        BirthDate = crewRole.Person.BirthDate,
+                    //        BirthPlace = crewRole.Person.BirthPlace,
+                    //        Description = crewRole.Person.Description,
+                    //        FirstName = crewRole.Person.FirstName,
+                    //        LastName = crewRole.Person.LastName
+                    //    }
                     //}),
                     //Genres = movie.Genres.Select(genre => new GenreModel
                     //{
                     //    ID = genre.ID,
                     //    Name = genre.Name
                     //}),
+                    //Language = null // already displayed
                 }),
             });
         }
@@ -95,15 +108,28 @@ namespace BusinessLogicLayer
                     {
                         ID = crewRole.ID,
                         CharacterName = crewRole.CharacterName,
-                        Role = crewRole.Role.ToString()
+                        Role = crewRole.Role.ToString(),
+                        MovieID = crewRole.MovieID,
+                        Movie = null, // already displayed
+                        PersonID = crewRole.PersonID,
+                        Person = new PersonModel
+                        {
+                            ID = crewRole.Person.ID,
+                            BirthDate = crewRole.Person.BirthDate,
+                            BirthPlace = crewRole.Person.BirthPlace,
+                            Description = crewRole.Person.Description,
+                            FirstName = crewRole.Person.FirstName,
+                            LastName = crewRole.Person.LastName
+                        }
                     }),
                     Genres = movie.Genres.Select(genre => new GenreModel
                     {
                         ID = genre.ID,
                         Name = genre.Name
                     }),
+                    Language = null // already displayed
                 }),
-            }).FirstOrDefault(c => c.ID == id);
+            }).FirstOrDefault(x => x.ID == id);
         }
 
         public async Task<AdminLanguageModel> Update(AdminLanguageModel adminLanguageModel) 
