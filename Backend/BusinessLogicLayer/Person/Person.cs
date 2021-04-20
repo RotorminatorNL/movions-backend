@@ -1,4 +1,4 @@
-﻿using DataAccessLayer;
+﻿using DataAccessLayerInterface;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,9 +9,9 @@ namespace BusinessLogicLayer
 {
     public class Person
     {
-        private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IApplicationDbContext _applicationDbContext;
 
-        public Person(ApplicationDbContext applicationDbContext)
+        public Person(IApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }
@@ -44,10 +44,7 @@ namespace BusinessLogicLayer
 
         public IEnumerable<PersonModel> ReadAll()
         {
-            return _applicationDbContext.Persons
-            .Include(persons => persons.Roles)
-            .ToList()
-            .Select(person => new PersonModel
+            return _applicationDbContext.Persons.ToList().Select(person => new PersonModel
             {
                 ID = person.ID,
                 BirthDate = person.BirthDate,
@@ -55,49 +52,12 @@ namespace BusinessLogicLayer
                 Description = person.Description,
                 FirstName = person.FirstName,
                 LastName = person.LastName,
-                Roles = person.Roles.Select(roles => new CrewRoleModel 
-                { 
-                    ID = roles.ID,
-                    CharacterName = roles.CharacterName,
-                    Role = roles.Role.ToString(),
-                    MovieID = roles.MovieID,
-                    //Movie = new MovieModel
-                    //{
-                    //    ID = roles.Movie.ID,
-                    //    Description = roles.Movie.Description,
-                    //    Length = roles.Movie.Length,
-                    //    ReleaseDate = roles.Movie.ReleaseDate,
-                    //    Title = roles.Movie.Title,
-                    //    Companies = roles.Movie.Companies.Select(company => new CompanyModel
-                    //    {
-                    //        ID = company.ID,
-                    //        Name = company.Name,
-                    //        Type = company.Type.ToString()
-                    //    }),
-                    //    Crew = null, // Crew is already been displayed
-                    //    Genres = roles.Movie.Genres.Select(genre => new GenreModel
-                    //    {
-                    //        ID = genre.ID,
-                    //        Name = genre.Name
-                    //    }),
-                    //    Language = new LanguageModel
-                    //    {
-                    //        ID = roles.Movie.Language.ID,
-                    //        Name = roles.Movie.Language.Name
-                    //    }
-                    //},
-                    PersonID = roles.PersonID,
-                    Person = null // already displayed
-                })
             });
         }
 
         public PersonModel Read(int id)
         {
-            return _applicationDbContext.Persons
-            .Include(persons => persons.Roles)
-            .ToList()
-            .Select(person => new PersonModel
+            return _applicationDbContext.Persons.ToList().Select(person => new PersonModel
             {
                 ID = person.ID,
                 BirthDate = person.BirthDate,
@@ -105,40 +65,6 @@ namespace BusinessLogicLayer
                 Description = person.Description,
                 FirstName = person.FirstName,
                 LastName = person.LastName,
-                Roles = person.Roles.Select(roles => new CrewRoleModel
-                {
-                    ID = roles.ID,
-                    CharacterName = roles.CharacterName,
-                    Role = roles.Role.ToString(),
-                    MovieID = roles.MovieID,
-                    //Movie = new MovieModel
-                    //{
-                    //    ID = roles.Movie.ID,
-                    //    Description = roles.Movie.Description,
-                    //    Length = roles.Movie.Length,
-                    //    ReleaseDate = roles.Movie.ReleaseDate,
-                    //    Title = roles.Movie.Title,
-                    //    Companies = roles.Movie.Companies.Select(company => new CompanyModel
-                    //    {
-                    //        ID = company.ID,
-                    //        Name = company.Name,
-                    //        Type = company.Type.ToString()
-                    //    }),
-                    //    Crew = null , // Crew is already been displayed
-                    //    Genres = roles.Movie.Genres.Select(genre => new GenreModel
-                    //    {
-                    //        ID = genre.ID,
-                    //        Name = genre.Name
-                    //    }),
-                    //    Language = new LanguageModel
-                    //    {
-                    //        ID = roles.Movie.Language.ID,
-                    //        Name = roles.Movie.Language.Name
-                    //    }
-                    //},
-                    PersonID = roles.PersonID,
-                    Person = null // already displayed
-                })
             }).FirstOrDefault(x => x.ID == id);
         }
 
