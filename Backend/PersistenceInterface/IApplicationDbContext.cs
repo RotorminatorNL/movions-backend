@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DataAccessLayerInterface
+namespace PersistenceInterface
 {
     public interface IApplicationDbContext
     {

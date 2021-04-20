@@ -1,11 +1,11 @@
-﻿using DataAccessLayerInterface;
-using Domain;
+﻿using Domain;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PersistenceInterface;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer
+namespace Persistence
 {
     public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
     {

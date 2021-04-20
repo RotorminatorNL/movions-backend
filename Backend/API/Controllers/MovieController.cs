@@ -1,8 +1,6 @@
 ﻿using BusinessLogicLayer;
-using DataAccessLayer;
-using DataAccessLayerInterface;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using PersistenceInterface;
 using System.Threading.Tasks;
 
 namespace API.Controllers
