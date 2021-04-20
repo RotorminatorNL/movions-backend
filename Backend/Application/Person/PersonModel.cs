@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BusinessLogicLayer
+namespace Application
 {
-    public class AdminPersonModel
+    public class PersonModel
     {
         public int ID { get; set; }
         public DateTime BirthDate { get; set; }
@@ -11,6 +11,6 @@ namespace BusinessLogicLayer
         public string Description { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public IEnumerable<AdminCrewRoleModel> Roles { get; set; }
+        public IEnumerable<CrewRoleModel> Roles { get; set; }
     }
 }
