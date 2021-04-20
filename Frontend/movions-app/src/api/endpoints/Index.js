@@ -1,0 +1,1 @@
+export { default as getMovies } from './GetMovies.js'

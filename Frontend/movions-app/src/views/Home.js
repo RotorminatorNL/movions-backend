@@ -1,12 +1,11 @@
 import React, {Component} from "react";
 
-export class Movie extends Component {
+export default class Home extends Component {
     render() {
         return (
             <div>
-				<p>Title</p>
-				<p>Description</p>
-			</div>
+                <p>Home page</p>
+            </div>
         );
     }
 }
