@@ -2,6 +2,8 @@
 using Domain;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
@@ -16,5 +18,10 @@ namespace DataAccessLayer
         public DbSet<Language> Languages { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Person> Persons { get; set; }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
     }
 }

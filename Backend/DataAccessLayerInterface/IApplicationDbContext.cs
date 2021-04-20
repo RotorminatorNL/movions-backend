@@ -14,6 +14,6 @@ namespace DataAccessLayerInterface
         DbSet<CrewRole> CrewRoles { get; }
         DbSet<Person> Persons { get; }
 
-        Task SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken));
     }
 }
