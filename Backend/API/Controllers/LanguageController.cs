@@ -13,7 +13,7 @@ namespace API.Controllers
     {
         private readonly Language Language;
 
-        public LanguageController(ApplicationDbContext applicationDbContext)
+        public LanguageController(IApplicationDbContext applicationDbContext)
         {
             Language = new Language(applicationDbContext);
         }

@@ -13,7 +13,7 @@ namespace API.Controllers
     {
         private readonly CrewRole Genre;
 
-        public CrewRoleController(ApplicationDbContext applicationDbContext)
+        public CrewRoleController(IApplicationDbContext applicationDbContext)
         {
             Genre = new CrewRole(applicationDbContext);
         }

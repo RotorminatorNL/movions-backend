@@ -13,7 +13,7 @@ namespace API.Controllers
     {
         private readonly Company Company;
 
-        public CompanyController(ApplicationDbContext applicationDbContext)
+        public CompanyController(IApplicationDbContext applicationDbContext)
         {
             Company = new Company(applicationDbContext);
         }

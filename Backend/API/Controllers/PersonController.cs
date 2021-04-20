@@ -13,7 +13,7 @@ namespace API.Controllers
     {
         private readonly Person Person;
 
-        public PersonController(ApplicationDbContext applicationDbContext)
+        public PersonController(IApplicationDbContext applicationDbContext)
         {
             Person = new Person(applicationDbContext);
         }

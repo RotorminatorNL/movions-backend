@@ -13,7 +13,7 @@ namespace API.Controllers
     {
         private readonly Genre Genre;
 
-        public GenreController(ApplicationDbContext applicationDbContext)
+        public GenreController(IApplicationDbContext applicationDbContext)
         {
             Genre = new Genre(applicationDbContext);
         }

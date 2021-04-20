@@ -1,5 +1,6 @@
 ﻿using BusinessLogicLayer;
 using DataAccessLayer;
+using DataAccessLayerInterface;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace API.Controllers
     {
         private readonly Movie Movie;
 
-        public MovieController(ApplicationDbContext applicationDbContext)
+        public MovieController(IApplicationDbContext applicationDbContext)
         {
             Movie = new Movie(applicationDbContext);
         }
