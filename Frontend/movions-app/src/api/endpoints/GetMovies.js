@@ -1,12 +1,11 @@
-import apiRequest from '../ApiRequest.js'
+import apiRequest from "../ApiRequest.js";
 
-const getMovies = async() => {
-    const response = await apiRequest('/Movie/ReadAll', 'GET')
-    if (response.ok) {
-        const result = await response.json()
-        return result
+async function getMovies() {
+    const response = await apiRequest("http://localhost:5000/movie/readall", "GET");
+    if(response.ok) {
+        return response.json();
     }
-    return null
+    return null;
 }
 
 export default getMovies;
