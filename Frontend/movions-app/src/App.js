@@ -1,29 +1,23 @@
-import {BrowserRouter as Router, Route, NavLink} from "react-router-dom";
-import Home from "./views/Home.js";
+import {BrowserRouter as Router, Route} from "react-router-dom";
+import "./assets/css/App.css";
+import Navigation from "./components/Navigation";
+import Home from "./views/Home";
 import MovieCollection from "./views/MovieCollection";
 
 function App() {
     return (
         <Router>
             <div>
-                <h1>Simple but it works.</h1>
-                <nav>
-                    <ul className="header">
-                        <li>
-                            <NavLink to="/">Home</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/MovieCollection">MovieCollection</NavLink>
-                        </li>
-                    </ul>
-                </nav>
-                <div className="content">
-                    <Route exact path="/">
-                        <Home/>
-                    </Route>
-                    <Route path="/MovieCollection">
-                        <MovieCollection/>
-                    </Route>
+                <Navigation />
+                <div className="container">
+                    <div className="content">
+                        <Route exact path="/">
+                            <Home/>
+                        </Route>
+                        <Route path="/MovieCollection">
+                            <MovieCollection/>
+                        </Route>
+                    </div>
                 </div>
             </div>
         </Router>
