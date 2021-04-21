@@ -29,6 +29,10 @@ a {
     text-decoration: none;
 }
 
+.content {
+ margin-top: 18px;
+}
+
 .container {
     flex-grow: 1;
     margin: 0 auto;
