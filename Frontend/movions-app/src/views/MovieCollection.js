@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import GetMovies from "../api/endpoints/GetMovies";
 import Movie from "../components/Movie";
+import "../assets/css/MovieCollection.css";
 
 export default class MovieCollection extends Component {
     constructor(props) {
@@ -17,7 +18,15 @@ export default class MovieCollection extends Component {
 
     render() {
         return (
-            <div>
+            <div className="movie-collection">
+                {this
+                    .state
+                    .movies
+                    .map(movie => (<Movie key={movie.id} data={movie}/>))}
+                {this
+                    .state
+                    .movies
+                    .map(movie => (<Movie key={movie.id} data={movie}/>))}
                 {this
                     .state
                     .movies

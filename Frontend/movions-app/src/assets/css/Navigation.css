@@ -1,6 +1,6 @@
 .navbar {
     border-bottom: 1px solid black;
-    box-shadow: 0 7px 8px 1px rgb(10 10 10 / 30%);
+    box-shadow: 0 5px 5px 1px rgb(10 10 10 / 30%);
     min-height: 70px;
     position: relative;
     z-index: 30;

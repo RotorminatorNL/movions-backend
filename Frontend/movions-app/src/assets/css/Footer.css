@@ -1,0 +1,17 @@
+footer {
+    background: linear-gradient(0deg, rgba(1,87,155,1) 0%, rgba(0,35,62,1) 100%);
+    box-shadow: 0 -3px 5px 1px rgb(10 10 10 / 50%);
+    height: 70px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: -70px;
+    left: 0;
+    width: 100vw;
+}
+
+footer p {
+    color: white;
+}

@@ -1,13 +1,15 @@
 import {BrowserRouter as Router, Route} from "react-router-dom";
-import "./assets/css/App.css";
 import Navigation from "./components/Navigation";
+import Footer from "./components/Footer";
 import Home from "./views/Home";
 import MovieCollection from "./views/MovieCollection";
+import "./assets/css/App.css";
 
 function App() {
     return (
         <Router>
-            <div>
+            <div className="app">
+                <div className="background"></div>
                 <Navigation />
                 <div className="container">
                     <div className="content">
@@ -19,6 +21,7 @@ function App() {
                         </Route>
                     </div>
                 </div>
+                <Footer />
             </div>
         </Router>
     );

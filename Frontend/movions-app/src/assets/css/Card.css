@@ -1,0 +1,26 @@
+.card {    
+    background-color: white;
+    border-radius: 3px;
+    box-shadow: 0 0 7px 3px rgb(0 0 0 / 30%);
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.card h1 {
+    margin-top: 0;
+}
+
+.card img {
+    max-height: 500px;
+}
+
+.card p {
+    margin-bottom: 0;
+}
+
+@media screen and (min-width: 1024px) { 
+    .card {
+        margin: 10px 1.85%;
+        width: 44%;
+    }
+}
