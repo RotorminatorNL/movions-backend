@@ -18,9 +18,12 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
-
-    - name: Build with DotNet
-      run: dotnet build ./Backend/API/API.csproj
+        
+    - name: Restore dependencies
+      run: dotnet restore ./Backend/API/API.csproj
       
-    - name: UnitTest
+    - name: Build with DotNet
+      run: dotnet build --no-restore ./Backend/API/API.csproj
+      
+    - name: Run UnitTest
       run: dotnet test ./Backend/UnitTests/UnitTests.csproj
