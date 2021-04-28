@@ -21,7 +21,6 @@ jobs:
         
     - name: Restore dependencies
       run: dotnet restore
-      working-directory: repo4movions/backend/api/api.csproj
       
     - name: Build
       run: dotnet build --no-restore
