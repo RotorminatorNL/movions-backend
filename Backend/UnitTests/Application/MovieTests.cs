@@ -1,6 +1,7 @@
 ﻿using Application;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,8 +20,38 @@ namespace UnitTests
                 .Options;
         }
 
+        [Theory]
+        [InlineData("Test description", 104, "2010-10-04", "Test title")]
+        public async Task Create_ValidInput_ReturnsCorrectData(string description, int length, string releaseDate, string title)
+        {
+            // Arrange 
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var movie = new AdminMovieModel
+            {
+                Description = description,
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
+            };
+
+            var appMovie = new Movie(dbContext);
+
+            // Act
+            var result = await appMovie.Create(movie);
+
+            // Assert
+            Assert.NotEqual(0, result.ID);
+            Assert.Equal(description, result.Description);
+            Assert.Equal(length, result.Length);
+            Assert.Equal(DateTime.Parse(releaseDate), result.ReleaseDate);
+            Assert.Equal(title, result.Title);
+        }
+
         [Fact]
-        public async Task ReadAll()
+        public async Task ReadAll_ReturnsAllMovies()
         {
             // Arrange 
             var dbContext = new ApplicationDbContext(_dbContextOptions);
@@ -31,10 +62,10 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var movie = new Movie(dbContext);
+            var appMovie = new Movie(dbContext);
 
             // Act
-            var result = movie.ReadAll();
+            var result = appMovie.ReadAll();
 
             // Assert
             var movieModel = Assert.IsAssignableFrom<IEnumerable<MovieModel>>(result);
