@@ -19,6 +19,7 @@ namespace UnitTests
                 .Options;
         }
 
+        [Fact]
         public async Task ReadAll()
         {
             // Arrange 
