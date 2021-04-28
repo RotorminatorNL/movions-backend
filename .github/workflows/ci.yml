@@ -23,7 +23,7 @@ jobs:
       run: dotnet restore ./Backend/API/API.csproj
       
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore ./Backend/API/API.csproj
       
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal ./Backend/API/API.csproj
