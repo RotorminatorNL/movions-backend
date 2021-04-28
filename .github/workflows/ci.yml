@@ -26,4 +26,4 @@ jobs:
       run: dotnet build --no-restore ./Backend/API/API.csproj
       
     - name: UnitTest
-      run: dotnet test --no-restore --verbosity --logger trx ./Backend/UnitTests/UnitTests.csproj
+      run: dotnet test --no-restore --logger trx ./Backend/UnitTests/UnitTests.csproj
