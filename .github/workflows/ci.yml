@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
 
     runs-on: ubuntu-latest
 
@@ -19,10 +19,7 @@ jobs:
       with:
         dotnet-version: 5.0.x
         
-    - name: Restore dependencies
-      run: dotnet restore ./Backend/API/API.csproj
-      
-    - name: Build
+    - name: Build with DotNet
       run: dotnet build --no-restore ./Backend/API/API.csproj
       
     - name: UnitTest
