@@ -21,7 +21,7 @@ jobs:
         
     - name: Restore dependencies
       run: dotnet restore
-      working-directory: ./Backend/API/API.csproj
+      working-directory: cd ./Backend/API/API.csproj
       
     - name: Build
       run: dotnet build --no-restore
