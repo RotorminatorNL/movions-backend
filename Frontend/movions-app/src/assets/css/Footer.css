@@ -6,8 +6,8 @@ footer {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    position: absolute;
-    bottom: -70px;
+    position: fixed;
+    bottom: 0;
     left: 0;
     width: 100vw;
 }

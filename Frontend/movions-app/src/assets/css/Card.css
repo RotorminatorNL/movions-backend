@@ -1,13 +1,27 @@
-.card {    
+.card {
     background-color: white;
-    border-radius: 3px;
+    border-radius: 5px;
     box-shadow: 0 0 7px 3px rgb(0 0 0 / 30%);
+    cursor: pointer;
     margin: 10px 0;
-    padding: 10px;
+    padding: 20px;
+    transition: all 200ms;
+}
+
+.movie-collection:hover .card {
+    opacity: .7;
+}
+
+.movie-collection .card:hover {
+    opacity: 1;
+    transform: scale(1.04);
 }
 
 .card h1 {
+    border-bottom: 1px solid black;
     margin-top: 0;
+    padding-bottom: 10px;
+    text-align: center;
 }
 
 .card img {
@@ -15,12 +29,14 @@
 }
 
 .card p {
+    border-top: 1px solid black;
     margin-bottom: 0;
+    padding-top: 10px;
 }
 
 @media screen and (min-width: 1024px) { 
     .card {
-        margin: 10px 1.85%;
-        width: 44%;
+        margin: 10px;
+        width: 43.75%;
     }
 }
