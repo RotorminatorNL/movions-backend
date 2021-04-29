@@ -54,7 +54,7 @@ namespace UnitTests
         [InlineData("Test description", 0, "2010-10-04", "Test title")]
         [InlineData("", 114, "2010-10-04", "Test title")]
         [InlineData(null, 114, "2010-10-04", "Test title")]
-        [InlineData("Test description", 114, null, "Test title")]
+        [InlineData("Test description", 114, "", "Test title")]
         [InlineData("Test description", 114, "2010-10-04", "")]
         [InlineData("Test description", 114, "2010-10-04", null)]
         public async Task Create_InvalidInput_ReturnsNull(string description, int length, string releaseDate, string title)
@@ -64,11 +64,13 @@ namespace UnitTests
 
             await dbContext.Database.EnsureDeletedAsync();
 
+            DateTime expectedReleaseDate = DateTime.Parse(releaseDate);
+
             var expectedMovie = new AdminMovieModel
             {
                 Description = description,
                 Length = length,
-                ReleaseDate = DateTime.Parse(releaseDate),
+                ReleaseDate = expectedReleaseDate,
                 Title = title
             };
 
