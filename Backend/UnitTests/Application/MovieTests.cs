@@ -29,7 +29,7 @@ namespace UnitTests
 
             await dbContext.Database.EnsureDeletedAsync();
 
-            var movie = new AdminMovieModel
+            var expectedMovie = new AdminMovieModel
             {
                 Description = description,
                 Length = length,
@@ -40,14 +40,45 @@ namespace UnitTests
             var appMovie = new Movie(dbContext);
 
             // Act
-            var result = await appMovie.Create(movie);
+            var result = await appMovie.Create(expectedMovie);
 
             // Assert
-            Assert.NotEqual(0, result.ID);
-            Assert.Equal(description, result.Description);
-            Assert.Equal(length, result.Length);
-            Assert.Equal(DateTime.Parse(releaseDate), result.ReleaseDate);
-            Assert.Equal(title, result.Title);
+            Assert.NotEqual(expectedMovie.ID, result.ID);
+            Assert.Equal(expectedMovie.Description, result.Description);
+            Assert.Equal(expectedMovie.Length, result.Length);
+            Assert.Equal(expectedMovie.ReleaseDate, result.ReleaseDate);
+            Assert.Equal(expectedMovie.Title, result.Title);
+        }
+
+        [Theory]
+        [InlineData("Test description", 0, "2010-10-04", "Test title")]
+        [InlineData("", 114, "2010-10-04", "Test title")]
+        [InlineData(null, 114, "2010-10-04", "Test title")]
+        [InlineData("Test description", 114, null, "Test title")]
+        [InlineData("Test description", 114, "2010-10-04", "")]
+        [InlineData("Test description", 114, "2010-10-04", null)]
+        public async Task Create_InvalidInput_ReturnsNull(string description, int length, string releaseDate, string title)
+        {
+            // Arrange 
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var expectedMovie = new AdminMovieModel
+            {
+                Description = description,
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
+            };
+
+            var appMovie = new Movie(dbContext);
+
+            // Act
+            var result = await appMovie.Create(expectedMovie);
+
+            // Assert
+            Assert.Null(result);
         }
 
         [Theory]
@@ -58,7 +89,7 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var movie = new Domain.Movie
+            var expectedMovie = new Domain.Movie
             {
                 ID = id,
                 Description = "Test description",
@@ -67,7 +98,7 @@ namespace UnitTests
                 Title = "Test title"
             };
 
-            dbContext.Movies.Add(movie);
+            dbContext.Movies.Add(expectedMovie);
             await dbContext.SaveChangesAsync();
 
             var appMovie = new Movie(dbContext);
@@ -76,11 +107,11 @@ namespace UnitTests
             var result = appMovie.Read(id);
 
             // Assert
-            Assert.Equal(movie.ID, result.ID);
-            Assert.Equal(movie.Description, result.Description);
-            Assert.Equal(movie.Length, result.Length);
-            Assert.Equal(movie.ReleaseDate, result.ReleaseDate);
-            Assert.Equal(movie.Title, result.Title);
+            Assert.Equal(expectedMovie.ID, result.ID);
+            Assert.Equal(expectedMovie.Description, result.Description);
+            Assert.Equal(expectedMovie.Length, result.Length);
+            Assert.Equal(expectedMovie.ReleaseDate, result.ReleaseDate);
+            Assert.Equal(expectedMovie.Title, result.Title);
         }
 
         [Fact]
