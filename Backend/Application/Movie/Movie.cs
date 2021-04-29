@@ -17,6 +17,11 @@ namespace Application
 
         public async Task<AdminMovieModel> Create(AdminMovieModel adminMovieModel)
         {
+            if(new Validation().MovieCheck(adminMovieModel))
+            {
+                return null;
+            }
+
             var movie = new Domain.Movie
             {
                 Description = adminMovieModel.Description,
