@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using PersistenceInterface;
+using System.Configuration;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,8 +11,6 @@ namespace Persistence
 {
     public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext, IDesignTimeDbContextFactory<ApplicationDbContext>
     {
-        private string dbsConn = "Server=mssql.fhict.local;Database=dbi451244_movionsdb;User Id=dbi451244_movionsdb;Password=MovionsDBW8Woord;";
-
         public ApplicationDbContext() { }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -27,7 +26,8 @@ namespace Persistence
         public ApplicationDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseSqlServer(dbsConn);
+
+            optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["MovionsDB"].ConnectionString);
 
             return new ApplicationDbContext(optionsBuilder.Options);
         }
