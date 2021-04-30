@@ -15,5 +15,6 @@ namespace Domain
         public IEnumerable<CrewRole> Crew { get; set; }
         public IEnumerable<Genre> Genres { get; set; }
         public Language Language { get; set; }
+        public int LanguageID { get; set; }
     }
 }

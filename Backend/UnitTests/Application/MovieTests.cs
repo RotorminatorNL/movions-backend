@@ -21,17 +21,25 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData("Test description", 104, "2010-10-04", "Test title")]
-        public async Task Create_ValidInput_ReturnsCorrectData(string description, int length, string releaseDate, string title)
+        [InlineData("Test description", 1, 104, "2010-10-04", "Test title")]
+        public async Task Create_ValidInput_ReturnsCorrectData(string description, int languageID, int length, string releaseDate, string title)
         {
             // Arrange 
             var dbContext = new ApplicationDbContext(_dbContextOptions);
-
             await dbContext.Database.EnsureDeletedAsync();
+
+            var language = new Domain.Language
+            {
+                Name = "English"
+            };
+
+            dbContext.Languages.Add(language);
+            await dbContext.SaveChangesAsync();
 
             var expectedMovie = new AdminMovieModel
             {
                 Description = description,
+                Language = new AdminLanguageModel { ID = languageID },
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
                 Title = title
@@ -45,29 +53,40 @@ namespace UnitTests
             // Assert
             Assert.NotEqual(expectedMovie.ID, result.ID);
             Assert.Equal(expectedMovie.Description, result.Description);
+            Assert.Equal(language.ID, result.Language.ID);
+            Assert.Equal(language.Name, result.Language.Name);
             Assert.Equal(expectedMovie.Length, result.Length);
             Assert.Equal(expectedMovie.ReleaseDate, result.ReleaseDate);
             Assert.Equal(expectedMovie.Title, result.Title);
         }
 
         [Theory]
-        [InlineData("Test description", 0, "2010-10-04", "Test title")]
-        [InlineData("", 114, "2010-10-04", "Test title")]
-        [InlineData(null, 114, "2010-10-04", "Test title")]
-        [InlineData("Test description", 114, "2010-10-04", "")]
-        [InlineData("Test description", 114, "2010-10-04", null)]
-        public async Task Create_InvalidInput_ReturnsNull(string description, int length, string releaseDate, string title)
+        [InlineData("", 1, 114, "2010-10-04", "Test title")]
+        [InlineData(null, 1, 114, "2010-10-04", "Test title")]
+        [InlineData("Test description", 0, 114, "2010-10-04", "Test title")]
+        [InlineData("Test description", 1, 0, "2010-10-04", "Test title")]
+        [InlineData("Test description", 1, 114, "2010-10-04", "")]
+        [InlineData("Test description", 1, 114, "2010-10-04", null)]
+        public async Task Create_InvalidInput_ReturnsNull(string description, int languageID, int length, string releaseDate, string title)
         {
             // Arrange 
             var dbContext = new ApplicationDbContext(_dbContextOptions);
-
             await dbContext.Database.EnsureDeletedAsync();
+
+            var language = new Domain.Language
+            {
+                Name = "English"
+            };
+
+            dbContext.Languages.Add(language);
+            await dbContext.SaveChangesAsync();
 
             DateTime expectedReleaseDate = DateTime.Parse(releaseDate);
 
             var expectedMovie = new AdminMovieModel
             {
                 Description = description,
+                Language = new AdminLanguageModel { ID = languageID },
                 Length = length,
                 ReleaseDate = expectedReleaseDate,
                 Title = title
@@ -90,10 +109,19 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
+            var language = new Domain.Language
+            {
+                Name = "English"
+            };
+
+            dbContext.Languages.Add(language);
+            await dbContext.SaveChangesAsync();
+
             var expectedMovie = new Domain.Movie
             {
                 ID = id,
                 Description = "Test description",
+                LanguageID = language.ID,
                 Length = 104,
                 ReleaseDate = DateTime.Parse("4-10-2010").ToString(),
                 Title = "Test title"
@@ -110,6 +138,8 @@ namespace UnitTests
             // Assert
             Assert.Equal(expectedMovie.ID, result.ID);
             Assert.Equal(expectedMovie.Description, result.Description);
+            Assert.Equal(language.ID, result.Language.ID);
+            Assert.Equal(language.Name, result.Language.Name);
             Assert.Equal(expectedMovie.Length, result.Length);
             Assert.Equal(expectedMovie.ReleaseDate, result.ReleaseDate.ToString());
             Assert.Equal(expectedMovie.Title, result.Title);

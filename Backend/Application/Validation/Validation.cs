@@ -9,8 +9,10 @@ namespace Application
         public bool MovieCheck(AdminMovieModel adminMovieModel)
         {
             if(adminMovieModel.Description == null || 
-                adminMovieModel.Description == "" || 
-                adminMovieModel.Length == 0 || 
+                adminMovieModel.Description == "" ||
+                adminMovieModel.Language == null ||
+                adminMovieModel.Language.ID == 0 ||
+                adminMovieModel.Length == 0 ||
                 adminMovieModel.ReleaseDate == null || 
                 adminMovieModel.Title == null || 
                 adminMovieModel.Title == "")

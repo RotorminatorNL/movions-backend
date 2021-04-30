@@ -25,6 +25,7 @@ namespace Application
             var movie = new Domain.Movie
             {
                 Description = adminMovieModel.Description,
+                LanguageID = adminMovieModel.Language.ID, 
                 Length = adminMovieModel.Length,
                 ReleaseDate = adminMovieModel.ReleaseDate.ToShortDateString(),
                 Title = adminMovieModel.Title
@@ -38,10 +39,32 @@ namespace Application
             {
                 ID = movie.ID,
                 Description = movie.Description,
+                Language = new AdminLanguageModel 
+                { 
+                    ID = movie.Language.ID, 
+                    Name = movie.Language.Name 
+                },
                 Length = movie.Length,
                 ReleaseDate = DateTime.Parse(movie.ReleaseDate),
                 Title = movie.Title
             };
+        }
+
+        public MovieModel Read(int id)
+        {
+            return _applicationDbContext.Movies.ToList().Select(movie => new MovieModel
+            {
+                ID = movie.ID,
+                Description = movie.Description,
+                Language = new LanguageModel 
+                { 
+                    ID = movie.Language.ID, 
+                    Name = movie.Language.Name 
+                },
+                Length = movie.Length,
+                ReleaseDate = DateTime.Parse(movie.ReleaseDate),
+                Title = movie.Title,
+            }).FirstOrDefault(x => x.ID == id);
         }
 
         public IEnumerable<MovieModel> ReadAll()
@@ -54,18 +77,6 @@ namespace Application
                 ReleaseDate = DateTime.Parse(movie.ReleaseDate),
                 Title = movie.Title,
             });
-        }
-
-        public MovieModel Read(int id)
-        {
-            return _applicationDbContext.Movies.ToList().Select(movie => new MovieModel
-            {
-                ID = movie.ID,
-                Description = movie.Description,
-                Length = movie.Length,
-                ReleaseDate = DateTime.Parse(movie.ReleaseDate),
-                Title = movie.Title,
-            }).FirstOrDefault(x => x.ID == id);
         }
 
         public async Task<AdminMovieModel> Update(AdminMovieModel adminMovieModel)

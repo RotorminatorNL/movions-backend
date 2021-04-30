@@ -27,7 +27,7 @@ namespace Persistence
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
-            optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["MovionsDB"].ConnectionString);
+            optionsBuilder.UseSqlServer("Server=mssql.fhict.local;Database=dbi451244_movionsdb;User Id=dbi451244_movionsdb;Password=MovionsDBW8Woord;");
 
             return new ApplicationDbContext(optionsBuilder.Options);
         }
