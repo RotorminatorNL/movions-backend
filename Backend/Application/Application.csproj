@@ -8,4 +8,13 @@
     <ProjectReference Include="..\PersistenceInterface\PersistenceInterface.csproj" />
   </ItemGroup>
 
+  <PropertyGroup Label="FineCodeCoverage">
+    <Enabled>
+      True
+    </Enabled>
+    <ExcludeByFile>
+      **/AdminModels/*.cs
+      **/ViewModels/*.cs
+    </ExcludeByFile>
+  </PropertyGroup>
 </Project>
