@@ -7,7 +7,7 @@ namespace Domain
     public class Person
     {
         public int ID { get; set; }
-        public DateTime BirthDate { get; set; }
+        public string BirthDate { get; set; }
         public string BirthPlace { get; set; }
         public string Description { get; set; }
         public string FirstName { get; set; }

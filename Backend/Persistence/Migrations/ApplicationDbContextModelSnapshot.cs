@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
-namespace DataAccessLayer.Migrations
+namespace Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -126,8 +126,8 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Length")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ReleaseDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ReleaseDate")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -146,8 +146,8 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("BirthDate")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BirthPlace")
                         .HasColumnType("nvarchar(max)");

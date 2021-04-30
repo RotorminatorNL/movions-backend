@@ -26,7 +26,7 @@ namespace API
             services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
                 options => options.UseSqlServer(
                     Configuration.GetConnectionString("MovionsDB"), 
-                    b => b.MigrationsAssembly("DataAccessLayer")
+                    b => b.MigrationsAssembly("Persistence")
                 )
             );
 

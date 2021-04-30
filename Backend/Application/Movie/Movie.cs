@@ -26,7 +26,7 @@ namespace Application
             {
                 Description = adminMovieModel.Description,
                 Length = adminMovieModel.Length,
-                ReleaseDate = adminMovieModel.ReleaseDate,
+                ReleaseDate = adminMovieModel.ReleaseDate.ToShortDateString(),
                 Title = adminMovieModel.Title
             };
 
@@ -39,7 +39,7 @@ namespace Application
                 ID = movie.ID,
                 Description = movie.Description,
                 Length = movie.Length,
-                ReleaseDate = movie.ReleaseDate,
+                ReleaseDate = DateTime.Parse(movie.ReleaseDate),
                 Title = movie.Title
             };
         }
@@ -51,7 +51,7 @@ namespace Application
                 ID = movie.ID,
                 Description = movie.Description,
                 Length = movie.Length,
-                ReleaseDate = movie.ReleaseDate,
+                ReleaseDate = DateTime.Parse(movie.ReleaseDate),
                 Title = movie.Title,
             });
         }
@@ -63,7 +63,7 @@ namespace Application
                 ID = movie.ID,
                 Description = movie.Description,
                 Length = movie.Length,
-                ReleaseDate = movie.ReleaseDate,
+                ReleaseDate = DateTime.Parse(movie.ReleaseDate),
                 Title = movie.Title,
             }).FirstOrDefault(x => x.ID == id);
         }
@@ -74,7 +74,7 @@ namespace Application
 
             movie.Description = adminMovieModel.Description;
             movie.Length = adminMovieModel.Length;
-            movie.ReleaseDate = adminMovieModel.ReleaseDate;
+            movie.ReleaseDate = adminMovieModel.ReleaseDate.ToShortDateString();
             movie.Title = adminMovieModel.Title;
 
             await _applicationDbContext.SaveChangesAsync();
@@ -84,7 +84,7 @@ namespace Application
                 ID = movie.ID,
                 Description = movie.Description,
                 Length = movie.Length,
-                ReleaseDate = movie.ReleaseDate,
+                ReleaseDate = DateTime.Parse(movie.ReleaseDate),
                 Title = movie.Title
             };
         }

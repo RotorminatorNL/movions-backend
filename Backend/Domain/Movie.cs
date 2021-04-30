@@ -9,7 +9,7 @@ namespace Domain
         public int ID { get; set; }
         public string Description { get; set; }
         public int Length { get; set; }
-        public DateTime ReleaseDate { get; set; }
+        public string ReleaseDate { get; set; }
         public string Title { get; set; }
         public IEnumerable<Company> Companies { get; set; }
         public IEnumerable<CrewRole> Crew { get; set; }

@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace DataAccessLayer.Migrations
+namespace Persistence.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -92,7 +92,7 @@ namespace DataAccessLayer.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BirthDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BirthPlace = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -217,7 +217,7 @@ namespace DataAccessLayer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Length = table.Column<int>(type: "int", nullable: false),
-                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ReleaseDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LanguageID = table.Column<int>(type: "int", nullable: true)
                 },
@@ -264,8 +264,8 @@ namespace DataAccessLayer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CharacterName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Role = table.Column<int>(type: "int", nullable: false),
-                    MovieID = table.Column<int>(type: "int", nullable: true),
-                    PersonID = table.Column<int>(type: "int", nullable: true)
+                    MovieID = table.Column<int>(type: "int", nullable: false),
+                    PersonID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -275,13 +275,13 @@ namespace DataAccessLayer.Migrations
                         column: x => x.MovieID,
                         principalTable: "Movies",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CrewRoles_Persons_PersonID",
                         column: x => x.PersonID,
                         principalTable: "Persons",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

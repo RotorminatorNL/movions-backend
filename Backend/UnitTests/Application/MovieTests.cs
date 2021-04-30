@@ -95,7 +95,7 @@ namespace UnitTests
                 ID = id,
                 Description = "Test description",
                 Length = 104,
-                ReleaseDate = DateTime.Parse("2010-10-04"),
+                ReleaseDate = DateTime.Parse("4-10-2010").ToString(),
                 Title = "Test title"
             };
 
@@ -111,7 +111,7 @@ namespace UnitTests
             Assert.Equal(expectedMovie.ID, result.ID);
             Assert.Equal(expectedMovie.Description, result.Description);
             Assert.Equal(expectedMovie.Length, result.Length);
-            Assert.Equal(expectedMovie.ReleaseDate, result.ReleaseDate);
+            Assert.Equal(expectedMovie.ReleaseDate, result.ReleaseDate.ToString());
             Assert.Equal(expectedMovie.Title, result.Title);
         }
 
@@ -122,7 +122,13 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
 
             dbContext.Movies.AddRange(
-                Enumerable.Range(1, 5).Select(m => new Domain.Movie { ID = m, Description = $"Description {m}" })
+                Enumerable.Range(1, 5).Select(m => new Domain.Movie { 
+                    ID = m, 
+                    Description = $"Description {m}", 
+                    Length = 114,
+                    ReleaseDate = DateTime.Parse("4-10-2010").ToShortDateString(),
+                    Title = $"Title {m}"
+                })
             );
 
             await dbContext.SaveChangesAsync();

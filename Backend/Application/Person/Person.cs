@@ -19,7 +19,7 @@ namespace Application
         {
             var person = new Domain.Person
             {
-                BirthDate = adminPersonModel.BirthDate,
+                BirthDate = adminPersonModel.BirthDate.ToShortDateString(),
                 BirthPlace = adminPersonModel.BirthPlace,
                 Description = adminPersonModel.Description,
                 FirstName = adminPersonModel.FirstName,
@@ -33,7 +33,7 @@ namespace Application
             return new AdminPersonModel
             {
                 ID = person.ID,
-                BirthDate = person.BirthDate,
+                BirthDate = DateTime.Parse(person.BirthDate),
                 BirthPlace = person.BirthPlace,
                 Description = person.Description,
                 FirstName = person.FirstName,
@@ -46,7 +46,7 @@ namespace Application
             return _applicationDbContext.Persons.ToList().Select(person => new PersonModel
             {
                 ID = person.ID,
-                BirthDate = person.BirthDate,
+                BirthDate = DateTime.Parse(person.BirthDate),
                 BirthPlace = person.BirthPlace,
                 Description = person.Description,
                 FirstName = person.FirstName,
@@ -59,7 +59,7 @@ namespace Application
             return _applicationDbContext.Persons.ToList().Select(person => new PersonModel
             {
                 ID = person.ID,
-                BirthDate = person.BirthDate,
+                BirthDate = DateTime.Parse(person.BirthDate),
                 BirthPlace = person.BirthPlace,
                 Description = person.Description,
                 FirstName = person.FirstName,
@@ -71,7 +71,7 @@ namespace Application
         {
             var person = _applicationDbContext.Persons.FirstOrDefault(x => x.ID == adminPersonModel.ID);
 
-            person.BirthDate = adminPersonModel.BirthDate;
+            person.BirthDate = adminPersonModel.BirthDate.ToShortDateString();
             person.BirthPlace = adminPersonModel.BirthPlace;
             person.Description = adminPersonModel.Description;
             person.FirstName = adminPersonModel.FirstName;
@@ -82,7 +82,7 @@ namespace Application
             return new AdminPersonModel
             {
                 ID = person.ID,
-                BirthDate = person.BirthDate,
+                BirthDate = DateTime.Parse(person.BirthDate),
                 BirthPlace = person.BirthPlace,
                 Description = person.Description,
                 FirstName = person.FirstName,

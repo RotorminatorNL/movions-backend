@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
-namespace DataAccessLayer.Migrations
+namespace Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210414212753_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20210430101710_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -64,10 +64,10 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("CharacterName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("MovieID")
+                    b.Property<int>("MovieID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PersonID")
+                    b.Property<int>("PersonID")
                         .HasColumnType("int");
 
                     b.Property<int>("Role")
@@ -128,8 +128,8 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Length")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ReleaseDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ReleaseDate")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -148,8 +148,8 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("BirthDate")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BirthPlace")
                         .HasColumnType("nvarchar(max)");
@@ -396,13 +396,21 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("Domain.CrewRole", b =>
                 {
-                    b.HasOne("Domain.Movie", null)
+                    b.HasOne("Domain.Movie", "Movie")
                         .WithMany("Crew")
-                        .HasForeignKey("MovieID");
+                        .HasForeignKey("MovieID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Domain.Person", null)
+                    b.HasOne("Domain.Person", "Person")
                         .WithMany("Roles")
-                        .HasForeignKey("PersonID");
+                        .HasForeignKey("PersonID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("Domain.Movie", b =>
