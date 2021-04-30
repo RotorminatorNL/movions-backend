@@ -61,12 +61,13 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData("", 1, 114, "2010-10-04", "Test title")]
-        [InlineData(null, 1, 114, "2010-10-04", "Test title")]
-        [InlineData("Test description", 0, 114, "2010-10-04", "Test title")]
-        [InlineData("Test description", 1, 0, "2010-10-04", "Test title")]
-        [InlineData("Test description", 1, 114, "2010-10-04", "")]
-        [InlineData("Test description", 1, 114, "2010-10-04", null)]
+        [InlineData("", 1, 114, "2010-10-04", "Test title")]                    // description = empty
+        [InlineData(null, 1, 114, "2010-10-04", "Test title")]                  // description = null
+        [InlineData("Test description", 0, 114, "2010-10-04", "Test title")]    // languageID = 0
+        [InlineData("Test description", 1, 0, "2010-10-04", "Test title")]      // length = 0
+        [InlineData("Test description", 1, 114, "", "Test title")]              // releaseDate = empty
+        [InlineData("Test description", 1, 114, "2010-10-04", "")]              // title = empty
+        [InlineData("Test description", 1, 114, "2010-10-04", null)]            // title = null
         public async Task Create_InvalidInput_ReturnsNull(string description, int languageID, int length, string releaseDate, string title)
         {
             // Arrange 
@@ -81,7 +82,8 @@ namespace UnitTests
             dbContext.Languages.Add(language);
             await dbContext.SaveChangesAsync();
 
-            DateTime expectedReleaseDate = DateTime.Parse(releaseDate);
+            // '4-10-2010 12:12:12' simulates as an empty DateTime
+            DateTime expectedReleaseDate = releaseDate == "" ? DateTime.Parse("4-10-2010 12:12:12") : DateTime.Parse(releaseDate);
 
             var expectedMovie = new AdminMovieModel
             {
