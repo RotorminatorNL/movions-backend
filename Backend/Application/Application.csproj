@@ -5,16 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PersistenceInterface\PersistenceInterface.csproj" />
+    <PackageReference Include="System.Linq" Version="4.3.0" />
   </ItemGroup>
 
-  <PropertyGroup Label="FineCodeCoverage">
-    <Enabled>
-      True
-    </Enabled>
-    <ExcludeByFile>
-      **/AdminModels/*.cs
-      **/ViewModels/*.cs
-    </ExcludeByFile>
-  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PersistenceInterface\PersistenceInterface.csproj" />
+  </ItemGroup>
 </Project>

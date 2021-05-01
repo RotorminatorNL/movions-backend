@@ -17,14 +17,22 @@ namespace Application
 
         public async Task<AdminMovieModel> Create(AdminMovieModel adminMovieModel)
         {
-            if(new Validation().MovieCheck(adminMovieModel))
+            if(new MovieValidation().MovieCreateCheck(adminMovieModel))
             {
                 return null;
             }
 
             var movie = new Domain.Movie
             {
+                Companies = adminMovieModel.Companies.Select(c => new Domain.CompanyMovie
+                { 
+                    CompanyID = c.ID
+                }).ToList(),
                 Description = adminMovieModel.Description,
+                Genres = adminMovieModel.Genres.Select(g => new Domain.GenreMovie 
+                { 
+                    GenreID = g.ID
+                }).ToList(),
                 LanguageID = adminMovieModel.Language.ID, 
                 Length = adminMovieModel.Length,
                 ReleaseDate = adminMovieModel.ReleaseDate.ToShortDateString(),
@@ -38,11 +46,22 @@ namespace Application
             return new AdminMovieModel
             {
                 ID = movie.ID,
+                Companies = movie.Companies.Select(c => new AdminCompanyModel
+                {
+                    ID = c.CompanyID,
+                    Name = c.Company.Name,
+                    Type = (AdminCompanyModel.Types)c.Company.Type
+                }),
                 Description = movie.Description,
+                Genres = movie.Genres.Select(g => new AdminGenreModel
+                {
+                    ID = g.GenreID,
+                    Name = g.Genre.Name
+                }),
                 Language = new AdminLanguageModel 
                 { 
                     ID = movie.Language.ID, 
-                    Name = movie.Language.Name 
+                    Name = movie.Language.Name
                 },
                 Length = movie.Length,
                 ReleaseDate = DateTime.Parse(movie.ReleaseDate),
@@ -59,11 +78,11 @@ namespace Application
                 Language = new LanguageModel 
                 { 
                     ID = movie.Language.ID, 
-                    Name = movie.Language.Name 
+                    Name = movie.Language.Name
                 },
                 Length = movie.Length,
                 ReleaseDate = DateTime.Parse(movie.ReleaseDate),
-                Title = movie.Title,
+                Title = movie.Title
             }).FirstOrDefault(x => x.ID == id);
         }
 
@@ -75,7 +94,7 @@ namespace Application
                 Description = movie.Description,
                 Length = movie.Length,
                 ReleaseDate = DateTime.Parse(movie.ReleaseDate),
-                Title = movie.Title,
+                Title = movie.Title
             });
         }
 
