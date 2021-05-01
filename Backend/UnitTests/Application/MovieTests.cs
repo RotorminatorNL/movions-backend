@@ -414,18 +414,17 @@ namespace UnitTests
         {
             #region Arrange 
             var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
 
-            for (int i = 1; i < 6; i++)
-            {
-                dbContext.Movies.Add(new Domain.Movie
-                {
-                    ID = i,
-                    Description = $"Description {i}",
+            dbContext.Movies.AddRange(
+                Enumerable.Range(1, 5).Select(m => new Domain.Movie { 
+                    ID = m, 
+                    Description = $"Description {m}", 
                     Length = 114,
                     ReleaseDate = DateTime.Parse("4-10-2010").ToShortDateString(),
-                    Title = $"Title {i}"
-                });
-            }
+                    Title = $"Title {m}"
+                })
+            );
 
             await dbContext.SaveChangesAsync();
 
