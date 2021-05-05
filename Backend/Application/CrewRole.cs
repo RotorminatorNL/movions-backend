@@ -29,7 +29,7 @@ namespace Application
 
             return new AdminCrewRoleModel
             {
-                ID = crewRole.ID,
+                ID = crewRole.CrewRoleID,
                 CharacterName = crewRole.CharacterName,
                 Role = (AdminCrewRoleModel.Roles)crewRole.Role
             };
@@ -39,7 +39,7 @@ namespace Application
         {
             return _applicationDbContext.CrewRoles.ToList().Select(crewRole => new CrewRoleModel
             {
-                ID = crewRole.ID,
+                ID = crewRole.CrewRoleID,
                 CharacterName = crewRole.CharacterName,
                 Role = crewRole.Role.ToString(),
                 MovieID = crewRole.MovieID,
@@ -50,7 +50,7 @@ namespace Application
         {
             return _applicationDbContext.CrewRoles.ToList().Select(crewRole => new CrewRoleModel
             {
-                ID = crewRole.ID,
+                ID = crewRole.CrewRoleID,
                 CharacterName = crewRole.CharacterName,
                 Role = crewRole.Role.ToString(),
                 MovieID = crewRole.MovieID,
@@ -59,7 +59,7 @@ namespace Application
 
         public async Task<AdminCrewRoleModel> Update(AdminCrewRoleModel adminCrewRoleModel) 
         {
-            var crewRole = _applicationDbContext.CrewRoles.FirstOrDefault(x => x.ID == adminCrewRoleModel.ID);
+            var crewRole = _applicationDbContext.CrewRoles.FirstOrDefault(x => x.CrewRoleID == adminCrewRoleModel.ID);
 
             crewRole.CharacterName = adminCrewRoleModel.CharacterName;
             crewRole.Role = (Domain.CrewRole.Roles)adminCrewRoleModel.Role;
@@ -68,7 +68,7 @@ namespace Application
 
             return new AdminCrewRoleModel
             {
-                ID = crewRole.ID,
+                ID = crewRole.CrewRoleID,
                 CharacterName = crewRole.CharacterName,
                 Role = (AdminCrewRoleModel.Roles)crewRole.Role
             };
@@ -76,7 +76,7 @@ namespace Application
 
         public async Task<bool> Delete(int id) 
         {
-            var crewRole = _applicationDbContext.CrewRoles.FirstOrDefault(x => x.ID == id);
+            var crewRole = _applicationDbContext.CrewRoles.FirstOrDefault(x => x.CrewRoleID == id);
 
             _applicationDbContext.CrewRoles.Remove(crewRole);
  
