@@ -92,13 +92,36 @@ namespace Application
 
         public MovieModel Read(int id)
         {
-            return _applicationDbContext.Movies.ToList().Select(movie => new MovieModel
+            return _applicationDbContext.Movies.Select(movie => new MovieModel
             {
                 ID = movie.ID,
+                Companies = movie.Companies.OrderBy(c => c.Company.ID).Select(c => new CompanyModel
+                {
+                    ID = c.Company.ID,
+                    Name = c.Company.Name,
+                    Type = c.Company.Type.ToString()
+                }),
+                Crew = movie.Crew.OrderBy(c => c.CrewRoleID).Select(c => new CrewRoleModel
+                {
+                    ID = c.CrewRoleID,
+                    CharacterName = c.CharacterName,
+                    Person = new PersonModel
+                    {
+                        ID = c.Person.ID,
+                        FirstName = c.Person.FirstName,
+                        LastName = c.Person.LastName
+                    },
+                    Role = c.Role.ToString()
+                }),
                 Description = movie.Description,
-                Language = new LanguageModel 
-                { 
-                    ID = movie.Language.ID, 
+                Genres = movie.Genres.OrderBy(c => c.Genre.ID).Select(g => new GenreModel
+                {
+                    ID = g.GenreID,
+                    Name = g.Genre.Name
+                }),
+                Language = new LanguageModel
+                {
+                    ID = movie.Language.ID,
                     Name = movie.Language.Name
                 },
                 Length = movie.Length,
@@ -109,14 +132,14 @@ namespace Application
 
         public IEnumerable<MovieModel> ReadAll()
         {
-            return _applicationDbContext.Movies.ToList().Select(movie => new MovieModel
+            return _applicationDbContext.Movies.Select(movie => new MovieModel
             {
                 ID = movie.ID,
                 Description = movie.Description,
                 Length = movie.Length,
                 ReleaseDate = DateTime.Parse(movie.ReleaseDate),
                 Title = movie.Title
-            });
+            }).ToList();
         }
 
         public async Task<AdminMovieModel> Update(AdminMovieModel adminMovieModel)
