@@ -26,11 +26,12 @@ namespace Application
             bool isReleaseDateDifferent = movie.ReleaseDate != adminMovieModel.ReleaseDate.ToString();
             bool isTitleDifferent = movie.Title != adminMovieModel.Title;
 
-            Console.WriteLine(isDescriptionDifferent);
-            Console.WriteLine(isLanguageDifferent);
-            Console.WriteLine(isLengthDifferent);
-            Console.WriteLine(isReleaseDateDifferent);
-            Console.WriteLine(isTitleDifferent);
+            Console.WriteLine("--------------------");
+            Console.WriteLine("Desc: " + isDescriptionDifferent);
+            Console.WriteLine("Lang: " + isLanguageDifferent);
+            Console.WriteLine("Length: " + isLengthDifferent);
+            Console.WriteLine("Release: " + isReleaseDateDifferent);
+            Console.WriteLine("Title: " + isTitleDifferent);
 
             return isDescriptionDifferent || isLanguageDifferent || isLengthDifferent || isReleaseDateDifferent || isTitleDifferent;
         }
