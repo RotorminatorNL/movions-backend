@@ -12,7 +12,7 @@ namespace Application
         public DateTime ReleaseDate { get; set; }
         public string Title { get; set; }
         public IEnumerable<AdminCompanyModel> Companies { get; set; }
-        public IEnumerable<AdminCrewRoleModel> Crew { get; set; }
+        public IEnumerable<AdminCrewMemberModel> Crew { get; set; }
         public IEnumerable<AdminGenreModel> Genres { get; set; }
         public AdminLanguageModel Language { get; set; }
     }

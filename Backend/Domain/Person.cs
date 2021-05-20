@@ -12,6 +12,6 @@ namespace Domain
         public string Description { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public IEnumerable<CrewRole> Roles { get; set; }
+        public IEnumerable<CrewMember> Roles { get; set; }
     }
 }

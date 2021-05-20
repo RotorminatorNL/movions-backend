@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Application
 {
-    public class CrewRoleModel
+    public class CrewMemberModel
     {
         public int ID { get; set; }
         public string Role { get; set; }

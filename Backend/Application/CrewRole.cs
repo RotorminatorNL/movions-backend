@@ -15,68 +15,68 @@ namespace Application
             _applicationDbContext = applicationDbContext;
         }
 
-        public async Task<AdminCrewRoleModel> Create(AdminCrewRoleModel adminCrewRoleModel)
+        public async Task<AdminCrewMemberModel> Create(AdminCrewMemberModel adminCrewRoleModel)
         {
-            var crewRole = new Domain.CrewRole
+            var crewRole = new Domain.CrewMember
             {
                 CharacterName = adminCrewRoleModel.CharacterName,
-                Role = (Domain.CrewRole.Roles)adminCrewRoleModel.Role
+                Role = adminCrewRoleModel.Role
             };
 
             _applicationDbContext.CrewRoles.Add(crewRole);
 
             await _applicationDbContext.SaveChangesAsync();
 
-            return new AdminCrewRoleModel
+            return new AdminCrewMemberModel
             {
-                ID = crewRole.CrewRoleID,
+                ID = crewRole.CrewMemberID,
                 CharacterName = crewRole.CharacterName,
-                Role = (AdminCrewRoleModel.Roles)crewRole.Role
+                Role = crewRole.Role
             };
         }
 
-        public IEnumerable<CrewRoleModel> ReadAll()
+        public IEnumerable<CrewMemberModel> ReadAll()
         {
-            return _applicationDbContext.CrewRoles.ToList().Select(crewRole => new CrewRoleModel
+            return _applicationDbContext.CrewRoles.ToList().Select(crewRole => new CrewMemberModel
             {
-                ID = crewRole.CrewRoleID,
+                ID = crewRole.CrewMemberID,
                 CharacterName = crewRole.CharacterName,
                 Role = crewRole.Role.ToString(),
                 MovieID = crewRole.MovieID,
             });
         }
 
-        public CrewRoleModel Read(int id)
+        public CrewMemberModel Read(int id)
         {
-            return _applicationDbContext.CrewRoles.ToList().Select(crewRole => new CrewRoleModel
+            return _applicationDbContext.CrewRoles.ToList().Select(crewRole => new CrewMemberModel
             {
-                ID = crewRole.CrewRoleID,
+                ID = crewRole.CrewMemberID,
                 CharacterName = crewRole.CharacterName,
                 Role = crewRole.Role.ToString(),
                 MovieID = crewRole.MovieID,
             }).FirstOrDefault(x => x.ID == id);
         }
 
-        public async Task<AdminCrewRoleModel> Update(AdminCrewRoleModel adminCrewRoleModel) 
+        public async Task<AdminCrewMemberModel> Update(AdminCrewMemberModel adminCrewRoleModel) 
         {
-            var crewRole = _applicationDbContext.CrewRoles.FirstOrDefault(x => x.CrewRoleID == adminCrewRoleModel.ID);
+            var crewRole = _applicationDbContext.CrewRoles.FirstOrDefault(x => x.CrewMemberID == adminCrewRoleModel.ID);
 
             crewRole.CharacterName = adminCrewRoleModel.CharacterName;
-            crewRole.Role = (Domain.CrewRole.Roles)adminCrewRoleModel.Role;
+            crewRole.Role = adminCrewRoleModel.Role;
 
             await _applicationDbContext.SaveChangesAsync();
 
-            return new AdminCrewRoleModel
+            return new AdminCrewMemberModel
             {
-                ID = crewRole.CrewRoleID,
+                ID = crewRole.CrewMemberID,
                 CharacterName = crewRole.CharacterName,
-                Role = (AdminCrewRoleModel.Roles)crewRole.Role
+                Role = crewRole.Role
             };
         }
 
         public async Task<bool> Delete(int id) 
         {
-            var crewRole = _applicationDbContext.CrewRoles.FirstOrDefault(x => x.CrewRoleID == id);
+            var crewRole = _applicationDbContext.CrewRoles.FirstOrDefault(x => x.CrewMemberID == id);
 
             _applicationDbContext.CrewRoles.Remove(crewRole);
  

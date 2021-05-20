@@ -12,7 +12,7 @@ namespace Domain
         public string ReleaseDate { get; set; }
         public string Title { get; set; }
         public IEnumerable<CompanyMovie> Companies { get; set; }
-        public IEnumerable<CrewRole> Crew { get; set; }
+        public IEnumerable<CrewMember> Crew { get; set; }
         public IEnumerable<GenreMovie> Genres { get; set; }
         public Language Language { get; set; }
         public int LanguageID { get; set; }

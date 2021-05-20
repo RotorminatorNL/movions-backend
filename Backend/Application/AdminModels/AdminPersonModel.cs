@@ -11,6 +11,6 @@ namespace Application
         public string Description { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public IEnumerable<AdminCrewRoleModel> Roles { get; set; }
+        public IEnumerable<AdminCrewMemberModel> Roles { get; set; }
     }
 }
