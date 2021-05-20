@@ -31,6 +31,8 @@ namespace Application
             Console.WriteLine("Lang: " + isLanguageDifferent);
             Console.WriteLine("Length: " + isLengthDifferent);
             Console.WriteLine("Release: " + isReleaseDateDifferent);
+            Console.WriteLine("Release - Domain.Movie: " + movie.ReleaseDate);
+            Console.WriteLine("Release - adminMovieModel.ReleaseDate: " + adminMovieModel.ReleaseDate.ToString());
             Console.WriteLine("Title: " + isTitleDifferent);
 
             return isDescriptionDifferent || isLanguageDifferent || isLengthDifferent || isReleaseDateDifferent || isTitleDifferent;
