@@ -418,6 +418,7 @@ namespace UnitTests
             #endregion
 
             #region Assert
+            Assert.Equal(expectedMovie.Title, actualMovie.Title);
             Assert.Equal(expectedMovie.ID, actualMovie.ID);
             #endregion
         }
