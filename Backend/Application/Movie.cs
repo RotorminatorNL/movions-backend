@@ -23,21 +23,7 @@ namespace Application
             {
                 var movie = new Domain.Movie
                 {
-                    Companies = adminMovieModel.Companies.Select(c => new Domain.CompanyMovie
-                    {
-                        CompanyID = c.ID
-                    }).ToList(),
-                    Crew = adminMovieModel.Crew.Select(c => new Domain.CrewRole
-                    {
-                        CharacterName = c.CharacterName,
-                        PersonID = c.PersonID,
-                        Role = (Domain.CrewRole.Roles)c.Role
-                    }).ToList(),
                     Description = adminMovieModel.Description,
-                    Genres = adminMovieModel.Genres.Select(g => new Domain.GenreMovie
-                    {
-                        GenreID = g.ID
-                    }).ToList(),
                     LanguageID = adminMovieModel.Language.ID,
                     Length = adminMovieModel.Length,
                     ReleaseDate = adminMovieModel.ReleaseDate.ToShortDateString(),
@@ -50,30 +36,7 @@ namespace Application
                 var returnData = new AdminMovieModel
                 {
                     ID = movie.ID,
-                    Companies = movie.Companies.Select(c => new AdminCompanyModel
-                    {
-                        ID = c.CompanyID,
-                        Name = c.Company.Name,
-                        Type = (AdminCompanyModel.Types)c.Company.Type
-                    }),
-                    Crew = movie.Crew.Select(c => new AdminCrewRoleModel
-                    {
-                        ID = c.CrewRoleID,
-                        CharacterName = c.CharacterName,
-                        Person = new AdminPersonModel
-                        {
-                            ID = c.Person.ID,
-                            FirstName = c.Person.FirstName,
-                            LastName = c.Person.LastName
-                        },
-                        Role = (AdminCrewRoleModel.Roles)c.Role
-                    }),
                     Description = movie.Description,
-                    Genres = movie.Genres.Select(g => new AdminGenreModel
-                    {
-                        ID = g.GenreID,
-                        Name = g.Genre.Name
-                    }),
                     Language = new AdminLanguageModel
                     {
                         ID = movie.Language.ID,
@@ -95,30 +58,7 @@ namespace Application
             return _applicationDbContext.Movies.Select(movie => new MovieModel
             {
                 ID = movie.ID,
-                Companies = movie.Companies.OrderBy(c => c.Company.ID).Select(c => new CompanyModel
-                {
-                    ID = c.Company.ID,
-                    Name = c.Company.Name,
-                    Type = c.Company.Type.ToString()
-                }),
-                Crew = movie.Crew.OrderBy(c => c.CrewRoleID).Select(c => new CrewRoleModel
-                {
-                    ID = c.CrewRoleID,
-                    CharacterName = c.CharacterName,
-                    Person = new PersonModel
-                    {
-                        ID = c.Person.ID,
-                        FirstName = c.Person.FirstName,
-                        LastName = c.Person.LastName
-                    },
-                    Role = c.Role.ToString()
-                }),
                 Description = movie.Description,
-                Genres = movie.Genres.OrderBy(c => c.Genre.ID).Select(g => new GenreModel
-                {
-                    ID = g.GenreID,
-                    Name = g.Genre.Name
-                }),
                 Language = new LanguageModel
                 {
                     ID = movie.Language.ID,
