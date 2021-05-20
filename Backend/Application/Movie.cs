@@ -121,17 +121,17 @@ namespace Application
 
         public async Task<bool> Delete(int id)
         {
-            if (id != 0)
+            try
             {
                 var movie = _applicationDbContext.Movies.FirstOrDefault(x => x.ID == id);
-
                 _applicationDbContext.Movies.Remove(movie);
-
                 await _applicationDbContext.SaveChangesAsync();
                 return true;
             }
-
-            return false;
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

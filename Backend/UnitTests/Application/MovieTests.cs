@@ -148,23 +148,18 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            string description = "Test description";
-            int length = 104;
-            string releaseDate = "2010-10-04";
-            string title = "Test title";
-
             var expectedMovie = new AdminMovieModel
             {
                 ID = id,
-                Description = description,
+                Description = "Test description",
                 Language = new AdminLanguageModel
                 {
                     ID = language.ID,
                     Name = language.Name
                 },
-                Length = length,
-                ReleaseDate = DateTime.Parse(releaseDate),
-                Title = title
+                Length = 104,
+                ReleaseDate = DateTime.Parse("2010-10-04"),
+                Title = "Test title"
             };
 
             var appMovie = new Movie(dbContext);
@@ -183,7 +178,7 @@ namespace UnitTests
         }
 
         [Fact]
-        public async Task ReadAll_ReturnsAllMovies()
+        public async Task ReadAll_MoviesExist_ReturnsAllMovies()
         {
             #region Arrange 
             var dbContext = new ApplicationDbContext(_dbContextOptions);
@@ -200,6 +195,30 @@ namespace UnitTests
                     Title = $"Title {m}"
                 })
             );
+
+            await dbContext.SaveChangesAsync();
+
+            var appMovie = new Movie(dbContext);
+            #endregion
+
+            #region Act
+            var result = appMovie.ReadAll();
+            #endregion
+
+            #region Assert
+            var actualAmount = Assert.IsAssignableFrom<IEnumerable<MovieModel>>(result).Count();
+            Assert.Equal(expectedAmount, actualAmount);
+            #endregion
+        }
+
+        [Fact]
+        public async Task ReadAll_NoMoviesExist_ReturnsAllMovies()
+        {
+            #region Arrange 
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            int expectedAmount = 0;
 
             await dbContext.SaveChangesAsync();
 
@@ -449,6 +468,7 @@ namespace UnitTests
 
         [Theory]
         [InlineData(0)]
+        [InlineData(2)]
         public async Task Delete_InvalidInput_ReturnsFalse(int id)
         {
             #region Arrange

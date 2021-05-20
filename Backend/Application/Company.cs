@@ -64,29 +64,37 @@ namespace Application
 
         public async Task<AdminCompanyModel> Update(AdminCompanyModel adminCompanyModel) 
         {
-            var company = _applicationDbContext.Companies.FirstOrDefault(x => x.ID == adminCompanyModel.ID);
-
-            company.Name = adminCompanyModel.Name;
-            company.Type = adminCompanyModel.Type;
-
-            await _applicationDbContext.SaveChangesAsync();
-
-            return new AdminCompanyModel
+            if (adminCompanyModel.ID != 0 && _companyValidation.IsInputValid(adminCompanyModel))
             {
-                ID = company.ID,
-                Name = company.Name,
-                Type = company.Type
-            };
+                var company = _applicationDbContext.Companies.FirstOrDefault(x => x.ID == adminCompanyModel.ID);
+
+                if (_companyValidation.IsInputDifferent(company, adminCompanyModel))
+                {
+                    company.Name = adminCompanyModel.Name;
+                    company.Type = adminCompanyModel.Type;
+
+                    await _applicationDbContext.SaveChangesAsync();
+
+                    return new AdminCompanyModel
+                    {
+                        ID = company.ID,
+                        Name = company.Name,
+                        Type = company.Type
+                    };
+                }
+
+                return new AdminCompanyModel();
+            }
+
+            return null;
         }
 
-        public async Task<bool> Delete(int id) 
+        public async Task<bool> Delete(int id)
         {
-            var company = _applicationDbContext.Companies.FirstOrDefault(x => x.ID == id);
-
-            _applicationDbContext.Companies.Remove(company);
- 
             try
             {
+                var company = _applicationDbContext.Companies.FirstOrDefault(x => x.ID == id);
+                _applicationDbContext.Companies.Remove(company);
                 await _applicationDbContext.SaveChangesAsync();
                 return true;
             }
