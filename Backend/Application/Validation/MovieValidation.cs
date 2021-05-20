@@ -23,17 +23,8 @@ namespace Application
             bool isDescriptionDifferent = movie.Description != adminMovieModel.Description;
             bool isLanguageDifferent = movie.LanguageID != adminMovieModel.Language.ID;
             bool isLengthDifferent = movie.Length != adminMovieModel.Length;
-            bool isReleaseDateDifferent = movie.ReleaseDate != adminMovieModel.ReleaseDate.ToString();
+            bool isReleaseDateDifferent = movie.ReleaseDate != adminMovieModel.ReleaseDate.ToString("yyyy-MM-dd");
             bool isTitleDifferent = movie.Title != adminMovieModel.Title;
-
-            Console.WriteLine("--------------------");
-            Console.WriteLine("Desc: " + isDescriptionDifferent);
-            Console.WriteLine("Lang: " + isLanguageDifferent);
-            Console.WriteLine("Length: " + isLengthDifferent);
-            Console.WriteLine("Release: " + isReleaseDateDifferent);
-            Console.WriteLine("Release - Domain.Movie: " + movie.ReleaseDate);
-            Console.WriteLine("Release - adminMovieModel.ReleaseDate: " + adminMovieModel.ReleaseDate.ToString());
-            Console.WriteLine("Title: " + isTitleDifferent);
 
             return isDescriptionDifferent || isLanguageDifferent || isLengthDifferent || isReleaseDateDifferent || isTitleDifferent;
         }

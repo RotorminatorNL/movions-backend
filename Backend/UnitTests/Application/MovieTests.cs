@@ -284,7 +284,7 @@ namespace UnitTests
             string description = "Description";
             int languageID = 1;
             int length = 10;
-            string releaseDate = "10-10-2010";
+            string releaseDate = "2010-10-04";
             string title = "Title";
 
             // id = 0
@@ -365,7 +365,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "Description", 1, 10, "10-10-2010 00:00:00", "Title")]
+        [InlineData(1, "Description", 1, 10, "2010-10-04", "Title")]
         public async Task Update_InputIsNotDifferent_ReturnsEmptyAdminMovieModel(int id, string description, int languageID, int length, string releaseDate, string title)
         {
             #region Arrange

@@ -93,7 +93,7 @@ namespace Application
                     movie.Description = adminMovieModel.Description;
                     movie.Length = adminMovieModel.Length;
                     movie.LanguageID = adminMovieModel.Language.ID;
-                    movie.ReleaseDate = adminMovieModel.ReleaseDate.ToShortDateString();
+                    movie.ReleaseDate = adminMovieModel.ReleaseDate.ToString("yyyy-MM-dd");
                     movie.Title = adminMovieModel.Title;
 
                     await _applicationDbContext.SaveChangesAsync();
