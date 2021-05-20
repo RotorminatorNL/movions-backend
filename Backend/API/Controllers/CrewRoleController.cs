@@ -9,11 +9,11 @@ namespace API.Controllers
     [Route("[controller]/[action]")]
     public class CrewRoleController : Controller
     {
-        private readonly CrewRole Genre;
+        private readonly CrewMember Genre;
 
         public CrewRoleController(IApplicationDbContext applicationDbContext)
         {
-            Genre = new CrewRole(applicationDbContext);
+            Genre = new CrewMember(applicationDbContext);
         }
 
         [HttpPost()]

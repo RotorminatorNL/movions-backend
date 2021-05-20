@@ -177,6 +177,51 @@ namespace UnitTests
             #endregion
         }
 
+        [Theory]
+        [InlineData(0)]
+        [InlineData(2)]
+        public async Task Read_InvalidInput_ReturnsNull(int id)
+        {
+            #region Arrange 
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var language = new Domain.Language
+            {
+                Name = "English"
+            };
+            dbContext.Languages.Add(language);
+
+            await dbContext.SaveChangesAsync();
+
+            var expectedMovie = new AdminMovieModel
+            {
+                ID = id,
+                Description = "Test description",
+                Language = new AdminLanguageModel
+                {
+                    ID = language.ID,
+                    Name = language.Name
+                },
+                Length = 104,
+                ReleaseDate = DateTime.Parse("2010-10-04"),
+                Title = "Test title"
+            };
+
+            var appMovie = new Movie(dbContext);
+
+            await appMovie.Create(expectedMovie);
+            #endregion
+
+            #region Act
+            var actualMovie = appMovie.Read(id);
+            #endregion
+
+            #region Assert
+            Assert.Null(actualMovie);
+            #endregion
+        }
+
         [Fact]
         public async Task ReadAll_MoviesExist_ReturnsAllMovies()
         {
@@ -212,7 +257,7 @@ namespace UnitTests
         }
 
         [Fact]
-        public async Task ReadAll_NoMoviesExist_ReturnsAllMovies()
+        public async Task ReadAll_NoMoviesExist_ReturnsEmptyList()
         {
             #region Arrange 
             var dbContext = new ApplicationDbContext(_dbContextOptions);

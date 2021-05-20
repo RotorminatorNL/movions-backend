@@ -33,15 +33,6 @@ namespace Application
             };
         }
 
-        public IEnumerable<LanguageModel> ReadAll()
-        {
-            return _applicationDbContext.Languages.ToList().Select(language => new LanguageModel
-            {
-                ID = language.ID,
-                Name = language.Name,
-            });
-        }
-
         public LanguageModel Read(int id)
         {
             return _applicationDbContext.Languages.ToList().Select(language => new LanguageModel
@@ -49,6 +40,15 @@ namespace Application
                 ID = language.ID,
                 Name = language.Name,
             }).FirstOrDefault(x => x.ID == id);
+        }
+
+        public IEnumerable<LanguageModel> ReadAll()
+        {
+            return _applicationDbContext.Languages.ToList().Select(language => new LanguageModel
+            {
+                ID = language.ID,
+                Name = language.Name,
+            });
         }
 
         public async Task<AdminLanguageModel> Update(AdminLanguageModel adminLanguageModel) 

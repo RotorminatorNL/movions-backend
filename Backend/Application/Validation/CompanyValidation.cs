@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application
+namespace Application.Validation
 {
     public class CompanyValidation
     {

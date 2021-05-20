@@ -1,4 +1,5 @@
-﻿using PersistenceInterface;
+﻿using Application.Validation;
+using PersistenceInterface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,16 +43,6 @@ namespace Application
             return null;
         }
 
-        public IEnumerable<CompanyModel> ReadAll()
-        {
-            return _applicationDbContext.Companies.ToList().Select(company => new CompanyModel
-            {
-                ID = company.ID,
-                Name = company.Name,
-                Type = company.Type.ToString(),
-            });
-        }
-
         public CompanyModel Read(int id)
         {
             return _applicationDbContext.Companies.Select(company => new CompanyModel
@@ -60,6 +51,16 @@ namespace Application
                 Name = company.Name,
                 Type = company.Type.ToString(),
             }).FirstOrDefault(x => x.ID == id);
+        }
+
+        public IEnumerable<CompanyModel> ReadAll()
+        {
+            return _applicationDbContext.Companies.ToList().Select(company => new CompanyModel
+            {
+                ID = company.ID,
+                Name = company.Name,
+                Type = company.Type.ToString(),
+            });
         }
 
         public async Task<AdminCompanyModel> Update(AdminCompanyModel adminCompanyModel) 

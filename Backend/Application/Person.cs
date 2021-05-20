@@ -41,19 +41,6 @@ namespace Application
             };
         }
 
-        public IEnumerable<PersonModel> ReadAll()
-        {
-            return _applicationDbContext.Persons.ToList().Select(person => new PersonModel
-            {
-                ID = person.ID,
-                BirthDate = DateTime.Parse(person.BirthDate),
-                BirthPlace = person.BirthPlace,
-                Description = person.Description,
-                FirstName = person.FirstName,
-                LastName = person.LastName,
-            });
-        }
-
         public PersonModel Read(int id)
         {
             return _applicationDbContext.Persons.ToList().Select(person => new PersonModel
@@ -65,6 +52,19 @@ namespace Application
                 FirstName = person.FirstName,
                 LastName = person.LastName,
             }).FirstOrDefault(x => x.ID == id);
+        }
+
+        public IEnumerable<PersonModel> ReadAll()
+        {
+            return _applicationDbContext.Persons.ToList().Select(person => new PersonModel
+            {
+                ID = person.ID,
+                BirthDate = DateTime.Parse(person.BirthDate),
+                BirthPlace = person.BirthPlace,
+                Description = person.Description,
+                FirstName = person.FirstName,
+                LastName = person.LastName,
+            });
         }
 
         public async Task<AdminPersonModel> Update(AdminPersonModel adminPersonModel)

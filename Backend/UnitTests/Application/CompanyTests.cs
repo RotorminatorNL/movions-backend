@@ -30,8 +30,6 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            await dbContext.SaveChangesAsync();
-
             var expectedCompany = new AdminCompanyModel
             {
                 ID = 1,
@@ -126,6 +124,7 @@ namespace UnitTests
 
         [Theory]
         [InlineData(0)]
+        [InlineData(2)]
         public async Task Read_InvalidInput_ReturnsNull(int id)
         {
             #region Arrange
@@ -187,7 +186,7 @@ namespace UnitTests
         }
 
         [Fact]
-        public async Task ReadAll_NoCompaniesExist_ReturnsAllCompanies()
+        public async Task ReadAll_NoCompaniesExist_ReturnsEmptyList()
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);

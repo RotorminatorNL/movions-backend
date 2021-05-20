@@ -11,7 +11,7 @@ namespace PersistenceInterface
         DbSet<Genre> Genres { get; }
         DbSet<Language> Languages { get; }
         DbSet<Movie> Movies { get; }
-        DbSet<CrewMember> CrewRoles { get; }
+        DbSet<CrewMember> CrewMembers { get; }
         DbSet<Person> Persons { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken));

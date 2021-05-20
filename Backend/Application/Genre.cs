@@ -33,15 +33,6 @@ namespace Application
             };
         }
 
-        public IEnumerable<GenreModel> ReadAll()
-        {
-            return _applicationDbContext.Genres.ToList().Select(genre => new GenreModel
-            {
-                ID = genre.ID,
-                Name = genre.Name,
-            });
-        }
-
         public GenreModel Read(int id)
         {
             return _applicationDbContext.Genres.Select(genre => new GenreModel
@@ -49,6 +40,15 @@ namespace Application
                 ID = genre.ID,
                 Name = genre.Name,
             }).FirstOrDefault(x => x.ID == id);
+        }
+
+        public IEnumerable<GenreModel> ReadAll()
+        {
+            return _applicationDbContext.Genres.ToList().Select(genre => new GenreModel
+            {
+                ID = genre.ID,
+                Name = genre.Name,
+            });
         }
 
         public async Task<AdminGenreModel> Update(AdminGenreModel adminGenreModel) 
