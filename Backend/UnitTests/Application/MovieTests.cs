@@ -418,6 +418,9 @@ namespace UnitTests
             #endregion
 
             #region Assert
+            Console.WriteLine(actualMovie.ID);
+            Console.WriteLine(actualMovie.Title);
+            Console.WriteLine(actualMovie.Description);
             Assert.Equal(expectedMovie.Title, actualMovie.Title);
             Assert.Equal(expectedMovie.ID, actualMovie.ID);
             #endregion
