@@ -20,19 +20,8 @@ namespace UnitTests
                 .Options;
         }
 
-        public static IEnumerable<object[]> ValidInputData()
-        {
-            yield return new object[] { 
-                "Test description",
-                1, 
-                104, 
-                "2010-10-04", 
-                "Test title" 
-            };
-        }
-
         [Theory]
-        [MemberData(nameof(ValidInputData))]
+        [InlineData("Test description", 1, 104, "2010-10-04", "Test title")]
         public async Task Create_ValidInput_ReturnsCorrectData(string description, int languageID, int length, string releaseDate, string title)
         {
             #region Arrange
@@ -69,14 +58,14 @@ namespace UnitTests
             #region Assert
             Assert.Equal(expectedMovie.ID, actualMovie.ID);
             Assert.Equal(expectedMovie.Description, actualMovie.Description);
+            Assert.Equal(expectedMovie.Language.ID, actualMovie.Language.ID);
             Assert.Equal(expectedMovie.Length, actualMovie.Length);
             Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
             Assert.Equal(expectedMovie.Title, actualMovie.Title);
-            Assert.NotNull(actualMovie.Language);
             #endregion
         }
 
-        public static IEnumerable<object[]> InvalidInputData()
+        public static IEnumerable<object[]> CreateInvalidInputData()
         {
             string description = "Test description";
             int languageID = 1;
@@ -85,73 +74,25 @@ namespace UnitTests
             string title = "Test title";
 
             // description = null
-            yield return new object[] {
-                null,
-                languageID,
-                length,
-                releaseDate,
-                title
-            };
+            yield return new object[] { null, languageID, length, releaseDate, title };
             // description = empty
-            yield return new object[] {
-                "",
-                languageID,
-                length,
-                releaseDate,
-                title
-            };
+            yield return new object[] { "", languageID, length, releaseDate, title };
             // language = null
-            yield return new object[] {
-                description,
-                null,
-                length,
-                releaseDate,
-                title
-            };
+            yield return new object[] { description, null, length, releaseDate, title };
             // language = empty
-            yield return new object[] {
-                description,
-                0,
-                length,
-                releaseDate,
-                title
-            };
+            yield return new object[] { description, 0, length, releaseDate, title };
             // length = null (i.e. 0)
-            yield return new object[] {
-                description,
-                languageID,
-                0,
-                releaseDate,
-                title
-            };
+            yield return new object[] { description, languageID, 0, releaseDate, title };
             // releaseDate = null (i.e. "1-1-0001 00:00:00")
-            yield return new object[] {
-                description,
-                languageID,
-                length,
-                "1-1-0001 00:00:00",
-                title
-            };
+            yield return new object[] { description, languageID, length, "1-1-0001 00:00:00", title };
             // title = null
-            yield return new object[] {
-                description,
-                languageID,
-                length,
-                releaseDate,
-                null
-            };
+            yield return new object[] { description, languageID, length, releaseDate, null };
             // title = empty
-            yield return new object[] {
-                description,
-                languageID,
-                length,
-                releaseDate,
-                ""
-            };
+            yield return new object[] { description, languageID, length, releaseDate, "" };
         }
 
         [Theory]
-        [MemberData(nameof(InvalidInputData))]
+        [MemberData(nameof(CreateInvalidInputData))]
         public async Task Create_InvalidInput_ReturnsNull(string description, int languageID, int length, string releaseDate, string title)
         {
             #region Arrange
@@ -272,6 +213,262 @@ namespace UnitTests
             #region Assert
             var actualAmount = Assert.IsAssignableFrom<IEnumerable<MovieModel>>(result).Count();
             Assert.Equal(expectedAmount, actualAmount);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(1, "Test description", 2, 104, "2010-10-04", "Test title")]
+        public async Task Update_ValidInput_ReturnsCorrectData(int id, string description, int languageID, int length, string releaseDate, string title)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var language = new Domain.Language
+            {
+                Name = "English"
+            }; 
+            var language2 = new Domain.Language
+            {
+                Name = "Dutch"
+            };
+            dbContext.Languages.Add(language);
+            dbContext.Languages.Add(language2);
+
+            var movie = new Domain.Movie
+            {
+                Description = "Description",
+                LanguageID = 1,
+                Length = 10,
+                ReleaseDate = "10-10-2010",
+                Title = "Title"
+            };
+            dbContext.Movies.Add(movie);
+
+            await dbContext.SaveChangesAsync();
+
+            var expectedMovie = new AdminMovieModel
+            {
+                ID = id,
+                Description = description,
+                Language = new AdminLanguageModel
+                {
+                    ID = languageID,
+                    Name = language.Name
+                },
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
+            };
+
+            var appMovie = new Movie(dbContext);
+            #endregion
+
+            #region Act
+            var actualMovie = await appMovie.Update(expectedMovie);
+            #endregion
+
+            #region Assert
+            Assert.Equal(expectedMovie.ID, actualMovie.ID);
+            Assert.Equal(expectedMovie.Description, actualMovie.Description);
+            Assert.Equal(expectedMovie.Language.ID, actualMovie.Language.ID);
+            Assert.Equal(expectedMovie.Length, actualMovie.Length);
+            Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
+            Assert.Equal(expectedMovie.Title, actualMovie.Title);
+            #endregion
+        }
+
+        public static IEnumerable<object[]> UpdateInvalidInputData()
+        {
+            int id = 1;
+            string description = "Description";
+            int languageID = 1;
+            int length = 10;
+            string releaseDate = "10-10-2010";
+            string title = "Title";
+
+            // id = 0
+            yield return new object[] { 0, description, languageID, length, releaseDate, title };
+            // description = null
+            yield return new object[] { id, null, languageID, length, releaseDate, title };
+            // description = empty
+            yield return new object[] { id, "", languageID, length, releaseDate, title };
+            // language = null
+            yield return new object[] { id, description, null, length, releaseDate, title };
+            // language = empty
+            yield return new object[] { id, description, 0, length, releaseDate, title };
+            // length = null (i.e. 0)
+            yield return new object[] { id, description, languageID, 0, releaseDate, title };
+            // releaseDate = null (i.e. "1-1-0001 00:00:00")
+            yield return new object[] { id, description, languageID, length, "1-1-0001 00:00:00", title };
+            // title = null
+            yield return new object[] { id, description, languageID, length, releaseDate, null };
+            // title = empty
+            yield return new object[] { id, description, languageID, length, releaseDate, "" };
+        }
+
+        [Theory]
+        [MemberData(nameof(UpdateInvalidInputData))]
+        public async Task Update_InvalidInput_ReturnsNull(int id, string description, int languageID, int length, string releaseDate, string title)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var language = new Domain.Language
+            {
+                Name = "English"
+            };
+            var language2 = new Domain.Language
+            {
+                Name = "Dutch"
+            };
+            dbContext.Languages.Add(language);
+            dbContext.Languages.Add(language2);
+
+            var movie = new Domain.Movie
+            {
+                Description = "Description",
+                LanguageID = 1,
+                Length = 10,
+                ReleaseDate = "10-10-2010",
+                Title = "Title"
+            };
+            dbContext.Movies.Add(movie);
+
+            await dbContext.SaveChangesAsync();
+
+            var expectedMovie = new AdminMovieModel
+            {
+                ID = id,
+                Description = description,
+                Language = new AdminLanguageModel
+                {
+                    ID = languageID,
+                    Name = language.Name
+                },
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
+            };
+
+            var appMovie = new Movie(dbContext);
+            #endregion
+
+            #region Act
+            var actualMovie = await appMovie.Update(expectedMovie);
+            #endregion
+
+            #region Assert
+            Assert.Null(actualMovie);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(1, "Description", 1, 10, "10-10-2010 00:00:00", "Title")]
+        public async Task Update_InputIsNotDifferent_ReturnsEmptyAdminMovieModel(int id, string description, int languageID, int length, string releaseDate, string title)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var language = new Domain.Language
+            {
+                Name = "English"
+            };
+            var language2 = new Domain.Language
+            {
+                Name = "Dutch"
+            };
+            dbContext.Languages.Add(language);
+            dbContext.Languages.Add(language2);
+
+            var movie = new Domain.Movie
+            {
+                Description = description,
+                LanguageID = languageID,
+                Length = length,
+                ReleaseDate = releaseDate,
+                Title = title
+            };
+            dbContext.Movies.Add(movie);
+
+            await dbContext.SaveChangesAsync();
+
+            var newMovie = new AdminMovieModel
+            {
+                ID = id,
+                Description = description,
+                Language = new AdminLanguageModel
+                {
+                    ID = languageID
+                },
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
+            };
+
+            var expectedMovie = new AdminMovieModel();
+
+            var appMovie = new Movie(dbContext);
+            #endregion
+
+            #region Act
+            var actualMovie = await appMovie.Update(newMovie);
+            #endregion
+
+            #region Assert
+            Assert.Equal(expectedMovie.ID, actualMovie.ID);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(1)]
+        public async Task Delete_ValidInput_ReturnsTrue(int id)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var movie = new Domain.Movie();
+            dbContext.Movies.Add(movie);
+
+            await dbContext.SaveChangesAsync();
+
+            var appMovie = new Movie(dbContext);
+            #endregion
+
+            #region Act
+            var actual = await appMovie.Delete(id);
+            #endregion
+
+            #region Assert
+            Assert.True(actual);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(0)]
+        public async Task Delete_InvalidInput_ReturnsFalse(int id)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var movie = new Domain.Movie();
+            dbContext.Movies.Add(movie);
+
+            await dbContext.SaveChangesAsync();
+
+            var appMovie = new Movie(dbContext);
+            #endregion
+
+            #region Act
+            var actual = await appMovie.Delete(id);
+            #endregion
+
+            #region Assert
+            Assert.False(actual);
             #endregion
         }
     }

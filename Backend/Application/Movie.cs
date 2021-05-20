@@ -19,7 +19,7 @@ namespace Application
 
         public async Task<AdminMovieModel> Create(AdminMovieModel adminMovieModel)
         {
-            if(_movieValidation.CreateMovie(adminMovieModel))
+            if(_movieValidation.IsInputValid(adminMovieModel))
             {
                 var movie = new Domain.Movie
                 {
@@ -84,40 +84,54 @@ namespace Application
 
         public async Task<AdminMovieModel> Update(AdminMovieModel adminMovieModel)
         {
-            var movie = _applicationDbContext.Movies.FirstOrDefault(x => x.ID == adminMovieModel.ID);
-
-            movie.Description = adminMovieModel.Description;
-            movie.Length = adminMovieModel.Length;
-            movie.ReleaseDate = adminMovieModel.ReleaseDate.ToShortDateString();
-            movie.Title = adminMovieModel.Title;
-
-            await _applicationDbContext.SaveChangesAsync();
-
-            return new AdminMovieModel
+            if (adminMovieModel.ID != 0 && _movieValidation.IsInputValid(adminMovieModel))
             {
-                ID = movie.ID,
-                Description = movie.Description,
-                Length = movie.Length,
-                ReleaseDate = DateTime.Parse(movie.ReleaseDate),
-                Title = movie.Title
-            };
+                var movie = _applicationDbContext.Movies.FirstOrDefault(x => x.ID == adminMovieModel.ID);
+
+                if (_movieValidation.IsInputDataDifferent(movie, adminMovieModel))
+                {
+                    movie.Description = adminMovieModel.Description;
+                    movie.Length = adminMovieModel.Length;
+                    movie.LanguageID = adminMovieModel.Language.ID;
+                    movie.ReleaseDate = adminMovieModel.ReleaseDate.ToShortDateString();
+                    movie.Title = adminMovieModel.Title;
+
+                    await _applicationDbContext.SaveChangesAsync();
+
+                    return new AdminMovieModel
+                    {
+                        ID = movie.ID,
+                        Description = movie.Description,
+                        Language = new AdminLanguageModel
+                        {
+                            ID = movie.Language.ID,
+                            Name = movie.Language.Name
+                        },
+                        Length = movie.Length,
+                        ReleaseDate = DateTime.Parse(movie.ReleaseDate),
+                        Title = movie.Title
+                    };
+                }
+
+                return new AdminMovieModel();
+            }
+
+            return null;
         }
 
         public async Task<bool> Delete(int id)
         {
-            var movie = _applicationDbContext.Movies.FirstOrDefault(x => x.ID == id);
-
-            _applicationDbContext.Movies.Remove(movie);
-
-            try
+            if (id != 0)
             {
+                var movie = _applicationDbContext.Movies.FirstOrDefault(x => x.ID == id);
+
+                _applicationDbContext.Movies.Remove(movie);
+
                 await _applicationDbContext.SaveChangesAsync();
                 return true;
             }
-            catch (Exception)
-            {
-                return false;
-            }
+
+            return false;
         }
     }
 }
