@@ -27,7 +27,7 @@ namespace Application
                     Description = adminMovieModel.Description,
                     LanguageID = adminMovieModel.Language.ID,
                     Length = adminMovieModel.Length,
-                    ReleaseDate = adminMovieModel.ReleaseDate.ToShortDateString(),
+                    ReleaseDate = adminMovieModel.ReleaseDate.ToString("yyyy-MM-dd"),
                     Title = adminMovieModel.Title
                 };
 
