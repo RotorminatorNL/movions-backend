@@ -50,16 +50,6 @@ namespace Application
                     Title = movie.Title
                 };
 
-                Console.WriteLine("------------------------------------------");
-                Console.WriteLine("------------------------------------------");
-                Console.WriteLine("--- Movie Console 'log' ---");
-
-                Console.WriteLine("Movie releaseDate: " + movie.ReleaseDate);
-                Console.WriteLine("ReturnData ReleaseDate: " + returnData.ReleaseDate);
-
-                Console.WriteLine("------------------------------------------");
-                Console.WriteLine("------------------------------------------");
-
                 return returnData;
             }
 
