@@ -24,7 +24,7 @@ namespace Application
             {
                 var person = new Domain.Person
                 {
-                    BirthDate = adminPersonModel.BirthDate.ToString("yyyy-MM-dd"),
+                    BirthDate = adminPersonModel.BirthDate.ToString("dd-MM-yyyy"),
                     BirthPlace = adminPersonModel.BirthPlace,
                     Description = adminPersonModel.Description,
                     FirstName = adminPersonModel.FirstName,
@@ -82,7 +82,7 @@ namespace Application
             {
                 if (_personValidation.IsInputDifferent(person, adminPersonModel))
                 {
-                    person.BirthDate = adminPersonModel.BirthDate.ToString("yyyy-MM-dd");
+                    person.BirthDate = adminPersonModel.BirthDate.ToString("dd-MM-yyyy");
                     person.BirthPlace = adminPersonModel.BirthPlace;
                     person.Description = adminPersonModel.Description;
                     person.FirstName = adminPersonModel.FirstName;

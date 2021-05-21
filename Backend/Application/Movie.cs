@@ -27,7 +27,7 @@ namespace Application
                     Description = adminMovieModel.Description,
                     LanguageID = adminMovieModel.Language.ID,
                     Length = adminMovieModel.Length,
-                    ReleaseDate = adminMovieModel.ReleaseDate.ToString("yyyy-MM-dd"),
+                    ReleaseDate = adminMovieModel.ReleaseDate.ToString("dd-MM-yyyy"),
                     Title = adminMovieModel.Title
                 };
 
@@ -94,7 +94,7 @@ namespace Application
                     movie.Description = adminMovieModel.Description;
                     movie.Length = adminMovieModel.Length;
                     movie.LanguageID = adminMovieModel.Language.ID;
-                    movie.ReleaseDate = adminMovieModel.ReleaseDate.ToString("yyyy-MM-dd");
+                    movie.ReleaseDate = adminMovieModel.ReleaseDate.ToString("dd-MM-yyyy");
                     movie.Title = adminMovieModel.Title;
 
                     await _applicationDbContext.SaveChangesAsync();

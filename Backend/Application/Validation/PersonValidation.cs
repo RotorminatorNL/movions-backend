@@ -19,7 +19,7 @@ namespace Application.Validation
 
         public bool IsInputDifferent(Domain.Person person, AdminPersonModel adminPersonModel)
         {
-            bool isBirthDateOk = person.BirthDate != adminPersonModel.BirthDate.ToString("yyyy-MM-dd");
+            bool isBirthDateOk = person.BirthDate != adminPersonModel.BirthDate.ToString("dd-MM-yyyy");
             bool isBirthPlaceOk = person.BirthPlace != adminPersonModel.BirthPlace;
             bool isDescriptionOk = person.Description != adminPersonModel.Description;
             bool isFirstNameOk = person.FirstName != adminPersonModel.FirstName;

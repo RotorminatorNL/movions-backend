@@ -21,7 +21,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData("Test description", 1, 104, "2010-10-04", "Test title")]
+        [InlineData("Test description", 1, 104, "04-10-2010", "Test title")]
         public async Task Create_ValidInput_ReturnsCorrectData(string description, int languageID, int length, string releaseDate, string title)
         {
             #region Arrange
@@ -70,7 +70,7 @@ namespace UnitTests
             string description = "Test description";
             int languageID = 1;
             int length = 104;
-            string releaseDate = "2010-10-04";
+            string releaseDate = "04-10-2010";
             string title = "Test title";
 
             // description = null
@@ -158,7 +158,7 @@ namespace UnitTests
                     Name = language.Name
                 },
                 Length = 104,
-                ReleaseDate = DateTime.Parse("2010-10-04"),
+                ReleaseDate = DateTime.Parse("04-10-2010"),
                 Title = "Test title"
             };
 
@@ -204,7 +204,7 @@ namespace UnitTests
                     Name = language.Name
                 },
                 Length = 104,
-                ReleaseDate = DateTime.Parse("2010-10-04"),
+                ReleaseDate = DateTime.Parse("04-10-2010"),
                 Title = "Test title"
             };
 
@@ -281,7 +281,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "Test description", 2, 104, "2010-10-04", "Test title")]
+        [InlineData(1, "Test description", 2, 104, "04-10-2010", "Test title")]
         public async Task Update_ValidInput_ReturnsCorrectData(int id, string description, int languageID, int length, string releaseDate, string title)
         {
             #region Arrange
@@ -348,7 +348,7 @@ namespace UnitTests
             string description = "Description";
             int languageID = 1;
             int length = 10;
-            string releaseDate = "2010-10-04";
+            string releaseDate = "04-10-2010";
             string title = "Title";
 
             // id = 0
@@ -431,7 +431,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "Description", 1, 10, "2010-10-04", "Title")]
+        [InlineData(1, "Description", 1, 10, "04-10-2010", "Title")]
         public async Task Update_InputIsNotDifferent_ReturnsEmptyAdminMovieModel(int id, string description, int languageID, int length, string releaseDate, string title)
         {
             #region Arrange
