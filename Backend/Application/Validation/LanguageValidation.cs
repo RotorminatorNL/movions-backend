@@ -19,10 +19,5 @@ namespace Application.Validation
 
             return isNameOk;
         }
-
-        public bool CheckValidations(Domain.Language language, AdminLanguageModel adminLanguageModel)
-        {
-            return IsInputValid(adminLanguageModel) && IsInputDifferent(language, adminLanguageModel);
-        }
     }
 }

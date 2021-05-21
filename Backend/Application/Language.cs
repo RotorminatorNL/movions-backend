@@ -63,17 +63,22 @@ namespace Application
         {
             var language = _applicationDbContext.Languages.FirstOrDefault(x => x.ID == adminLanguageModel.ID);
 
-            if (language != null && _languageValidation.CheckValidations(language, adminLanguageModel))
+            if (language != null && _languageValidation.IsInputValid(adminLanguageModel))
             {
-                language.Name = adminLanguageModel.Name;
-
-                await _applicationDbContext.SaveChangesAsync();
-
-                return new AdminLanguageModel
+                if (_languageValidation.IsInputDifferent(language, adminLanguageModel))
                 {
-                    ID = language.ID,
-                    Name = language.Name
-                };
+                    language.Name = adminLanguageModel.Name;
+
+                    await _applicationDbContext.SaveChangesAsync();
+
+                    return new AdminLanguageModel
+                    {
+                        ID = language.ID,
+                        Name = language.Name
+                    };
+                }
+
+                return new AdminLanguageModel();
             }
 
             return null;
