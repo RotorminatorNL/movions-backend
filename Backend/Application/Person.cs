@@ -1,4 +1,5 @@
-﻿using PersistenceInterface;
+﻿using Application.Validation;
+using PersistenceInterface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,36 +10,42 @@ namespace Application
     public class Person
     {
         private readonly IApplicationDbContext _applicationDbContext;
+        private readonly PersonValidation _personValidation;
 
         public Person(IApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
+            _personValidation = new PersonValidation();
         }
 
         public async Task<AdminPersonModel> Create(AdminPersonModel adminPersonModel)
         {
-            var person = new Domain.Person
+            if (_personValidation.IsInputValid(adminPersonModel))
             {
-                BirthDate = adminPersonModel.BirthDate.ToShortDateString(),
-                BirthPlace = adminPersonModel.BirthPlace,
-                Description = adminPersonModel.Description,
-                FirstName = adminPersonModel.FirstName,
-                LastName = adminPersonModel.LastName
-            };
+                var person = new Domain.Person
+                {
+                    BirthDate = adminPersonModel.BirthDate.ToString("yyyy-MM-dd"),
+                    BirthPlace = adminPersonModel.BirthPlace,
+                    Description = adminPersonModel.Description,
+                    FirstName = adminPersonModel.FirstName,
+                    LastName = adminPersonModel.LastName
+                };
 
-            _applicationDbContext.Persons.Add(person);
+                _applicationDbContext.Persons.Add(person);
+                await _applicationDbContext.SaveChangesAsync();
 
-            await _applicationDbContext.SaveChangesAsync();
+                return new AdminPersonModel
+                {
+                    ID = person.ID,
+                    BirthDate = DateTime.Parse(person.BirthDate),
+                    BirthPlace = person.BirthPlace,
+                    Description = person.Description,
+                    FirstName = person.FirstName,
+                    LastName = person.LastName
+                };
+            }
 
-            return new AdminPersonModel
-            {
-                ID = person.ID,
-                BirthDate = DateTime.Parse(person.BirthDate),
-                BirthPlace = person.BirthPlace,
-                Description = person.Description,
-                FirstName = person.FirstName,
-                LastName = person.LastName
-            };
+            return null;
         }
 
         public PersonModel Read(int id)
@@ -71,40 +78,48 @@ namespace Application
         {
             var person = _applicationDbContext.Persons.FirstOrDefault(x => x.ID == adminPersonModel.ID);
 
-            person.BirthDate = adminPersonModel.BirthDate.ToShortDateString();
-            person.BirthPlace = adminPersonModel.BirthPlace;
-            person.Description = adminPersonModel.Description;
-            person.FirstName = adminPersonModel.FirstName;
-            person.LastName = adminPersonModel.LastName;
-
-            await _applicationDbContext.SaveChangesAsync();
-
-            return new AdminPersonModel
+            if (person != null && _personValidation.IsInputValid(adminPersonModel))
             {
-                ID = person.ID,
-                BirthDate = DateTime.Parse(person.BirthDate),
-                BirthPlace = person.BirthPlace,
-                Description = person.Description,
-                FirstName = person.FirstName,
-                LastName = person.LastName
-            };
+                if (_personValidation.IsInputDifferent(person, adminPersonModel))
+                {
+                    person.BirthDate = adminPersonModel.BirthDate.ToString("yyyy-MM-dd");
+                    person.BirthPlace = adminPersonModel.BirthPlace;
+                    person.Description = adminPersonModel.Description;
+                    person.FirstName = adminPersonModel.FirstName;
+                    person.LastName = adminPersonModel.LastName;
+
+                    await _applicationDbContext.SaveChangesAsync();
+
+                    return new AdminPersonModel
+                    {
+                        ID = person.ID,
+                        BirthDate = DateTime.Parse(person.BirthDate),
+                        BirthPlace = person.BirthPlace,
+                        Description = person.Description,
+                        FirstName = person.FirstName,
+                        LastName = person.LastName
+                    };
+                }
+
+                return new AdminPersonModel();
+            }
+
+            return null;
         }
 
         public async Task<bool> Delete(int id)
         {
             var person = _applicationDbContext.Persons.FirstOrDefault(x => x.ID == id);
 
-            _applicationDbContext.Persons.Remove(person);
-
-            try
+            if (person != null)
             {
+                _applicationDbContext.Persons.Remove(person);
                 await _applicationDbContext.SaveChangesAsync();
+
                 return true;
             }
-            catch (Exception)
-            {
-                return false;
-            }
+
+            return false;
         }
     }
 }
