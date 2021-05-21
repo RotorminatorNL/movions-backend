@@ -16,8 +16,6 @@ namespace Application
 
         public Person(IApplicationDbContext applicationDbContext)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
-
             _applicationDbContext = applicationDbContext;
             _personValidation = new PersonValidation();
         }

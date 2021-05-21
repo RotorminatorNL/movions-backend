@@ -17,6 +17,8 @@ namespace UnitTests
 
         public MovieTests()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
+
             _dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: "movions_movies")
                 .Options;

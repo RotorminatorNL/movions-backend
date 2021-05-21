@@ -16,8 +16,6 @@ namespace Application
 
         public Movie(IApplicationDbContext applicationDbContext)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
-
             _applicationDbContext = applicationDbContext;
             _movieValidation = new MovieValidation();
         }
