@@ -353,6 +353,8 @@ namespace UnitTests
 
             // id = 0
             yield return new object[] { 0, description, languageID, length, releaseDate, title };
+            // id = 2 (does not exist)
+            yield return new object[] { 2, description, languageID, length, releaseDate, title };
             // description = null
             yield return new object[] { id, null, languageID, length, releaseDate, title };
             // description = empty

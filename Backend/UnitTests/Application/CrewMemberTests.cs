@@ -255,6 +255,8 @@ namespace UnitTests
 
             // id = 0
             yield return new object[] { 0, characterName, crewRole };
+            // id = 2 (does not exist)
+            yield return new object[] { 2, characterName, crewRole };
             // characterName = null
             yield return new object[] { id, null, crewRole };
             // characterName = empty

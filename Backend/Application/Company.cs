@@ -63,12 +63,12 @@ namespace Application
             });
         }
 
-        public async Task<AdminCompanyModel> Update(AdminCompanyModel adminCompanyModel) 
+        public async Task<AdminCompanyModel> Update(AdminCompanyModel adminCompanyModel)
         {
-            if (adminCompanyModel.ID != 0 && _companyValidation.IsInputValid(adminCompanyModel))
-            {
-                var company = _applicationDbContext.Companies.FirstOrDefault(x => x.ID == adminCompanyModel.ID);
+            var company = _applicationDbContext.Companies.FirstOrDefault(x => x.ID == adminCompanyModel.ID);
 
+            if (company != null && _companyValidation.IsInputValid(adminCompanyModel))
+            {
                 if (_companyValidation.IsInputDifferent(company, adminCompanyModel))
                 {
                     company.Name = adminCompanyModel.Name;
@@ -92,17 +92,17 @@ namespace Application
 
         public async Task<bool> Delete(int id)
         {
-            try
+            var company = _applicationDbContext.Companies.FirstOrDefault(x => x.ID == id);
+
+            if (company != null)
             {
-                var company = _applicationDbContext.Companies.FirstOrDefault(x => x.ID == id);
                 _applicationDbContext.Companies.Remove(company);
                 await _applicationDbContext.SaveChangesAsync();
+
                 return true;
             }
-            catch (Exception)
-            {
-                return false;
-            }
+                
+            return false;
         }
     }
 }

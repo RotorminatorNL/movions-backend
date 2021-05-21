@@ -85,10 +85,10 @@ namespace Application
 
         public async Task<AdminMovieModel> Update(AdminMovieModel adminMovieModel)
         {
-            if (adminMovieModel.ID != 0 && _movieValidation.IsInputValid(adminMovieModel))
-            {
-                var movie = _applicationDbContext.Movies.FirstOrDefault(x => x.ID == adminMovieModel.ID);
+            var movie = _applicationDbContext.Movies.FirstOrDefault(x => x.ID == adminMovieModel.ID);
 
+            if (movie != null && _movieValidation.IsInputValid(adminMovieModel))
+            {
                 if (_movieValidation.IsInputDataDifferent(movie, adminMovieModel))
                 {
                     movie.Description = adminMovieModel.Description;
@@ -122,17 +122,17 @@ namespace Application
 
         public async Task<bool> Delete(int id)
         {
-            try
+            var movie = _applicationDbContext.Movies.FirstOrDefault(x => x.ID == id);
+
+            if (movie != null)
             {
-                var movie = _applicationDbContext.Movies.FirstOrDefault(x => x.ID == id);
                 _applicationDbContext.Movies.Remove(movie);
                 await _applicationDbContext.SaveChangesAsync();
+
                 return true;
             }
-            catch (Exception)
-            {
-                return false;
-            }
+
+            return false;
         }
     }
 }

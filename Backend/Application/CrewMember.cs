@@ -65,12 +65,12 @@ namespace Application
             });
         }
 
-        public async Task<AdminCrewMemberModel> Update(AdminCrewMemberModel adminCrewRoleModel) 
+        public async Task<AdminCrewMemberModel> Update(AdminCrewMemberModel adminCrewRoleModel)
         {
-            if (adminCrewRoleModel.ID != 0 && _crewMemberValidation.IsInputValid(adminCrewRoleModel))
-            {
-                var crewRole = _applicationDbContext.CrewMembers.FirstOrDefault(x => x.CrewMemberID == adminCrewRoleModel.ID);
+            var crewRole = _applicationDbContext.CrewMembers.FirstOrDefault(x => x.CrewMemberID == adminCrewRoleModel.ID);
 
+            if (crewRole != null && _crewMemberValidation.IsInputValid(adminCrewRoleModel))
+            {
                 if (_crewMemberValidation.IsInputDifferent(crewRole, adminCrewRoleModel))
                 {
                     crewRole.CharacterName = adminCrewRoleModel.CharacterName;
@@ -94,17 +94,17 @@ namespace Application
 
         public async Task<bool> Delete(int id)
         {
-            try
+            var crewRole = _applicationDbContext.CrewMembers.FirstOrDefault(x => x.CrewMemberID == id);
+
+            if (crewRole != null)
             {
-                var crewRole = _applicationDbContext.CrewMembers.FirstOrDefault(x => x.CrewMemberID == id);
                 _applicationDbContext.CrewMembers.Remove(crewRole);
                 await _applicationDbContext.SaveChangesAsync();
+
                 return true;
             }
-            catch (Exception)
-            {
-                return false;
-            }
+
+            return false;
         }
     }
 }
