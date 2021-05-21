@@ -1,4 +1,5 @@
-﻿using PersistenceInterface;
+﻿using Application.Validation;
+using PersistenceInterface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,28 +10,35 @@ namespace Application
     public class Genre
     {
         private readonly IApplicationDbContext _applicationDbContext;
+        private readonly GenreValidation _genreValidation;
 
         public Genre(IApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
+            _genreValidation = new GenreValidation();
         }
 
         public async Task<AdminGenreModel> Create(AdminGenreModel adminGenreModel)
         {
-            var genre = new Domain.Genre
+            if (_genreValidation.IsInputValid(adminGenreModel))
             {
-                Name = adminGenreModel.Name
-            };
+                var genre = new Domain.Genre
+                {
+                    Name = adminGenreModel.Name
+                };
 
-            _applicationDbContext.Genres.Add(genre);
+                _applicationDbContext.Genres.Add(genre);
 
-            await _applicationDbContext.SaveChangesAsync();
+                await _applicationDbContext.SaveChangesAsync();
 
-            return new AdminGenreModel
-            {
-                ID = genre.ID,
-                Name = genre.Name
-            };
+                return new AdminGenreModel
+                {
+                    ID = genre.ID,
+                    Name = genre.Name
+                };
+            }
+
+            return null;
         }
 
         public GenreModel Read(int id)
@@ -44,43 +52,52 @@ namespace Application
 
         public IEnumerable<GenreModel> ReadAll()
         {
-            return _applicationDbContext.Genres.ToList().Select(genre => new GenreModel
+            return _applicationDbContext.Genres.Select(genre => new GenreModel
             {
                 ID = genre.ID,
                 Name = genre.Name,
-            });
+            }).ToList();
         }
 
-        public async Task<AdminGenreModel> Update(AdminGenreModel adminGenreModel) 
+        public async Task<AdminGenreModel> Update(AdminGenreModel adminGenreModel)
         {
             var genre = _applicationDbContext.Genres.FirstOrDefault(x => x.ID == adminGenreModel.ID);
-
-            genre.Name = adminGenreModel.Name;
-
-            await _applicationDbContext.SaveChangesAsync();
-
-            return new AdminGenreModel
+            
+            if (genre != null && _genreValidation.IsInputValid(adminGenreModel))
             {
-                ID = genre.ID,
-                Name = genre.Name
-            };
+                if (_genreValidation.IsInputDifferent(genre, adminGenreModel))
+                {
+                    genre.Name = adminGenreModel.Name;
+
+                    await _applicationDbContext.SaveChangesAsync();
+
+                    return new AdminGenreModel
+                    {
+                        ID = genre.ID,
+                        Name = genre.Name
+                    };
+                }
+
+                return new AdminGenreModel();
+            }
+
+            return null;
         }
 
         public async Task<bool> Delete(int id) 
         {
             var genre = _applicationDbContext.Genres.FirstOrDefault(x => x.ID == id);
 
-            _applicationDbContext.Genres.Remove(genre);
- 
-            try
+            if (genre != null)
             {
+                _applicationDbContext.Genres.Remove(genre);
                 await _applicationDbContext.SaveChangesAsync();
+
                 return true;
             }
-            catch (Exception)
-            {
-                return false;
-            }
+            
+            return false;
+            
         }
     }
 }
