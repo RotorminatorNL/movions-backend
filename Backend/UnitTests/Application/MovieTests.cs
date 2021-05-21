@@ -48,6 +48,17 @@ namespace UnitTests
                 Title = title
             };
 
+
+            Console.WriteLine("------------------------------------------");
+            Console.WriteLine("------------------------------------------");
+            Console.WriteLine("--- Test Console 'log' ---");
+
+            Console.WriteLine("string releaseDate: " + releaseDate);
+            Console.WriteLine("expectedMovie ReleaseDate: " + expectedMovie.ReleaseDate);
+
+            Console.WriteLine("------------------------------------------");
+            Console.WriteLine("------------------------------------------");
+
             var appMovie = new Movie(dbContext);
             #endregion
 
