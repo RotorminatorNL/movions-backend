@@ -2,7 +2,9 @@
 using PersistenceInterface;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Application
@@ -20,8 +22,11 @@ namespace Application
 
         public async Task<AdminMovieModel> Create(AdminMovieModel adminMovieModel)
         {
-            if(_movieValidation.IsInputValid(adminMovieModel))
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
+
+            if (_movieValidation.IsInputValid(adminMovieModel))
             {
+
                 var movie = new Domain.Movie
                 {
                     Description = adminMovieModel.Description,
