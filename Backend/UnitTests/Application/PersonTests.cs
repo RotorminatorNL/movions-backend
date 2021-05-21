@@ -18,8 +18,6 @@ namespace UnitTests
 
         public PersonTests()
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
-
             _dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: "movions_person")
                 .Options;
