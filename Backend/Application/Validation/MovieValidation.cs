@@ -11,8 +11,6 @@ namespace Application.Validation
     {
         public bool IsInputValid(AdminMovieModel adminMovieModel)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
-
             bool isDescriptionOk = !(adminMovieModel.Description == null || adminMovieModel.Description == "");
             bool isLanguageOk = !(adminMovieModel.Language == null || adminMovieModel.Language.ID == 0);
             bool isLengthOk = adminMovieModel.Length != 0;
@@ -24,8 +22,6 @@ namespace Application.Validation
 
         public bool IsInputDataDifferent(Domain.Movie movie, AdminMovieModel adminMovieModel)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
-
             bool isDescriptionDifferent = movie.Description != adminMovieModel.Description;
             bool isLanguageDifferent = movie.LanguageID != adminMovieModel.Language.ID;
             bool isLengthDifferent = movie.Length != adminMovieModel.Length;

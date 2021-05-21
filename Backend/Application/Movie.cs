@@ -24,8 +24,6 @@ namespace Application
 
         public async Task<AdminMovieModel> Create(AdminMovieModel adminMovieModel)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
-
             if (_movieValidation.IsInputValid(adminMovieModel))
             {
                 var movie = new Domain.Movie
@@ -101,8 +99,6 @@ namespace Application
 
         public async Task<AdminMovieModel> Update(AdminMovieModel adminMovieModel)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
-
             var movie = _applicationDbContext.Movies.FirstOrDefault(x => x.ID == adminMovieModel.ID);
 
             if (movie != null && _movieValidation.IsInputValid(adminMovieModel))
