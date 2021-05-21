@@ -16,6 +16,8 @@ namespace Application
 
         public Movie(IApplicationDbContext applicationDbContext)
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
+
             _applicationDbContext = applicationDbContext;
             _movieValidation = new MovieValidation();
         }
@@ -26,7 +28,6 @@ namespace Application
 
             if (_movieValidation.IsInputValid(adminMovieModel))
             {
-
                 var movie = new Domain.Movie
                 {
                     Description = adminMovieModel.Description,
@@ -100,6 +101,8 @@ namespace Application
 
         public async Task<AdminMovieModel> Update(AdminMovieModel adminMovieModel)
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
+
             var movie = _applicationDbContext.Movies.FirstOrDefault(x => x.ID == adminMovieModel.ID);
 
             if (movie != null && _movieValidation.IsInputValid(adminMovieModel))
