@@ -1,4 +1,5 @@
-﻿using PersistenceInterface;
+﻿using Application.Validation;
+using PersistenceInterface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,28 +10,35 @@ namespace Application
     public class Language
     {
         private readonly IApplicationDbContext _applicationDbContext;
+        private readonly LanguageValidation _languageValidation;
 
         public Language(IApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
+            _languageValidation = new LanguageValidation();
         }
 
         public async Task<AdminLanguageModel> Create(AdminLanguageModel adminLanguageModel)
         {
-            var language = new Domain.Language
+            if (_languageValidation.IsInputValid(adminLanguageModel))
             {
-                Name = adminLanguageModel.Name
-            };
+                var language = new Domain.Language
+                {
+                    Name = adminLanguageModel.Name
+                };
 
-            _applicationDbContext.Languages.Add(language);
+                _applicationDbContext.Languages.Add(language);
 
-            await _applicationDbContext.SaveChangesAsync();
+                await _applicationDbContext.SaveChangesAsync();
 
-            return new AdminLanguageModel
-            {
-                ID = language.ID,
-                Name = language.Name
-            };
+                return new AdminLanguageModel
+                {
+                    ID = language.ID,
+                    Name = language.Name
+                };
+            }
+
+            return null;
         }
 
         public LanguageModel Read(int id)
@@ -44,43 +52,46 @@ namespace Application
 
         public IEnumerable<LanguageModel> ReadAll()
         {
-            return _applicationDbContext.Languages.ToList().Select(language => new LanguageModel
+            return _applicationDbContext.Languages.Select(language => new LanguageModel
             {
                 ID = language.ID,
                 Name = language.Name,
-            });
+            }).ToList();
         }
 
         public async Task<AdminLanguageModel> Update(AdminLanguageModel adminLanguageModel) 
         {
             var language = _applicationDbContext.Languages.FirstOrDefault(x => x.ID == adminLanguageModel.ID);
 
-            language.Name = adminLanguageModel.Name;
-
-            await _applicationDbContext.SaveChangesAsync();
-
-            return new AdminLanguageModel
+            if (language != null && _languageValidation.CheckValidations(language, adminLanguageModel))
             {
-                ID = language.ID,
-                Name = language.Name
-            };
+                language.Name = adminLanguageModel.Name;
+
+                await _applicationDbContext.SaveChangesAsync();
+
+                return new AdminLanguageModel
+                {
+                    ID = language.ID,
+                    Name = language.Name
+                };
+            }
+
+            return null;
         }
 
         public async Task<bool> Delete(int id) 
         {
             var language = _applicationDbContext.Languages.FirstOrDefault(x => x.ID == id);
 
-            _applicationDbContext.Languages.Remove(language);
- 
-            try
+            if (language != null)
             {
+                _applicationDbContext.Languages.Remove(language);
                 await _applicationDbContext.SaveChangesAsync();
+
                 return true;
             }
-            catch (Exception)
-            {
-                return false;
-            }
+ 
+            return false;
         }
     }
 }
