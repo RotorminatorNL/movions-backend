@@ -7,11 +7,11 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class CrewRoleController : Controller
+    public class CrewMemberController : Controller
     {
         private readonly CrewMember Genre;
 
-        public CrewRoleController(IApplicationDbContext applicationDbContext)
+        public CrewMemberController(IApplicationDbContext applicationDbContext)
         {
             Genre = new CrewMember(applicationDbContext);
         }
