@@ -18,6 +18,7 @@ namespace API.Controllers
         }
 
         [HttpPost()]
+        [ActionName("Create")]
         public async Task<ActionResult<AdminCompanyModel>> Create([FromBody] AdminCompanyModel adminCompanyModel)
         {
             var result = await Company.Create(adminCompanyModel);
