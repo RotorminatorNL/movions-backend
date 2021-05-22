@@ -20,8 +20,8 @@ namespace API
 
         public IConfiguration Configuration { get; }
 
-        private bool _isTesting = false;
-        readonly string AllowFrontend = "_allowFrontend";
+        private readonly bool _isTesting = false;
+        private readonly string AllowFrontend = "_allowFrontend";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -45,11 +45,6 @@ namespace API
                 );
             }
 
-            services.AddControllers(options =>
-            {
-                options.SuppressAsyncSuffixInActionNames = false;
-            });
-
             services.AddCors(options =>
             {
                 options.AddPolicy(name: AllowFrontend,
@@ -61,7 +56,10 @@ namespace API
                 });
             });
 
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

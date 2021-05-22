@@ -38,7 +38,7 @@ namespace IntegrationTests
             #endregion
 
             #region Assert
-            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(expectedCompany.ID, actualCompany.ID);
             Assert.Equal(expectedCompany.Name, actualCompany.Name);
             Assert.Equal(expectedCompany.Type, actualCompany.Type);

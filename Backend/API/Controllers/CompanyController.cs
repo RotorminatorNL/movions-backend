@@ -25,7 +25,7 @@ namespace API.Controllers
 
             if (result != null)
             {
-                var returnData = CreatedAtAction(nameof(result), result);
+                var returnData = Ok(result);
 
                 return returnData;
             }
