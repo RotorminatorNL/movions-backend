@@ -22,16 +22,16 @@ namespace API.Controllers
             return Ok(await Language.Create(adminLanguageModel));
         }
 
-        [HttpGet()]
-        public IActionResult ReadAll()
-        {
-            return Ok(Language.ReadAll());
-        }
-
         [HttpGet("{id}")]
         public IActionResult Read(int id)
         {
             return Ok(Language.Read(id));
+        }
+
+        [HttpGet()]
+        public IActionResult ReadAll()
+        {
+            return Ok(Language.ReadAll());
         }
 
         [HttpPut("{id}")]

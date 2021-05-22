@@ -22,16 +22,16 @@ namespace API.Controllers
             return Ok(await Company.Create(adminCompanyModel));
         }
 
-        [HttpGet()]
-        public IActionResult ReadAll()
-        {
-            return Ok(Company.ReadAll());
-        }
-
         [HttpGet("{id}")]
         public IActionResult Read(int id)
         {
             return Ok(Company.Read(id));
+        }
+
+        [HttpGet()]
+        public IActionResult ReadAll()
+        {
+            return Ok(Company.ReadAll());
         }
 
         [HttpPut("{id}")]

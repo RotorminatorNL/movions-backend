@@ -23,16 +23,16 @@ namespace API.Controllers
             return Ok(await Movie.Create(adminMovieModel));
         }
 
-        [HttpGet()]
-        public IActionResult ReadAll()
-        {
-            return Ok(Movie.ReadAll());
-        }
-
         [HttpGet("{id}")]
         public IActionResult Read(int id)
         {
             return Ok(Movie.Read(id));
+        }
+
+        [HttpGet()]
+        public IActionResult ReadAll()
+        {
+            return Ok(Movie.ReadAll());
         }
 
         [HttpPut("{id}")]

@@ -22,16 +22,16 @@ namespace API.Controllers
             return Ok(await Person.Create(adminPersonModel));
         }
 
-        [HttpGet()]
-        public IActionResult ReadAll()
-        {
-            return Ok(Person.ReadAll());
-        }
-
         [HttpGet("{id}")]
         public IActionResult Read(int id)
         {
             return Ok(Person.Read(id));
+        }
+
+        [HttpGet()]
+        public IActionResult ReadAll()
+        {
+            return Ok(Person.ReadAll());
         }
 
         [HttpPut("{id}")]

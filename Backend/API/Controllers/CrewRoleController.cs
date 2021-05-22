@@ -22,16 +22,16 @@ namespace API.Controllers
             return Ok(await Genre.Create(adminCrewRoleModel));
         }
 
-        [HttpGet()]
-        public IActionResult ReadAll()
-        {
-            return Ok(Genre.ReadAll());
-        }
-
         [HttpGet("{id}")]
         public IActionResult Read(int id)
         {
             return Ok(Genre.Read(id));
+        }
+
+        [HttpGet()]
+        public IActionResult ReadAll()
+        {
+            return Ok(Genre.ReadAll());
         }
 
         [HttpPut("{id}")]
