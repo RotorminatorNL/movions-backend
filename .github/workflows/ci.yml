@@ -29,4 +29,4 @@ jobs:
       run: dotnet test ./Backend/UnitTests/UnitTests.csproj
       
     - name: Run IntegrationTest
-      run: dotnet test ./Backend/UnitTests/IntegrationTests.csproj
+      run: dotnet test ./Backend/IntegrationTests/IntegrationTests.csproj
