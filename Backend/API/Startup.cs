@@ -1,3 +1,4 @@
+using Application;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -11,24 +12,39 @@ namespace API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _isTesting = env.IsEnvironment("Testing");
         }
 
         public IConfiguration Configuration { get; }
 
+        private bool _isTesting = false;
         readonly string AllowFrontend = "_allowFrontend";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
-                options => options.UseSqlServer(
-                    Configuration.GetConnectionString("MovionsDB"), 
-                    b => b.MigrationsAssembly("Persistence")
-                )
-            );
+            if (_isTesting)
+            {
+                services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
+                    options => options.UseSqlServer(
+                        Configuration.GetConnectionString("MovionsDB"),
+                        b => b.MigrationsAssembly("Persistence")
+                    )
+                );
+            }
+            else
+            {
+                services.AddTransient<Company>();
+                services.AddTransient<CrewMember>();
+                services.AddTransient<Genre>();
+                services.AddTransient<Language>();
+                services.AddTransient<Movie>();
+                services.AddTransient<Person>();
+            }
+
 
             services.AddCors(options =>
             {
