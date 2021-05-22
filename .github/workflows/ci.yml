@@ -27,3 +27,6 @@ jobs:
       
     - name: Run UnitTest
       run: dotnet test ./Backend/UnitTests/UnitTests.csproj
+      
+    - name: Run IntegrationTest
+      run: dotnet test ./Backend/UnitTests/IntegrationTests.csproj
