@@ -1,6 +1,7 @@
 ﻿using Application;
 using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -17,9 +18,18 @@ namespace API.Controllers
         }
 
         [HttpPost()]
-        public async Task<IActionResult> Create(AdminCompanyModel adminCompanyModel)
+        public async Task<ActionResult<AdminCompanyModel>> Create([FromBody] AdminCompanyModel adminCompanyModel)
         {
-            return Ok(await Company.Create(adminCompanyModel));
+            var result = await Company.Create(adminCompanyModel);
+
+            if (result != null)
+            {
+                var returnData = CreatedAtAction(nameof(result), result);
+
+                return returnData;
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet("{id}")]
