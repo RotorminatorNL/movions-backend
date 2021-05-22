@@ -28,15 +28,6 @@ namespace API
         {
             if (_isTesting)
             {
-                services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
-                    options => options.UseSqlServer(
-                        Configuration.GetConnectionString("MovionsDB"),
-                        b => b.MigrationsAssembly("Persistence")
-                    )
-                );
-            }
-            else
-            {
                 services.AddTransient<Company>();
                 services.AddTransient<CrewMember>();
                 services.AddTransient<Genre>();
@@ -44,7 +35,20 @@ namespace API
                 services.AddTransient<Movie>();
                 services.AddTransient<Person>();
             }
+            else
+            {
+                services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
+                    options => options.UseSqlServer(
+                        Configuration.GetConnectionString("MovionsDB"),
+                        b => b.MigrationsAssembly("Persistence")
+                    )
+                );
+            }
 
+            services.AddControllers(options =>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+            });
 
             services.AddCors(options =>
             {
