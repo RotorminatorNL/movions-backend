@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using PersistenceInterface;
-using System.Configuration;
 using System.Threading;
 using System.Threading.Tasks;
 
