@@ -20,7 +20,7 @@ namespace IntegrationTests
         public async Task Create_ValidInput_ReturnsJsonResponseAndCreated(string name, CompanyTypes companyType)
         {
             #region Arrange 
-            var dbContent = CreateDbContext();
+            var dbContent = CreateDbContext().Companies;
 
             var client = CreateHttpClient();
             var expectedCompany = new AdminCompanyModel

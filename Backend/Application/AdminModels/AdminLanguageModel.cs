@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Application
 {
     public class AdminLanguageModel
     {
+        [JsonPropertyName("id")]
         public int ID { get; set; }
+
+        [JsonPropertyName("name")]
         public string Name { get; set; }
+
+        [JsonPropertyName("movie")]
         public IEnumerable<AdminMovieModel> Movies { get; set; }
     }
 }
