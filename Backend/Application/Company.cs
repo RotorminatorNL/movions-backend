@@ -1,4 +1,5 @@
 ﻿using Application.Validation;
+using Microsoft.EntityFrameworkCore;
 using PersistenceInterface;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,24 +43,24 @@ namespace Application
             return null;
         }
 
-        public CompanyModel Read(int id)
+        public async Task<CompanyModel> Read(int id)
         {
-            return _applicationDbContext.Companies.Select(company => new CompanyModel
+            return await _applicationDbContext.Companies.Select(company => new CompanyModel
             {
                 ID = company.ID,
                 Name = company.Name,
                 Type = company.Type.ToString(),
-            }).FirstOrDefault(x => x.ID == id);
+            }).FirstOrDefaultAsync(x => x.ID == id);
         }
 
-        public IEnumerable<CompanyModel> ReadAll()
+        public async Task<IEnumerable<CompanyModel>> ReadAll()
         {
-            return _applicationDbContext.Companies.ToList().Select(company => new CompanyModel
+            return await _applicationDbContext.Companies.Select(company => new CompanyModel
             {
                 ID = company.ID,
                 Name = company.Name,
                 Type = company.Type.ToString(),
-            });
+            }).ToListAsync();
         }
 
         public async Task<AdminCompanyModel> Update(AdminCompanyModel adminCompanyModel)

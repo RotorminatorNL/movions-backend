@@ -1,4 +1,5 @@
 ﻿using Application.Validation;
+using Microsoft.EntityFrameworkCore;
 using PersistenceInterface;
 using System;
 using System.Collections.Generic;
@@ -48,9 +49,9 @@ namespace Application
             return null;
         }
 
-        public PersonModel Read(int id)
+        public async Task<PersonModel> Read(int id)
         {
-            return _applicationDbContext.Persons.ToList().Select(person => new PersonModel
+            return await _applicationDbContext.Persons.Select(person => new PersonModel
             {
                 ID = person.ID,
                 BirthDate = DateTime.Parse(person.BirthDate),
@@ -58,12 +59,12 @@ namespace Application
                 Description = person.Description,
                 FirstName = person.FirstName,
                 LastName = person.LastName,
-            }).FirstOrDefault(x => x.ID == id);
+            }).FirstOrDefaultAsync(x => x.ID == id);
         }
 
-        public IEnumerable<PersonModel> ReadAll()
+        public async Task<IEnumerable<PersonModel>> ReadAll()
         {
-            return _applicationDbContext.Persons.ToList().Select(person => new PersonModel
+            return await _applicationDbContext.Persons.Select(person => new PersonModel
             {
                 ID = person.ID,
                 BirthDate = DateTime.Parse(person.BirthDate),
@@ -71,7 +72,7 @@ namespace Application
                 Description = person.Description,
                 FirstName = person.FirstName,
                 LastName = person.LastName,
-            });
+            }).ToListAsync();
         }
 
         public async Task<AdminPersonModel> Update(AdminPersonModel adminPersonModel)

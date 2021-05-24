@@ -10,50 +10,76 @@ namespace API.Controllers
     [Route("[controller]/[action]")]
     public class CompanyController : Controller
     {
-        private readonly Company Company;
+        private readonly Company company;
 
         public CompanyController(IApplicationDbContext applicationDbContext)
         {
-            Company = new Company(applicationDbContext);
+            company = new Company(applicationDbContext);
         }
 
         [HttpPost()]
         public async Task<IActionResult> Create([FromBody] AdminCompanyModel adminCompanyModel)
         {
-            var result = await Company.Create(adminCompanyModel);
+            var result = await company.Create(adminCompanyModel);
 
             if (result != null)
             {
-                var returnData = Ok(result);
-
-                return returnData;
+                return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
             }
 
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Read(int id)
+        public async Task<IActionResult> Read(int id)
         {
-            return Ok(Company.Read(id));
+            var result = await company.Read(id);
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpGet()]
-        public IActionResult ReadAll()
+        public async Task<IActionResult> ReadAll()
         {
-            return Ok(Company.ReadAll());
+            var result = await company.ReadAll();
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(AdminCompanyModel adminCompanyModel)
+        public async Task<IActionResult> Update([FromBody] AdminCompanyModel adminCompanyModel)
         {
-            return Ok(await Company.Update(adminCompanyModel));
+            var result = await company.Update(adminCompanyModel);
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok(await Company.Delete(id));
+            var result = await company.Delete(id);
+
+            if (result != true)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
     }
 }

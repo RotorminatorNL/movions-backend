@@ -1,4 +1,5 @@
 ﻿using Application.Validation;
+using Microsoft.EntityFrameworkCore;
 using PersistenceInterface;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,6 @@ namespace Application
                 };
 
                 _applicationDbContext.CrewMembers.Add(crewRole);
-
                 await _applicationDbContext.SaveChangesAsync();
 
                 return new AdminCrewMemberModel
@@ -42,26 +42,26 @@ namespace Application
             return null;
         }
 
-        public CrewMemberModel Read(int id)
+        public async Task<CrewMemberModel> Read(int id)
         {
-            return _applicationDbContext.CrewMembers.ToList().Select(crewRole => new CrewMemberModel
+            return await _applicationDbContext.CrewMembers.Select(crewRole => new CrewMemberModel
             {
                 ID = crewRole.CrewMemberID,
                 CharacterName = crewRole.CharacterName,
                 Role = crewRole.Role.ToString(),
                 MovieID = crewRole.MovieID,
-            }).FirstOrDefault(x => x.ID == id);
+            }).FirstOrDefaultAsync(x => x.ID == id);
         }
 
-        public IEnumerable<CrewMemberModel> ReadAll()
+        public async Task<IEnumerable<CrewMemberModel>> ReadAll()
         {
-            return _applicationDbContext.CrewMembers.ToList().Select(crewRole => new CrewMemberModel
+            return await _applicationDbContext.CrewMembers.Select(crewRole => new CrewMemberModel
             {
                 ID = crewRole.CrewMemberID,
                 CharacterName = crewRole.CharacterName,
                 Role = crewRole.Role.ToString(),
                 MovieID = crewRole.MovieID,
-            });
+            }).ToListAsync();
         }
 
         public async Task<AdminCrewMemberModel> Update(AdminCrewMemberModel adminCrewRoleModel)

@@ -1,4 +1,5 @@
 ﻿using Application.Validation;
+using Microsoft.EntityFrameworkCore;
 using PersistenceInterface;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,22 +41,22 @@ namespace Application
             return null;
         }
 
-        public GenreModel Read(int id)
+        public async Task<GenreModel> Read(int id)
         {
-            return _applicationDbContext.Genres.Select(genre => new GenreModel
+            return await _applicationDbContext.Genres.Select(genre => new GenreModel
             {
                 ID = genre.ID,
                 Name = genre.Name,
-            }).FirstOrDefault(x => x.ID == id);
+            }).FirstOrDefaultAsync(x => x.ID == id);
         }
 
-        public IEnumerable<GenreModel> ReadAll()
+        public async Task<IEnumerable<GenreModel>> ReadAll()
         {
-            return _applicationDbContext.Genres.Select(genre => new GenreModel
+            return await _applicationDbContext.Genres.Select(genre => new GenreModel
             {
                 ID = genre.ID,
                 Name = genre.Name,
-            }).ToList();
+            }).ToListAsync();
         }
 
         public async Task<AdminGenreModel> Update(AdminGenreModel adminGenreModel)

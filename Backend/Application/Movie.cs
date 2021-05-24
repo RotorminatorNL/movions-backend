@@ -1,4 +1,5 @@
 ﻿using Application.Validation;
+using Microsoft.EntityFrameworkCore;
 using PersistenceInterface;
 using System;
 using System.Collections.Generic;
@@ -54,9 +55,9 @@ namespace Application
             return null;
         }
 
-        public MovieModel Read(int id)
+        public async Task<MovieModel> Read(int id)
         {
-            return _applicationDbContext.Movies.Select(movie => new MovieModel
+            return await _applicationDbContext.Movies.Select(movie => new MovieModel
             {
                 ID = movie.ID,
                 Description = movie.Description,
@@ -68,19 +69,19 @@ namespace Application
                 Length = movie.Length,
                 ReleaseDate = DateTime.Parse(movie.ReleaseDate),
                 Title = movie.Title
-            }).FirstOrDefault(x => x.ID == id);
+            }).FirstOrDefaultAsync(x => x.ID == id);
         }
 
-        public IEnumerable<MovieModel> ReadAll()
+        public async Task<IEnumerable<MovieModel>> ReadAll()
         {
-            return _applicationDbContext.Movies.Select(movie => new MovieModel
+            return await _applicationDbContext.Movies.Select(movie => new MovieModel
             {
                 ID = movie.ID,
                 Description = movie.Description,
                 Length = movie.Length,
                 ReleaseDate = DateTime.Parse(movie.ReleaseDate),
                 Title = movie.Title
-            }).ToList();
+            }).ToListAsync();
         }
 
         public async Task<AdminMovieModel> Update(AdminMovieModel adminMovieModel)

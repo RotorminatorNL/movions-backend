@@ -1,6 +1,7 @@
 ﻿using Application;
 using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -9,41 +10,76 @@ namespace API.Controllers
     [Route("[controller]/[action]")]
     public class GenreController : Controller
     {
-        private readonly Genre Genre;
+        private readonly Genre genre;
 
         public GenreController(IApplicationDbContext applicationDbContext)
         {
-            Genre = new Genre(applicationDbContext);
+            genre = new Genre(applicationDbContext);
         }
 
         [HttpPost()]
-        public async Task<IActionResult> Create(AdminGenreModel adminGenreModel)
+        public async Task<IActionResult> Create([FromBody] AdminGenreModel adminGenreModel)
         {
-            return Ok(await Genre.Create(adminGenreModel));
+            var result = await genre.Create(adminGenreModel);
+
+            if (result != null)
+            {
+                return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Read(int id)
+        public async Task<IActionResult> Read(int id)
         {
-            return Ok(Genre.Read(id));
+            var result = await genre.Read(id);
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpGet()]
-        public IActionResult ReadAll()
+        public async Task<IActionResult> ReadAll()
         {
-            return Ok(Genre.ReadAll());
+            var result = await genre.ReadAll();
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(AdminGenreModel adminCompanyModel)
+        public async Task<IActionResult> Update([FromBody] AdminGenreModel adminGenreModel)
         {
-            return Ok(await Genre.Update(adminCompanyModel));
+            var result = await genre.Update(adminGenreModel);
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok(await Genre.Delete(id));
+            var result = await genre.Delete(id);
+
+            if (result != true)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
     }
 }

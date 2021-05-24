@@ -1,4 +1,5 @@
 ﻿using Application.Validation;
+using Microsoft.EntityFrameworkCore;
 using PersistenceInterface;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,22 +41,22 @@ namespace Application
             return null;
         }
 
-        public LanguageModel Read(int id)
+        public async Task<LanguageModel> Read(int id)
         {
-            return _applicationDbContext.Languages.ToList().Select(language => new LanguageModel
+            return await _applicationDbContext.Languages.Select(language => new LanguageModel
             {
                 ID = language.ID,
                 Name = language.Name,
-            }).FirstOrDefault(x => x.ID == id);
+            }).FirstOrDefaultAsync(x => x.ID == id);
         }
 
-        public IEnumerable<LanguageModel> ReadAll()
+        public async Task<IEnumerable<LanguageModel>> ReadAll()
         {
-            return _applicationDbContext.Languages.Select(language => new LanguageModel
+            return await _applicationDbContext.Languages.Select(language => new LanguageModel
             {
                 ID = language.ID,
                 Name = language.Name,
-            }).ToList();
+            }).ToListAsync();
         }
 
         public async Task<AdminLanguageModel> Update(AdminLanguageModel adminLanguageModel) 

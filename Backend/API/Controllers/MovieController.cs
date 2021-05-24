@@ -1,6 +1,7 @@
 ﻿using Application;
 using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -9,41 +10,76 @@ namespace API.Controllers
     [Route("[controller]/[action]")]
     public class MovieController : Controller
     {
-        private readonly Movie Movie;
+        private readonly Movie movie;
 
         public MovieController(IApplicationDbContext applicationDbContext)
         {
-            Movie = new Movie(applicationDbContext);
+            movie = new Movie(applicationDbContext);
         }
 
         [HttpPost()]
-        public async Task<IActionResult> Create(AdminMovieModel adminMovieModel)
+        public async Task<IActionResult> Create([FromBody] AdminMovieModel adminMovieModel)
         {
-            return Ok(await Movie.Create(adminMovieModel));
+            var result = await movie.Create(adminMovieModel);
+
+            if (result != null)
+            {
+                return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Read(int id)
+        public async Task<IActionResult> Read(int id)
         {
-            return Ok(Movie.Read(id));
+            var result = await movie.Read(id);
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpGet()]
-        public IActionResult ReadAll()
+        public async Task<IActionResult> ReadAll()
         {
-            return Ok(Movie.ReadAll());
+            var result = await movie.ReadAll();
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(AdminMovieModel adminMovieModel)
+        public async Task<IActionResult> Update([FromBody] AdminMovieModel adminMovieModel)
         {
-            return Ok(await Movie.Update(adminMovieModel));
+            var result = await movie.Update(adminMovieModel);
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok(await Movie.Delete(id));
+            var result = await movie.Delete(id);
+
+            if (result != true)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
     }
 }

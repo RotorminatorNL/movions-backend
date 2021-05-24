@@ -1,6 +1,7 @@
 ﻿using Application;
 using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -9,41 +10,76 @@ namespace API.Controllers
     [Route("[controller]/[action]")]
     public class CrewMemberController : Controller
     {
-        private readonly CrewMember Genre;
+        private readonly CrewMember crewMember;
 
         public CrewMemberController(IApplicationDbContext applicationDbContext)
         {
-            Genre = new CrewMember(applicationDbContext);
+            crewMember = new CrewMember(applicationDbContext);
         }
 
         [HttpPost()]
-        public async Task<IActionResult> Create(AdminCrewMemberModel adminCrewRoleModel)
+        public async Task<IActionResult> Create([FromBody] AdminCrewMemberModel adminCrewMemberModel)
         {
-            return Ok(await Genre.Create(adminCrewRoleModel));
+            var result = await crewMember.Create(adminCrewMemberModel);
+
+            if (result != null)
+            {
+                return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Read(int id)
+        public async Task<IActionResult> Read(int id)
         {
-            return Ok(Genre.Read(id));
+            var result = await crewMember.Read(id);
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpGet()]
-        public IActionResult ReadAll()
+        public async Task<IActionResult> ReadAll()
         {
-            return Ok(Genre.ReadAll());
+            var result = await crewMember.ReadAll();
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(AdminCrewMemberModel adminCompanyModel)
+        public async Task<IActionResult> Update([FromBody] AdminCrewMemberModel adminCrewMemberModel)
         {
-            return Ok(await Genre.Update(adminCompanyModel));
+            var result = await crewMember.Update(adminCrewMemberModel);
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok(await Genre.Delete(id));
+            var result = await crewMember.Delete(id);
+
+            if (result != true)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
     }
 }
