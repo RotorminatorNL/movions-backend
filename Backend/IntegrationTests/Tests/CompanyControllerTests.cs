@@ -51,10 +51,10 @@ namespace IntegrationTests
         public static IEnumerable<object[]> CreateInvalidInputData()
         {
             string name = "Name";
-            CompanyTypes companyType = CompanyTypes.Distributor;
+            CompanyTypes companyType = CompanyTypes.Producer;
 
-            // both = null
-            yield return new object[] { null, null, new string[] { "Name", "CompanyType" } };
+            // name = null | companyType = 100 (does not exists)
+            yield return new object[] { null, 100, new string[] { "Name", "CompanyType" } };
             // name = null
             yield return new object[] { null, companyType, new string[] { "Name" } };
             // name = empty
@@ -87,7 +87,8 @@ namespace IntegrationTests
             #endregion
 
             #region Assert
-            var errors = actualCompany.GetProperty("errors").EnumerateObject();
+            var errorProp = actualCompany.GetProperty("errors");
+            var errors = errorProp.EnumerateObject();
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal(expectedErrors.Length, errors.Count());
