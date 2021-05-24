@@ -1,8 +1,10 @@
 ﻿using API;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PersistenceInterface;
 using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace IntegrationTests
@@ -10,28 +12,30 @@ namespace IntegrationTests
     public class IntegrationTestSetup : IClassFixture<ApiFactory<Startup>>, IDisposable
     {
         private readonly ApiFactory<Startup> _apiFactory;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private IServiceScope _serviceScope;
+        private readonly IServiceScope _serviceScope;
 
         public IntegrationTestSetup(ApiFactory<Startup> factory)
         {
             _apiFactory = factory;
-            _serviceScopeFactory = factory.Services.GetService<IServiceScopeFactory>();
+            _serviceScope = _apiFactory.Services.GetService<IServiceScopeFactory>()?.CreateScope();
         }
 
-        protected IApplicationDbContext CreateDbContext()
+        protected IApplicationDbContext GetDbContext()
         {
-            _serviceScope = _serviceScopeFactory?.CreateScope();
-            var dbContext = _serviceScope.ServiceProvider.GetService<IApplicationDbContext>();
+            return _serviceScope.ServiceProvider.GetService<IApplicationDbContext>();
+        }
 
-            return dbContext;
+        protected async Task DeleteDbContent()
+        {
+            if (_serviceScope.ServiceProvider.GetService<IApplicationDbContext>() is DbContext dbContext)
+            {
+                await dbContext.Database.EnsureDeletedAsync();
+            }
         }
 
         protected HttpClient CreateHttpClient()
         {
-            var client = _apiFactory.CreateClient();
-
-            return client;
+            return _apiFactory.CreateClient();
         }
 
         public void Dispose()
