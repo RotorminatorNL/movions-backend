@@ -1,6 +1,7 @@
 ﻿using Domain.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -9,12 +10,16 @@ namespace Application
     public class AdminCrewMemberModel
     {
         [JsonPropertyName("id")]
+        [Required]
         public int ID { get; set; }
 
         [JsonPropertyName("characterName")]
+        [Required]
         public string CharacterName { get; set; }
 
+        [EnumDataType(typeof(CrewRoles))]
         [JsonPropertyName("role")]
+        [Required]
         public CrewRoles Role { get; set; }
 
         [JsonPropertyName("movieID")]
