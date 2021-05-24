@@ -54,18 +54,18 @@ namespace IntegrationTests
             CompanyTypes companyType = CompanyTypes.Producer;
 
             // name = null | companyType = 100 (does not exists)
-            yield return new object[] { null, 100, new string[] { "Name", "CompanyType" } };
+            yield return new object[] { null, 100, new string[] { "Name", "Type" } };
             // name = null
             yield return new object[] { null, companyType, new string[] { "Name" } };
             // name = empty
             yield return new object[] { "", companyType, new string[] { "Name" } };
             // companyType = 100 (does not exists)
-            yield return new object[] { name, 100, new string[] { "CompanyType" } };
+            yield return new object[] { name, 100, new string[] { "Type" } };
         }
 
         [Theory]
         [MemberData(nameof(CreateInvalidInputData))]
-        public async Task Create_InvalidInput_ReturnsJsonResponseAndBadRequest(string name, CompanyTypes companyType, string[] expectedErrors)
+        public async Task Create_InvalidInput_ReturnsJsonResponseAndBadRequest(string name, CompanyTypes companyType, IEnumerable<string> expectedErrors)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -91,7 +91,8 @@ namespace IntegrationTests
             var errors = errorProp.EnumerateObject();
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal(expectedErrors.Length, errors.Count());
+            Assert.Equal(expectedErrors.Count(), errors.Count());
+            Assert.All(expectedErrors, error => Assert.Contains(error, errors.Select(prop => prop.Name)));
             #endregion
         }
     }
