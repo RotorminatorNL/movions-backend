@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Persistence;
 using PersistenceInterface;
+using System;
 using System.Linq;
 
 namespace IntegrationTests
@@ -12,6 +13,8 @@ namespace IntegrationTests
     public class ApiFactory<TEntryPoint> : 
         WebApplicationFactory<TEntryPoint> where TEntryPoint : class
     {
+        private readonly string dbName = "movions_testdb";
+
         protected override IHostBuilder CreateHostBuilder() =>
             base.CreateHostBuilder().UseEnvironment("Testing");
 
@@ -25,7 +28,7 @@ namespace IntegrationTests
                 services.Remove(descriptor);
 
                 services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(options =>
-                    options.UseInMemoryDatabase(databaseName: "movions_testdb"));
+                    options.UseInMemoryDatabase(databaseName: dbName));
             });
         }
     }
