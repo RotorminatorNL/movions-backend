@@ -112,7 +112,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualCompany = appCompany.Read(id);
+            var actualCompany = await appCompany.Read(id);
             #endregion
 
             #region Assert
@@ -142,7 +142,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualCompany = appCompany.Read(id);
+            var actualCompany = await appCompany.Read(id);
             #endregion
 
             #region Assert
@@ -174,7 +174,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var result = appCompany.ReadAll();
+            var result = await appCompany.ReadAll();
             #endregion
 
             #region Assert
@@ -196,7 +196,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var result = appCompany.ReadAll();
+            var result = await appCompany.ReadAll();
             #endregion
 
             #region Assert

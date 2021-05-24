@@ -102,7 +102,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualGenre = appGenre.Read(id);
+            var actualGenre = await appGenre.Read(id);
             #endregion
 
             #region Assert
@@ -131,7 +131,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualGenre = appGenre.Read(id);
+            var actualGenre = await appGenre.Read(id);
             #endregion
 
             #region Assert
@@ -162,7 +162,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var result = appGenre.ReadAll();
+            var result = await appGenre.ReadAll();
             #endregion
 
             #region Assert
@@ -184,7 +184,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var result = appGenre.ReadAll();
+            var result = await appGenre.ReadAll();
             #endregion
 
             #region Assert

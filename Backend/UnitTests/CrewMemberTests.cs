@@ -114,7 +114,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualCrewMember = appCrewMember.Read(id);
+            var actualCrewMember = await appCrewMember.Read(id);
             #endregion
 
             #region Assert
@@ -144,7 +144,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualCrewMember = appCrewMember.Read(id);
+            var actualCrewMember = await appCrewMember.Read(id);
             #endregion
 
             #region Assert
@@ -176,7 +176,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var result = appCrewMember.ReadAll();
+            var result = await appCrewMember.ReadAll();
             #endregion
 
             #region Assert
@@ -198,7 +198,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var result = appCrewMember.ReadAll();
+            var result = await appCrewMember.ReadAll();
             #endregion
 
             #region Assert

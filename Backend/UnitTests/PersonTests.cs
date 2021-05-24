@@ -143,7 +143,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualPerson = appPerson.Read(id);
+            var actualPerson = await appPerson.Read(id);
             #endregion
 
             #region Assert
@@ -176,7 +176,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualPerson = appPerson.Read(id);
+            var actualPerson = await appPerson.Read(id);
             #endregion
 
             #region Assert
@@ -211,7 +211,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var result = appPerson.ReadAll();
+            var result = await appPerson.ReadAll();
             #endregion
 
             #region Assert
@@ -233,7 +233,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var result = appPerson.ReadAll();
+            var result = await appPerson.ReadAll();
             #endregion
 
             #region Assert

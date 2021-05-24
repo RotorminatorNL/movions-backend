@@ -172,7 +172,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualMovie = appMovie.Read(id);
+            var actualMovie = await appMovie.Read(id);
             #endregion
 
             #region Assert
@@ -218,7 +218,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualMovie = appMovie.Read(id);
+            var actualMovie = await appMovie.Read(id);
             #endregion
 
             #region Assert
@@ -251,7 +251,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var result = appMovie.ReadAll();
+            var result = await appMovie.ReadAll();
             #endregion
 
             #region Assert
@@ -275,7 +275,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var result = appMovie.ReadAll();
+            var result = await appMovie.ReadAll();
             #endregion
 
             #region Assert

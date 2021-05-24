@@ -102,7 +102,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualLanguage = appLanguage.Read(id);
+            var actualLanguage = await appLanguage.Read(id);
             #endregion
 
             #region Assert
@@ -131,7 +131,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualLanguage = appLanguage.Read(id);
+            var actualLanguage = await appLanguage.Read(id);
             #endregion
 
             #region Assert
@@ -162,7 +162,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var result = appLanguage.ReadAll();
+            var result = await appLanguage.ReadAll();
             #endregion
 
             #region Assert
@@ -184,7 +184,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var result = appLanguage.ReadAll();
+            var result = await appLanguage.ReadAll();
             #endregion
 
             #region Assert
