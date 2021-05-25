@@ -53,6 +53,10 @@ namespace IntegrationTests
             string name = "Name";
             CompanyTypes companyType = CompanyTypes.Producer;
 
+            // object = null
+            yield return new object[] { "null", 0, new string[] { "" } };
+            // object = wrong model
+            yield return new object[] { "wrongModel", 0, new string[] { "$.type" } };
             // name = null | companyType = 100 (does not exists)
             yield return new object[] { null, 100, new string[] { "Name", "Type" } };
             // name = null
@@ -78,10 +82,15 @@ namespace IntegrationTests
                 Name = name,
                 Type = companyType
             };
+            invalidCompanyData = invalidCompanyData.Name == "null" ? null : invalidCompanyData;
+
+            var wrongModel = new CompanyModel { Name = name, Type = companyType.ToString() };
             #endregion
 
             #region Act
-            var response = await client.PostAsJsonAsync("/company/create", invalidCompanyData);
+            var response = name == "wrongModel" 
+                ? await client.PostAsJsonAsync("/company/create", wrongModel) 
+                : await client.PostAsJsonAsync("/company/create", invalidCompanyData);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
             #endregion

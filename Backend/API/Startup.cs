@@ -45,6 +45,11 @@ namespace API
                 );
             }
 
+            services.AddControllers(options =>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+            });
+
             services.AddCors(options =>
             {
                 options.AddPolicy(name: AllowFrontend,
@@ -54,11 +59,6 @@ namespace API
                            .AllowAnyHeader()
                            .AllowAnyMethod();
                 });
-            });
-
-            services.AddControllers(options =>
-            {
-                options.SuppressAsyncSuffixInActionNames = false;
             });
         }
 

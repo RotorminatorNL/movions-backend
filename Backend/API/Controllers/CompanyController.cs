@@ -27,7 +27,7 @@ namespace API.Controllers
                 return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
             }
 
-            return StatusCode((int)HttpStatusCode.BadRequest);
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet("{id}")]
