@@ -1,6 +1,7 @@
 ﻿using Application;
 using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -20,9 +21,7 @@ namespace API.Controllers
         [HttpPost()]
         public async Task<IActionResult> Create([FromBody] AdminCompanyModel adminCompanyModel)
         {
-            var result = await company.Create(adminCompanyModel);
-
-            if (result != null)
+            if (await company.Create(adminCompanyModel) is AdminCompanyModel result && result != null)
             {
                 return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
             }
@@ -33,9 +32,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Read(int id)
         {
-            var result = await company.Read(id);
-
-            if (result != null)
+            if (await company.Read(id) is CompanyModel result && result != null)
             {
                 return Ok(result);
             }
@@ -46,22 +43,18 @@ namespace API.Controllers
         [HttpGet()]
         public async Task<IActionResult> ReadAll()
         {
-            var result = await company.ReadAll();
-
-            if (result != null)
+            if (await company.ReadAll() is ICollection<CompanyModel> result && result.Count > 0)
             {
                 return Ok(result);
             }
 
-            return NotFound();
+            return NoContent();
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] AdminCompanyModel adminCompanyModel)
         {
-            var result = await company.Update(adminCompanyModel);
-
-            if (result != null)
+            if (await company.Update(adminCompanyModel) is AdminCompanyModel result && result != null)
             {
                 return Ok(result);
             }
@@ -72,11 +65,9 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await company.Delete(id);
-
-            if (result != true)
+            if (await company.Delete(id))
             {
-                return Ok(result);
+                return Ok();
             }
 
             return NotFound();
