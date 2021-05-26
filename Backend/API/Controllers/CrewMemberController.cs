@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]")]
     public class CrewMemberController : Controller
     {
         private readonly CrewMember crewMember;
@@ -17,7 +17,7 @@ namespace API.Controllers
             crewMember = new CrewMember(applicationDbContext);
         }
 
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminCrewMemberModel adminCrewMemberModel)
         {
             var result = await crewMember.Create(adminCrewMemberModel);
@@ -43,7 +43,7 @@ namespace API.Controllers
             return NotFound();
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> ReadAll()
         {
             var result = await crewMember.ReadAll();

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]")]
     public class LanguageController : Controller
     {
         private readonly Language language;
@@ -17,7 +17,7 @@ namespace API.Controllers
             language = new Language(applicationDbContext);
         }
 
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminLanguageModel adminLanguageModel)
         {
             var result = await language.Create(adminLanguageModel);
@@ -43,7 +43,7 @@ namespace API.Controllers
             return NotFound();
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> ReadAll()
         {
             var result = await language.ReadAll();

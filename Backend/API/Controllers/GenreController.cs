@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]")]
     public class GenreController : Controller
     {
         private readonly Genre genre;
@@ -17,7 +17,7 @@ namespace API.Controllers
             genre = new Genre(applicationDbContext);
         }
 
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminGenreModel adminGenreModel)
         {
             var result = await genre.Create(adminGenreModel);
@@ -43,7 +43,7 @@ namespace API.Controllers
             return NotFound();
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> ReadAll()
         {
             var result = await genre.ReadAll();

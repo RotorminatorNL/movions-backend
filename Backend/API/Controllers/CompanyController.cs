@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]")]
     public class CompanyController : Controller
     {
         private readonly Company company;
@@ -18,7 +18,7 @@ namespace API.Controllers
             company = new Company(applicationDbContext);
         }
 
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminCompanyModel adminCompanyModel)
         {
             if (await company.Create(adminCompanyModel) is AdminCompanyModel result && result != null)
@@ -40,7 +40,7 @@ namespace API.Controllers
             return NotFound();
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> ReadAll()
         {
             if (await company.ReadAll() is ICollection<CompanyModel> result && result.Count > 0)

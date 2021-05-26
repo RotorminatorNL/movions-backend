@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]")]
     public class MovieController : Controller
     {
         private readonly Movie movie;
@@ -17,7 +17,7 @@ namespace API.Controllers
             movie = new Movie(applicationDbContext);
         }
 
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminMovieModel adminMovieModel)
         {
             var result = await movie.Create(adminMovieModel);
@@ -43,7 +43,7 @@ namespace API.Controllers
             return NotFound();
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> ReadAll()
         {
             var result = await movie.ReadAll();
