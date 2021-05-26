@@ -19,7 +19,7 @@ namespace IntegrationTests
 
         [Theory]
         [InlineData("Name", CompanyTypes.Producer)]
-        public async Task Create_ValidInput_ReturnsJsonResponseAndCreated(string name, CompanyTypes companyType)
+        public async Task Create_ValidRequest_ReturnsJsonResponseAndCreated(string name, CompanyTypes companyType)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -48,7 +48,7 @@ namespace IntegrationTests
             #endregion
         }
 
-        public static IEnumerable<object[]> CreateInvalidInputData()
+        public static IEnumerable<object[]> CreateInvalidRequestData()
         {
             string name = "Name";
             CompanyTypes companyType = CompanyTypes.Producer;
@@ -68,8 +68,8 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [MemberData(nameof(CreateInvalidInputData))]
-        public async Task Create_InvalidInput_ReturnsJsonResponseAndBadRequest(string name, CompanyTypes companyType, IEnumerable<string> expectedErrors)
+        [MemberData(nameof(CreateInvalidRequestData))]
+        public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequest(string name, CompanyTypes companyType, IEnumerable<string> expectedErrors)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -93,15 +93,137 @@ namespace IntegrationTests
                 : await client.PostAsJsonAsync("/company/create", invalidCompanyData);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
+
+            var errorProp = actualCompany.GetProperty("errors");
+            var errors = errorProp.EnumerateObject();
             #endregion
 
             #region Assert
-            var errorProp = actualCompany.GetProperty("errors");
-            var errors = errorProp.EnumerateObject();
-
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal(expectedErrors.Count(), errors.Count());
             Assert.All(expectedErrors, error => Assert.Contains(error, errors.Select(prop => prop.Name)));
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(1)]
+        public async Task Read_ValidRequest_ReturnsJsonResponseAndOk(int id)
+        {
+            #region Arrange 
+            await DeleteDbContent();
+
+            var client = CreateHttpClient();
+            var dbContext = GetDbContext();
+
+            dbContext.Companies.Add(new Domain.Company
+            {
+                Name = "Name",
+                Type = CompanyTypes.Producer
+            });
+            await dbContext.SaveChangesAsync();
+
+            var expectedCompany = new CompanyModel
+            {
+                ID = 1,
+                Name = "Name",
+                Type = CompanyTypes.Producer.ToString()
+            };
+            #endregion
+
+            #region Act
+            var response = await client.GetAsync($"/company/read/{id}");
+            var responseBody = await response.Content.ReadAsStreamAsync();
+            var actualCompany = await JsonSerializer.DeserializeAsync<CompanyModel>(responseBody);
+            #endregion
+
+            #region Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(expectedCompany.ID, actualCompany.ID);
+            Assert.Equal(expectedCompany.Name, actualCompany.Name);
+            Assert.Equal(expectedCompany.Type, actualCompany.Type);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(2)]
+        public async Task Read_InvalidRequest_ReturnsJsonResponseAndBadRequest(int id)
+        {
+            #region Arrange 
+            await DeleteDbContent();
+
+            var client = CreateHttpClient();
+            var dbContext = GetDbContext();
+
+            dbContext.Companies.Add(new Domain.Company
+            {
+                Name = "Name",
+                Type = CompanyTypes.Producer
+            });
+            await dbContext.SaveChangesAsync();
+            #endregion
+
+            #region Act
+            var response = await client.GetAsync($"/company/read/{id}");
+            #endregion
+
+            #region Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            #endregion
+        }
+
+        [Fact]
+        public async Task ReadAll_CompaniesExist_ReturnsJsonResponseAndOk()
+        {
+            #region Arrange 
+            await DeleteDbContent();
+
+            var client = CreateHttpClient();
+            var dbContext = GetDbContext();
+
+            dbContext.Companies.Add(new Domain.Company
+            {
+                Name = "Name",
+                Type = CompanyTypes.Producer
+            }); 
+            dbContext.Companies.Add(new Domain.Company
+            {
+                Name = "Some other company",
+                Type = CompanyTypes.Distributor
+            });
+            await dbContext.SaveChangesAsync();
+
+            int expectedCompanyCount = 2;
+            #endregion
+
+            #region Act
+            var response = await client.GetAsync("/company/readall");
+            var responseBody = await response.Content.ReadAsStreamAsync();
+            var actualCompanies = await JsonSerializer.DeserializeAsync<IEnumerable<CompanyModel>>(responseBody);
+            #endregion
+
+            #region Assert
+            Assert.NotNull(actualCompanies);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(expectedCompanyCount, actualCompanies.Count());
+            #endregion
+        }
+
+        [Fact]
+        public async Task ReadAll_NoCompaniesExist_ReturnsJsonResponseAndNoContent()
+        {
+            #region Arrange 
+            await DeleteDbContent();
+
+            var client = CreateHttpClient();
+            #endregion
+
+            #region Act
+            var response = await client.GetAsync("/company/readall");
+            #endregion
+
+            #region Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             #endregion
         }
     }
