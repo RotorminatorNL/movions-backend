@@ -1,6 +1,7 @@
 ﻿using Application;
 using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -20,22 +21,18 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminGenreModel adminGenreModel)
         {
-            var result = await genre.Create(adminGenreModel);
-
-            if (result != null)
+            if (await genre.Create(adminGenreModel) is AdminGenreModel result && result != null)
             {
                 return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
             }
 
-            return StatusCode((int)HttpStatusCode.BadRequest);
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Read(int id)
         {
-            var result = await genre.Read(id);
-
-            if (result != null)
+            if (await genre.Read(id) is GenreModel result && result != null)
             {
                 return Ok(result);
             }
@@ -46,9 +43,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> ReadAll()
         {
-            var result = await genre.ReadAll();
-
-            if (result != null)
+            if (await genre.ReadAll() is ICollection<GenreModel> result && result.Count > 0)
             {
                 return Ok(result);
             }
@@ -59,9 +54,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] AdminGenreModel adminGenreModel)
         {
-            var result = await genre.Update(adminGenreModel);
-
-            if (result != null)
+            if (await genre.Update(adminGenreModel) is AdminGenreModel result && result != null)
             {
                 return Ok(result);
             }
@@ -72,11 +65,9 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await genre.Delete(id);
-
-            if (result != true)
+            if (await genre.Delete(id))
             {
-                return Ok(result);
+                return Ok();
             }
 
             return NotFound();

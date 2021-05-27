@@ -14,8 +14,7 @@ namespace IntegrationTests
     public class CompanyControllerTests : IntegrationTestSetup
     {
         public CompanyControllerTests(ApiFactory<Startup> factory)
-            : base(factory)
-        { }
+            : base(factory) { }
 
         [Theory]
         [InlineData("Name", CompanyTypes.Producer)]

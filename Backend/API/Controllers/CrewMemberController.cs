@@ -1,6 +1,7 @@
 ﻿using Application;
 using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -20,22 +21,18 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminCrewMemberModel adminCrewMemberModel)
         {
-            var result = await crewMember.Create(adminCrewMemberModel);
-
-            if (result != null)
+            if (await crewMember.Create(adminCrewMemberModel) is AdminCrewMemberModel result && result != null)
             {
                 return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
             }
 
-            return StatusCode((int)HttpStatusCode.BadRequest);
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Read(int id)
         {
-            var result = await crewMember.Read(id);
-
-            if (result != null)
+            if (await crewMember.Read(id) is CrewMemberModel result && result != null)
             {
                 return Ok(result);
             }
@@ -46,9 +43,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> ReadAll()
         {
-            var result = await crewMember.ReadAll();
-
-            if (result != null)
+            if (await crewMember.ReadAll() is ICollection<CrewMemberModel> result && result.Count > 0)
             {
                 return Ok(result);
             }
@@ -59,9 +54,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] AdminCrewMemberModel adminCrewMemberModel)
         {
-            var result = await crewMember.Update(adminCrewMemberModel);
-
-            if (result != null)
+            if (await crewMember.Update(adminCrewMemberModel) is AdminCrewMemberModel result && result != null)
             {
                 return Ok(result);
             }
@@ -72,11 +65,9 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await crewMember.Delete(id);
-
-            if (result != true)
+            if (await crewMember.Delete(id))
             {
-                return Ok(result);
+                return Ok();
             }
 
             return NotFound();

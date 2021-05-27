@@ -1,6 +1,7 @@
 ﻿using Application;
 using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -20,9 +21,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminPersonModel adminPersonModel)
         {
-            var result = await person.Create(adminPersonModel);
-
-            if (result != null)
+            if (await person.Create(adminPersonModel) is AdminPersonModel result && result != null)
             {
                 return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
             }
@@ -33,9 +32,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Read(int id)
         {
-            var result = await person.Read(id);
-
-            if (result != null)
+            if (await person.Read(id) is PersonModel result && result != null)
             {
                 return Ok(result);
             }
@@ -46,9 +43,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> ReadAll()
         {
-            var result = await person.ReadAll();
-
-            if (result != null)
+            if (await person.ReadAll() is ICollection<PersonModel> result && result.Count > 0)
             {
                 return Ok(result);
             }
@@ -59,9 +54,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] AdminPersonModel adminPersonModel)
         {
-            var result = await person.Update(adminPersonModel);
-
-            if (result != null)
+            if (await person.Update(adminPersonModel) is AdminPersonModel result && result != null)
             {
                 return Ok(result);
             }
@@ -72,11 +65,9 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await person.Delete(id);
-
-            if (result != true)
+            if (await person.Delete(id))
             {
-                return Ok(result);
+                return Ok();
             }
 
             return NotFound();

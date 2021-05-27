@@ -1,6 +1,7 @@
 ﻿using Application;
 using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -20,9 +21,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminMovieModel adminMovieModel)
         {
-            var result = await movie.Create(adminMovieModel);
-
-            if (result != null)
+            if (await movie.Create(adminMovieModel) is AdminMovieModel result && result != null)
             {
                 return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
             }
@@ -33,9 +32,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Read(int id)
         {
-            var result = await movie.Read(id);
-
-            if (result != null)
+            if (await movie.Read(id) is MovieModel result && result != null)
             {
                 return Ok(result);
             }
@@ -46,9 +43,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> ReadAll()
         {
-            var result = await movie.ReadAll();
-
-            if (result != null)
+            if (await movie.ReadAll() is ICollection<MovieModel> result && result.Count > 0)
             {
                 return Ok(result);
             }
@@ -59,9 +54,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] AdminMovieModel adminMovieModel)
         {
-            var result = await movie.Update(adminMovieModel);
-
-            if (result != null)
+            if (await movie.Update(adminMovieModel) is AdminMovieModel result && result != null)
             {
                 return Ok(result);
             }
@@ -72,11 +65,9 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await movie.Delete(id);
-
-            if (result != true)
+            if (await movie.Delete(id))
             {
-                return Ok(result);
+                return Ok();
             }
 
             return NotFound();

@@ -1,6 +1,7 @@
 ﻿using Application;
 using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -20,9 +21,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminLanguageModel adminLanguageModel)
         {
-            var result = await language.Create(adminLanguageModel);
-
-            if (result != null)
+            if (await language.Create(adminLanguageModel) is AdminLanguageModel result && result != null)
             {
                 return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
             }
@@ -33,9 +32,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Read(int id)
         {
-            var result = await language.Read(id);
-
-            if (result != null)
+            if (await language.Read(id) is LanguageModel result && result != null)
             {
                 return Ok(result);
             }
@@ -46,9 +43,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> ReadAll()
         {
-            var result = await language.ReadAll();
-
-            if (result != null)
+            if (await language.ReadAll() is ICollection<LanguageModel> result && result.Count > 0)
             {
                 return Ok(result);
             }
@@ -59,9 +54,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] AdminLanguageModel adminLanguageModel)
         {
-            var result = await language.Update(adminLanguageModel);
-
-            if (result != null)
+            if (await language.Update(adminLanguageModel) is AdminLanguageModel result && result != null)
             {
                 return Ok(result);
             }
@@ -72,11 +65,9 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await language.Delete(id);
-
-            if (result != true)
+            if (await language.Delete(id))
             {
-                return Ok(result);
+                return Ok();
             }
 
             return NotFound();
