@@ -2,99 +2,103 @@
 using Application.AdminModels;
 using Application.ViewModels;
 using Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace IntegrationTests
 {
-    public class CompanyControllerTests : IntegrationTestSetup
+    public class CrewMemberControllerTests : IntegrationTestSetup
     {
-        public CompanyControllerTests(ApiFactory<Startup> factory)
+        public CrewMemberControllerTests(ApiFactory<Startup> factory)
             : base(factory) { }
 
         [Theory]
-        [InlineData("Name", CompanyTypes.Producer)]
-        public async Task Create_ValidRequest_ReturnsJsonResponseAndCreated(string name, CompanyTypes companyType)
+        [InlineData("Character Name", CrewRoles.Actor)]
+        [InlineData(null, CrewRoles.Director)]
+        public async Task Create_ValidRequest_ReturnsJsonResponseAndCreated(string name, CrewRoles crewRole)
         {
             #region Arrange 
             await DeleteDbContent();
 
             var client = CreateHttpClient();
 
-            var expectedCompany = new AdminCompanyModel
+            var expectedCrewMember = new AdminCrewMemberModel
             {
                 ID = 1,
-                Name = name,
-                Type = companyType
+                CharacterName = name,
+                Role = crewRole
             };
             #endregion
 
             #region Act
-            var response = await client.PostAsJsonAsync("/api/company", expectedCompany);
+            var response = await client.PostAsJsonAsync("/api/crewmember", expectedCrewMember);
             var responseBody = await response.Content.ReadAsStreamAsync();
-            var actualCompany = await JsonSerializer.DeserializeAsync<AdminCompanyModel>(responseBody);
+            var actualCrewMember = await JsonSerializer.DeserializeAsync<AdminCrewMemberModel>(responseBody);
             #endregion
 
             #region Assert
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-            Assert.Equal(expectedCompany.ID, actualCompany.ID);
-            Assert.Equal(expectedCompany.Name, actualCompany.Name);
-            Assert.Equal(expectedCompany.Type, actualCompany.Type);
+            Assert.Equal(expectedCrewMember.ID, actualCrewMember.ID);
+            Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
+            Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
             #endregion
         }
 
         public static IEnumerable<object[]> CreateInvalidRequestData()
         {
-            string name = "Name";
-            CompanyTypes companyType = CompanyTypes.Producer;
+            string characterName = "Name";
+            CrewRoles crewRoleActor = CrewRoles.Actor;
+            CrewRoles crewRoleDirector = CrewRoles.Director;
 
             // object = null
             yield return new object[] { "null", 0, new string[] { "" } };
             // object = wrong model
             yield return new object[] { "wrongModel", 0, new string[] { "$" } };
-            // name = null | companyType = 100 (does not exists)
-            yield return new object[] { null, 100, new string[] { "Name", "Type" } };
-            // name = null
-            yield return new object[] { null, companyType, new string[] { "Name" } };
-            // name = empty
-            yield return new object[] { "", companyType, new string[] { "Name" } };
-            // companyType = 100 (does not exists)
-            yield return new object[] { name, 100, new string[] { "Type" } };
+            // Actor should have a character name
+            yield return new object[] { null, crewRoleActor, new string[] { "CharacterName" } };
+            // Actor should have a character name
+            yield return new object[] { "", crewRoleActor, new string[] { "CharacterName" } };
+            // Director should not have a character name
+            yield return new object[] { characterName, crewRoleDirector, new string[] { "CharacterName" } };
+            // crewRole = 100 (does not exists)
+            yield return new object[] { characterName, 100, new string[] { "Role" } };
         }
 
         [Theory]
         [MemberData(nameof(CreateInvalidRequestData))]
-        public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequest(string name, CompanyTypes companyType, IEnumerable<string> expectedErrors)
+        public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequest(string characterName, CrewRoles crewRole, IEnumerable<string> expectedErrors)
         {
             #region Arrange 
             await DeleteDbContent();
 
             var client = CreateHttpClient();
 
-            var invalidCompanyData = new AdminCompanyModel
+            var invalidCompanyData = new AdminCrewMemberModel
             {
                 ID = 1,
-                Name = name,
-                Type = companyType
+                CharacterName = characterName,
+                Role = crewRole
             };
-            invalidCompanyData = invalidCompanyData.Name == "null" ? null : invalidCompanyData;
+            invalidCompanyData = invalidCompanyData.CharacterName == "null" ? null : invalidCompanyData;
 
-            var wrongModel = new object[] { 1, null, name, companyType };
+            var wrongModel = new object[] { 0, characterName, crewRole };
             #endregion
 
             #region Act
-            var response = name == "wrongModel" 
-                ? await client.PostAsJsonAsync("/api/company", wrongModel) 
-                : await client.PostAsJsonAsync("/api/company", invalidCompanyData);
+            var response = characterName == "wrongModel"
+                ? await client.PostAsJsonAsync("/api/crewmember", wrongModel)
+                : await client.PostAsJsonAsync("/api/crewmember", invalidCompanyData);
             var responseBody = await response.Content.ReadAsStreamAsync();
-            var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
+            var actualCrewMember = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
-            var errorProp = actualCompany.GetProperty("errors");
+            var errorProp = actualCrewMember.GetProperty("errors");
             var errors = errorProp.EnumerateObject();
             #endregion
 
@@ -115,32 +119,32 @@ namespace IntegrationTests
             var client = CreateHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Companies.Add(new Domain.Company
+            dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                Name = "Name",
-                Type = CompanyTypes.Producer
+                CharacterName = "Name",
+                Role = CrewRoles.Actor
             });
             await dbContext.SaveChangesAsync();
 
-            var expectedCompany = new CompanyModel
+            var expectedCrewMember = new CrewMemberModel
             {
                 ID = 1,
-                Name = "Name",
-                Type = CompanyTypes.Producer.ToString()
+                CharacterName = "Name",
+                Role = CrewRoles.Actor.ToString()
             };
             #endregion
 
             #region Act
-            var response = await client.GetAsync($"/api/company/{id}");
+            var response = await client.GetAsync($"/api/crewmember/{id}");
             var responseBody = await response.Content.ReadAsStreamAsync();
-            var actualCompany = await JsonSerializer.DeserializeAsync<CompanyModel>(responseBody);
+            var actualCrewMember = await JsonSerializer.DeserializeAsync<CrewMemberModel>(responseBody);
             #endregion
 
             #region Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedCompany.ID, actualCompany.ID);
-            Assert.Equal(expectedCompany.Name, actualCompany.Name);
-            Assert.Equal(expectedCompany.Type, actualCompany.Type);
+            Assert.Equal(expectedCrewMember.ID, actualCrewMember.ID);
+            Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
+            Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
             #endregion
         }
 
@@ -155,16 +159,15 @@ namespace IntegrationTests
             var client = CreateHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Companies.Add(new Domain.Company
+            dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                Name = "Name",
-                Type = CompanyTypes.Producer
+                Role = CrewRoles.Writer
             });
             await dbContext.SaveChangesAsync();
             #endregion
 
             #region Act
-            var response = await client.GetAsync($"/api/company/{id}");
+            var response = await client.GetAsync($"/api/crewmember/{id}");
             #endregion
 
             #region Assert
@@ -181,15 +184,14 @@ namespace IntegrationTests
             var client = CreateHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Companies.Add(new Domain.Company
+            dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                Name = "Name",
-                Type = CompanyTypes.Producer
-            }); 
-            dbContext.Companies.Add(new Domain.Company
+                CharacterName = "Name",
+                Role = CrewRoles.Actor
+            });
+            dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                Name = "Some other company",
-                Type = CompanyTypes.Distributor
+                Role = CrewRoles.Writer
             });
             await dbContext.SaveChangesAsync();
 
@@ -197,7 +199,7 @@ namespace IntegrationTests
             #endregion
 
             #region Act
-            var response = await client.GetAsync("/api/company");
+            var response = await client.GetAsync("/api/crewmember");
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCompanies = await JsonSerializer.DeserializeAsync<IEnumerable<CompanyModel>>(responseBody);
             #endregion
@@ -219,7 +221,7 @@ namespace IntegrationTests
             #endregion
 
             #region Act
-            var response = await client.GetAsync("/api/company");
+            var response = await client.GetAsync("/api/crewmember");
             #endregion
 
             #region Assert
@@ -228,8 +230,8 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(1, "Some other name", CompanyTypes.Producer)]
-        public async Task Update_ValidRequest_ReturnsJsonResponseAndOk(int id, string name, CompanyTypes companyType)
+        [InlineData(1, "Some other name", CrewRoles.Actor)]
+        public async Task Update_ValidRequest_ReturnsJsonResponseAndOk(int id, string characterName, CrewRoles crewRole)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -237,58 +239,58 @@ namespace IntegrationTests
             var client = CreateHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Companies.Add(new Domain.Company
+            dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                Name = "Name",
-                Type = CompanyTypes.Distributor
+                Role = CrewRoles.Writer
             });
             await dbContext.SaveChangesAsync();
 
-            var expectedCompany = new AdminCompanyModel
+            var expectedCrewMember = new AdminCrewMemberModel
             {
                 ID = id,
-                Name = name,
-                Type = companyType
+                CharacterName = characterName,
+                Role = crewRole
             };
             #endregion
 
             #region Act
-            var response = await client.PutAsJsonAsync($"/api/company/{expectedCompany.ID}", expectedCompany);
+            var response = await client.PutAsJsonAsync($"/api/crewmember/{expectedCrewMember.ID}", expectedCrewMember);
             var responseBody = await response.Content.ReadAsStreamAsync();
-            var actualCompany = await JsonSerializer.DeserializeAsync<AdminCompanyModel>(responseBody);
+            var actualCrewMember = await JsonSerializer.DeserializeAsync<AdminCrewMemberModel>(responseBody);
             #endregion
 
             #region Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedCompany.ID, actualCompany.ID);
-            Assert.Equal(expectedCompany.Name, actualCompany.Name);
-            Assert.Equal(expectedCompany.Type, actualCompany.Type);
+            Assert.Equal(expectedCrewMember.ID, actualCrewMember.ID);
+            Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
+            Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
             #endregion
         }
 
         public static IEnumerable<object[]> UpdateInvalidRequestData()
         {
             int id = 1;
-            string newName = "Some other name";
-            CompanyTypes newCompanyType = CompanyTypes.Producer;
+            string characterName = "Some other name";
+            CrewRoles crewRoleActor = CrewRoles.Actor;
+            CrewRoles crewRoleWriter = CrewRoles.Writer;
 
             // object = null
             yield return new object[] { 0, "null", 0, new string[] { "" } };
             // object = wrong
-            yield return new object[] { 0, "wrongModel", 0, new string[] { "$.type" } };
-            // name = null
-            yield return new object[] { id, null, newCompanyType, new string[] { "Name" } };
-            // name = empty
-            yield return new object[] { id, "", newCompanyType, new string[] { "Name" } };
+            yield return new object[] { 0, "wrongModel", 0, new string[] { "$" } };
+            // Actor should have a character name
+            yield return new object[] { id, null, crewRoleActor, new string[] { "CharacterName" } };
+            // Actor should always have a character name
+            yield return new object[] { id, "", crewRoleActor, new string[] { "CharacterName" } };
+            // Only an actor should have a character name
+            yield return new object[] { id, characterName, crewRoleWriter, new string[] { "CharacterName" } };
             // companyType = 100 (does not exist)
-            yield return new object[] { id, newName, 100, new string[] { "Type" } };
-            // name = null | companyType = 100 (does not exist)
-            yield return new object[] { id, null, 100, new string[] { "Name", "Type" } };
+            yield return new object[] { id, characterName, 100, new string[] { "Role" } };
         }
 
         [Theory]
         [MemberData(nameof(UpdateInvalidRequestData))]
-        public async Task Update_InvalidRequest_ReturnsJsonResponseAndBadRequest(int id, string name, CompanyTypes companyType, IEnumerable<string> expectedErrors)
+        public async Task Update_InvalidRequest_ReturnsJsonResponseAndBadRequest(int id, string characterName, CrewRoles crewRole, IEnumerable<string> expectedErrors)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -296,28 +298,28 @@ namespace IntegrationTests
             var client = CreateHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Companies.Add(new Domain.Company
+            dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                Name = "Name",
-                Type = CompanyTypes.Distributor
+                CharacterName = "Name",
+                Role = CrewRoles.Actor
             });
             await dbContext.SaveChangesAsync();
 
-            var expectedCompany = new AdminCompanyModel
+            var expectedCrewMember = new AdminCrewMemberModel
             {
                 ID = id,
-                Name = name,
-                Type = companyType
+                CharacterName = characterName,
+                Role = crewRole
             };
-            expectedCompany = expectedCompany.Name == "null" ? null : expectedCompany;
+            expectedCrewMember = expectedCrewMember.CharacterName == "null" ? null : expectedCrewMember;
 
-            var wrongModel = new CompanyModel { ID = id, Name = name, Type = companyType.ToString() };
+            var wrongModel = new object[] { id, characterName, crewRole };
             #endregion
 
             #region Act
-            var response = name == "wrongModel" 
-                ? await client.PutAsJsonAsync($"/api/company/{id}", wrongModel)
-                : await client.PutAsJsonAsync($"/api/company/{id}", expectedCompany);
+            var response = characterName == "wrongModel"
+                ? await client.PutAsJsonAsync($"/api/crewmember/{id}", wrongModel)
+                : await client.PutAsJsonAsync($"/api/crewmember/{id}", expectedCrewMember);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
@@ -343,23 +345,22 @@ namespace IntegrationTests
             var client = CreateHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Companies.Add(new Domain.Company
+            dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                Name = "Name",
-                Type = CompanyTypes.Distributor
+                CharacterName = "Name",
+                Role = CrewRoles.Actor
             });
             await dbContext.SaveChangesAsync();
 
-            var expectedCompany = new AdminCompanyModel
+            var expectedCrewMember = new AdminCrewMemberModel
             {
                 ID = id,
-                Name = "Some other name",
-                Type = CompanyTypes.Producer
+                Role = CrewRoles.Writer
             };
             #endregion
 
             #region Act
-            var response = await client.PutAsJsonAsync($"/api/company/{id}", expectedCompany);
+            var response = await client.PutAsJsonAsync($"/api/crewmember/{id}", expectedCrewMember);
             #endregion
 
             #region Assert
@@ -377,16 +378,16 @@ namespace IntegrationTests
             var client = CreateHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Companies.Add(new Domain.Company
+            dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                Name = "Name",
-                Type = CompanyTypes.Distributor
+                CharacterName = "Name",
+                Role = CrewRoles.Actor
             });
             await dbContext.SaveChangesAsync();
             #endregion
 
             #region Act
-            var response = await client.DeleteAsync($"/api/company/{id}");
+            var response = await client.DeleteAsync($"/api/crewmember/{id}");
             #endregion
 
             #region Assert
@@ -405,16 +406,16 @@ namespace IntegrationTests
             var client = CreateHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Companies.Add(new Domain.Company
+            dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                Name = "Name",
-                Type = CompanyTypes.Distributor
+                CharacterName = "Name",
+                Role = CrewRoles.Actor
             });
             await dbContext.SaveChangesAsync();
             #endregion
 
             #region Act
-            var response = await client.DeleteAsync($"/api/company/{id}");
+            var response = await client.DeleteAsync($"/api/crewmember/{id}");
             #endregion
 
             #region Assert
