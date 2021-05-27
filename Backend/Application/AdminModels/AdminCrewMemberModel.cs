@@ -7,14 +7,13 @@ using System.Text.Json.Serialization;
 
 namespace Application.AdminModels
 {
-    public class AdminCrewMemberModel
+    public class AdminCrewMemberModel : IValidatableObject
     {
         [JsonPropertyName("id")]
         [Required]
         public int ID { get; set; }
 
         [JsonPropertyName("characterName")]
-        [Required]
         public string CharacterName { get; set; }
 
         [EnumDataType(typeof(CrewRoles))]
@@ -33,5 +32,18 @@ namespace Application.AdminModels
 
         [JsonPropertyName("person")]
         public AdminPersonModel Person { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Role == CrewRoles.Actor && (CharacterName == null || CharacterName == ""))
+            {
+                yield return new ValidationResult("Actor should always have a character name.", new[] { nameof(CharacterName) });
+            }
+
+            if (Role != CrewRoles.Actor && CharacterName != null)
+            {
+                yield return new ValidationResult("Only an actor should have a character name.", new[] { nameof(CharacterName) });
+            }
+        }
     }
 }
