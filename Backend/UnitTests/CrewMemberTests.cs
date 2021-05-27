@@ -24,6 +24,7 @@ namespace UnitTests
 
         [Theory]
         [InlineData("Character Name", CrewRoles.Actor)]
+        [InlineData(null, CrewRoles.Director)]
         public async Task Create_ValidInput_ReturnsCorrectData(string characterName, CrewRoles crewRole)
         {
             #region Arrange
@@ -56,12 +57,15 @@ namespace UnitTests
         public static IEnumerable<object[]> CreateInvalidInputData()
         {
             string characterName = "Name";
-            CrewRoles crewRole = CrewRoles.Actor;
+            CrewRoles crewRoleActor = CrewRoles.Actor;
+            CrewRoles crewRoleDirector = CrewRoles.Director;
 
             // characterName = null
-            yield return new object[] { null, crewRole };
+            yield return new object[] { null, crewRoleActor };
             // characterName = empty
-            yield return new object[] { "", crewRole };
+            yield return new object[] { "", crewRoleActor };
+            // Director should not have a character name
+            yield return new object[] { "Epic Name", crewRoleDirector };
             // crewRole = 100 (does not exists)
             yield return new object[] { characterName, 100 };
         }
