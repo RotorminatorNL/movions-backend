@@ -1,4 +1,6 @@
-﻿namespace Application.Validation
+﻿using Application.AdminModels;
+
+namespace Application.Validation
 {
     public class GenreValidation
     {

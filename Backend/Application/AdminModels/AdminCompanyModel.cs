@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Application
+namespace Application.AdminModels
 {
     public class AdminCompanyModel
     {

@@ -1,4 +1,5 @@
-﻿using Domain.Enums;
+﻿using Application.AdminModels;
+using Domain.Enums;
 using System;
 
 namespace Application.Validation

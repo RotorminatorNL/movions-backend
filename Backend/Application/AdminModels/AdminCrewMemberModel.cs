@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace Application
+namespace Application.AdminModels
 {
     public class AdminCrewMemberModel
     {

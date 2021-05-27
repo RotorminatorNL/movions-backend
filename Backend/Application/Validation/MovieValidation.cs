@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Application.AdminModels;
+using System;
 
 namespace Application.Validation
 {

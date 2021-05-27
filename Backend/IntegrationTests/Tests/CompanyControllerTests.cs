@@ -1,5 +1,6 @@
 ﻿using API;
-using Application;
+using Application.AdminModels;
+using Application.ViewModels;
 using Domain.Enums;
 using System.Collections.Generic;
 using System.Linq;

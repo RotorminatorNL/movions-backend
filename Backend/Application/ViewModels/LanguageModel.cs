@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace Application
+namespace Application.ViewModels
 {
     public class LanguageModel
     {
