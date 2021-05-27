@@ -214,7 +214,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "Character Name", CrewRoles.Writer)]
+        [InlineData(1, null, CrewRoles.Writer)]
         public async Task Update_ValidInput_ReturnsCorrectData(int id, string characterName, CrewRoles crewRole)
         {
             #region Arrange
@@ -255,16 +255,17 @@ namespace UnitTests
         {
             int id = 1;
             string characterName = "Name";
-            CrewRoles crewRole = CrewRoles.Writer;
+            CrewRoles crewRoleActor = CrewRoles.Actor;
+            CrewRoles crewRoleWriter = CrewRoles.Writer;
 
             // id = 0
-            yield return new object[] { 0, characterName, crewRole };
+            yield return new object[] { 0, characterName, crewRoleWriter };
             // id = 2 (does not exist)
-            yield return new object[] { 2, characterName, crewRole };
-            // characterName = null
-            yield return new object[] { id, null, crewRole };
-            // characterName = empty
-            yield return new object[] { id, "", crewRole };
+            yield return new object[] { 2, characterName, crewRoleWriter };
+            // Only an actor should have a character name
+            yield return new object[] { id, characterName, crewRoleWriter };
+            // An actor should have a character name
+            yield return new object[] { id, null, crewRoleActor };
             // crewRole = 100 (does not exist)
             yield return new object[] { id, characterName, 100 };
         }
