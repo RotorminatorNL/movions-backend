@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -14,6 +15,7 @@ using Xunit;
 
 namespace IntegrationTests
 {
+    [Collection("Sequential")]
     public class CrewMemberControllerTests : IntegrationTestSetup
     {
         public CrewMemberControllerTests(ApiFactory<Startup> factory)
@@ -27,7 +29,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
 
             var expectedCrewMember = new AdminCrewMemberModel
             {
@@ -78,7 +80,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
 
             var invalidCompanyData = new AdminCrewMemberModel
             {
@@ -116,7 +118,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
@@ -156,7 +158,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
@@ -181,7 +183,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
@@ -217,7 +219,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             #endregion
 
             #region Act
@@ -236,7 +238,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
@@ -295,7 +297,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
@@ -342,7 +344,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
@@ -375,7 +377,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
@@ -403,7 +405,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember

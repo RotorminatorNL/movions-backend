@@ -13,11 +13,13 @@ namespace IntegrationTests
     {
         private readonly ApiFactory<Startup> _apiFactory;
         private readonly IServiceScope _serviceScope;
+        private readonly HttpClient _httpClient;
 
         public IntegrationTestSetup(ApiFactory<Startup> factory)
         {
             _apiFactory = factory;
             _serviceScope = _apiFactory.Services.GetService<IServiceScopeFactory>()?.CreateScope();
+            _httpClient = _apiFactory.CreateClient();
         }
 
         protected IApplicationDbContext GetDbContext()
@@ -33,9 +35,9 @@ namespace IntegrationTests
             }
         }
 
-        protected HttpClient CreateHttpClient()
+        protected HttpClient GetHttpClient()
         {
-            return _apiFactory.CreateClient();
+            return _httpClient;
         }
 
         public void Dispose()

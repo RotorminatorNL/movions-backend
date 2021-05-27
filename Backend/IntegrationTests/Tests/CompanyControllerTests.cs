@@ -5,6 +5,7 @@ using Domain.Enums;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using Xunit;
 
 namespace IntegrationTests
 {
+    [Collection("Sequential")]
     public class CompanyControllerTests : IntegrationTestSetup
     {
         public CompanyControllerTests(ApiFactory<Startup> factory)
@@ -24,7 +26,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
 
             var expectedCompany = new AdminCompanyModel
             {
@@ -74,7 +76,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
 
             var invalidCompanyData = new AdminCompanyModel
             {
@@ -112,7 +114,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.Companies.Add(new Domain.Company
@@ -152,7 +154,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.Companies.Add(new Domain.Company
@@ -178,7 +180,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.Companies.Add(new Domain.Company
@@ -215,7 +217,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             #endregion
 
             #region Act
@@ -234,7 +236,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.Companies.Add(new Domain.Company
@@ -293,7 +295,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.Companies.Add(new Domain.Company
@@ -340,7 +342,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.Companies.Add(new Domain.Company
@@ -374,7 +376,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.Companies.Add(new Domain.Company
@@ -402,7 +404,7 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
 
-            var client = CreateHttpClient();
+            var client = GetHttpClient();
             var dbContext = GetDbContext();
 
             dbContext.Companies.Add(new Domain.Company
