@@ -30,18 +30,24 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedCompany = new AdminCompanyModel
+            var adminCompanyModel = new AdminCompanyModel
+            {
+                Name = name,
+                Type = companyType
+            };
+
+            var expectedCompany = new CompanyModel
             {
                 ID = 1,
                 Name = name,
-                Type = companyType
+                Type = companyType.ToString()
             };
 
             var appCompany = new Company(dbContext);
             #endregion
 
             #region Act
-            var actualCompany = await appCompany.Create(expectedCompany);
+            var actualCompany = await appCompany.Create(adminCompanyModel);
             #endregion
 
             #region Assert
@@ -74,7 +80,7 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var expectedCompany = new AdminCompanyModel
+            var adminCompanyModel = new AdminCompanyModel
             {
                 ID = 1,
                 Name = name,
@@ -85,7 +91,114 @@ namespace UnitTests
             #endregion
             
             #region Act
-            var actualCompany = await appCompany.Create(expectedCompany);
+            var actualCompany = await appCompany.Create(adminCompanyModel);
+            #endregion
+
+            #region Assert
+            Assert.Null(actualCompany);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(1, 1)]
+        public async Task AddMovie_ValidInput_ReturnsCorrectData(int id, int movieID)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var newCompany = new Domain.Company
+            {
+                Name = "Epic Producer",
+                Type = CompanyTypes.Producer
+            };
+
+            var newMovie = new Domain.Movie
+            {
+                Title = "Epic Title"
+            };
+
+            dbContext.Companies.Add(newCompany);
+            dbContext.Movies.Add(newMovie);
+            await dbContext.SaveChangesAsync();
+
+            var companyMovie = new AdminCompanyMovieModel
+            {
+                CompanyID = id,
+                MovieID = movieID
+            };
+
+            var expectedCompany = new CompanyModel
+            {
+                ID = 1,
+                Name = "Epic Producer",
+                Type = CompanyTypes.Producer.ToString(),
+                Movies = new List<MovieModel> 
+                {
+                    new MovieModel
+                    {
+                        ID = 1,
+                        Title = "Epic Title"
+                    }
+                }
+            };
+
+            var appCompany = new Company(dbContext);
+            #endregion
+
+            #region Act
+            var actualCompany = await appCompany.ConnectMovie(companyMovie);
+            #endregion
+
+            #region Assert
+            Assert.Equal(expectedCompany.ID, actualCompany.ID);
+            Assert.Equal(expectedCompany.Name, actualCompany.Name);
+            Assert.Equal(expectedCompany.Type, actualCompany.Type);
+            Assert.Equal(expectedCompany.Movies.Count(), actualCompany.Movies.Count());
+            Assert.Equal(expectedCompany.Movies.ToList()[0].ID, actualCompany.Movies.ToList()[0].ID);
+            Assert.Equal(expectedCompany.Movies.ToList()[0].Title, actualCompany.Movies.ToList()[0].Title);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(0, 0)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        [InlineData(1, 2)]
+        [InlineData(2, 1)]
+        [InlineData(2, 2)]
+        public async Task AddMovie_InvalidInput_ReturnsNull(int id, int movieID)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var newCompany = new Domain.Company
+            {
+                Name = "Epic Producer",
+                Type = CompanyTypes.Producer
+            };
+
+            var newMovie = new Domain.Movie
+            {
+                Title = "Epic Title"
+            };
+
+            dbContext.Companies.Add(newCompany);
+            dbContext.Movies.Add(newMovie);
+            await dbContext.SaveChangesAsync();
+
+            var companyMovie = new AdminCompanyMovieModel
+            {
+                CompanyID = id,
+                MovieID = movieID
+            };
+
+            var appCompany = new Company(dbContext);
+            #endregion
+
+            #region Act
+            var actualCompany = await appCompany.ConnectMovie(companyMovie);
             #endregion
 
             #region Assert
@@ -343,6 +456,81 @@ namespace UnitTests
 
             #region Act
             var actual = await appCompany.Delete(id);
+            #endregion
+
+            #region Assert
+            Assert.False(actual);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(1, 1)]
+        public async Task DisconnectMovie_ValidInput_ReturnsTrue(int id, int movieID)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var company = new Domain.Company();
+            dbContext.Companies.Add(company);
+
+            var movie = new Domain.Movie();
+            dbContext.Movies.Add(movie);
+
+            var companyMovie = new Domain.CompanyMovie
+            {
+                CompanyID = company.ID,
+                MovieID = movie.ID
+            };
+            dbContext.CompanyMovies.Add(companyMovie);
+
+            await dbContext.SaveChangesAsync();
+
+            var appCompany = new Company(dbContext);
+            #endregion
+
+            #region Act
+            var actual = await appCompany.DisconnectMovie(id, movieID);
+            #endregion
+
+            #region Assert
+            Assert.True(actual);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(0, 0)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        [InlineData(1, 2)]
+        [InlineData(2, 1)]
+        [InlineData(2, 2)]
+        public async Task DisconnectMovie_InvalidInput_ReturnsFalse(int id, int movieID)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var company = new Domain.Company();
+            dbContext.Companies.Add(company);
+
+            var movie = new Domain.Movie();
+            dbContext.Movies.Add(movie);
+
+            var companyMovie = new Domain.CompanyMovie
+            {
+                CompanyID = company.ID,
+                MovieID = movie.ID
+            };
+            dbContext.CompanyMovies.Add(companyMovie);
+
+            await dbContext.SaveChangesAsync();
+
+            var appCompany = new Company(dbContext);
+            #endregion
+
+            #region Act
+            var actual = await appCompany.DisconnectMovie(id, movieID);
             #endregion
 
             #region Assert

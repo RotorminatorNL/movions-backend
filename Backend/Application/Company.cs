@@ -20,7 +20,7 @@ namespace Application
             _companyValidation = new CompanyValidation();
         }
 
-        public async Task<AdminCompanyModel> Create(AdminCompanyModel adminCompanyModel)
+        public async Task<CompanyModel> Create(AdminCompanyModel adminCompanyModel)
         {
             if (_companyValidation.IsInputValid(adminCompanyModel))
             {
@@ -31,48 +31,64 @@ namespace Application
                 };
 
                 _applicationDbContext.Companies.Add(company);
-
                 await _applicationDbContext.SaveChangesAsync();
 
-                return new AdminCompanyModel
-                {
-                    ID = company.ID,
-                    Name = company.Name,
-                    Type = company.Type
-                };
+                return await Read(company.ID);
             }
 
             return null;
         }
 
-        public async Task<AdminCompanyModel> AddMovie(AdminCompanyModel adminCompanyModel)
+        public async Task<CompanyModel> ConnectMovie(AdminCompanyMovieModel adminCompanyMovieModel)
         {
-            return adminCompanyModel;
+            var company = await _applicationDbContext.Companies.FirstOrDefaultAsync(c => c.ID == adminCompanyMovieModel.CompanyID);
+            var movie = await _applicationDbContext.Movies.FirstOrDefaultAsync(c => c.ID == adminCompanyMovieModel.MovieID);
+
+            if (company != null && movie != null)
+            {
+                var companyMovie = new Domain.CompanyMovie
+                {
+                    CompanyID = adminCompanyMovieModel.CompanyID,
+                    MovieID = adminCompanyMovieModel.MovieID
+                };
+
+                _applicationDbContext.CompanyMovies.Add(companyMovie);
+                await _applicationDbContext.SaveChangesAsync();
+
+                return await Read(adminCompanyMovieModel.CompanyID);
+            }
+
+            return null;
         }
 
         public async Task<CompanyModel> Read(int id)
         {
-            return await _applicationDbContext.Companies.Select(company => new CompanyModel
+            return await _applicationDbContext.Companies.Select(c => new CompanyModel
             {
-                ID = company.ID,
-                Name = company.Name,
-                Type = company.Type.ToString(),
-            }).FirstOrDefaultAsync(x => x.ID == id);
+                ID = c.ID,
+                Name = c.Name,
+                Type = c.Type.ToString(),
+                Movies = c.Movies.Select(m => new MovieModel
+                {
+                    ID = m.MovieID,
+                    Title = m.Movie.Title
+                })
+            }).FirstOrDefaultAsync(c => c.ID == id);
         }
 
         public async Task<IEnumerable<CompanyModel>> ReadAll()
         {
-            return await _applicationDbContext.Companies.Select(company => new CompanyModel
+            return await _applicationDbContext.Companies.Select(c => new CompanyModel
             {
-                ID = company.ID,
-                Name = company.Name,
-                Type = company.Type.ToString(),
+                ID = c.ID,
+                Name = c.Name,
+                Type = c.Type.ToString()
             }).ToListAsync();
         }
 
         public async Task<AdminCompanyModel> Update(AdminCompanyModel adminCompanyModel)
         {
-            var company = _applicationDbContext.Companies.FirstOrDefault(x => x.ID == adminCompanyModel.ID);
+            var company = _applicationDbContext.Companies.FirstOrDefault(c => c.ID == adminCompanyModel.ID);
 
             if (company != null && _companyValidation.IsInputValid(adminCompanyModel))
             {
@@ -81,12 +97,7 @@ namespace Application
 
                 await _applicationDbContext.SaveChangesAsync();
 
-                return new AdminCompanyModel
-                {
-                    ID = company.ID,
-                    Name = company.Name,
-                    Type = company.Type
-                };
+                return adminCompanyModel;
             }
 
             return null;
@@ -94,7 +105,7 @@ namespace Application
 
         public async Task<bool> Delete(int id)
         {
-            var company = _applicationDbContext.Companies.FirstOrDefault(x => x.ID == id);
+            var company = _applicationDbContext.Companies.FirstOrDefault(c => c.ID == id);
 
             if (company != null)
             {
@@ -104,6 +115,21 @@ namespace Application
                 return true;
             }
                 
+            return false;
+        }
+
+        public async Task<bool> DisconnectMovie(int id, int movieID)
+        {
+            var companyMovie = _applicationDbContext.CompanyMovies.FirstOrDefault(c => c.CompanyID == id && c.MovieID == movieID);
+
+            if (companyMovie != null)
+            {
+                _applicationDbContext.CompanyMovies.Remove(companyMovie);
+                await _applicationDbContext.SaveChangesAsync();
+
+                return true;
+            }
+
             return false;
         }
     }

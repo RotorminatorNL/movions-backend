@@ -19,8 +19,5 @@ namespace Application.AdminModels
         [JsonPropertyName("type")]
         [Required]
         public CompanyTypes Type { get; set; }
-
-        [JsonPropertyName("movies")]
-        public IEnumerable<AdminMovieModel> Movies { get; set; }
     }
 }
