@@ -16,8 +16,10 @@ namespace Persistence
             : base(options) { }
 
         public DbSet<Company> Companies { get; set; }
+        public DbSet<CompanyMovie> CompanyMovies { get; set; }
         public DbSet<CrewMember> CrewMembers { get; set; }
         public DbSet<Genre> Genres { get; set; }
+        public DbSet<GenreMovie> GenreMovies { get; set; }
         public DbSet<Language> Languages { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Person> Persons { get; set; }
