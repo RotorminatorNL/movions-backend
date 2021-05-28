@@ -337,18 +337,25 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var expectedCompany = new AdminCompanyModel
+            var newCompany = new AdminCompanyModel
             {
                 ID = id,
                 Name = name,
                 Type = companyType
             };
 
+            var expectedCompany = new CompanyModel
+            {
+                ID = id,
+                Name = name,
+                Type = companyType.ToString()
+            };
+
             var appCompany = new Company(dbContext);
             #endregion
 
             #region Act
-            var actualCompany = await appCompany.Update(expectedCompany);
+            var actualCompany = await appCompany.Update(newCompany);
             #endregion
 
             #region Assert
@@ -393,7 +400,7 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var expectedCompany = new AdminCompanyModel
+            var newCompany = new AdminCompanyModel
             {
                 ID = id,
                 Name = name,
@@ -404,7 +411,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualCompany = await appCompany.Update(expectedCompany);
+            var actualCompany = await appCompany.Update(newCompany);
             #endregion
 
             #region Assert

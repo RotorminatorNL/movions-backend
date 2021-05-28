@@ -86,7 +86,7 @@ namespace Application
             }).ToListAsync();
         }
 
-        public async Task<AdminCompanyModel> Update(AdminCompanyModel adminCompanyModel)
+        public async Task<CompanyModel> Update(AdminCompanyModel adminCompanyModel)
         {
             var company = _applicationDbContext.Companies.FirstOrDefault(c => c.ID == adminCompanyModel.ID);
 
@@ -97,7 +97,7 @@ namespace Application
 
                 await _applicationDbContext.SaveChangesAsync();
 
-                return adminCompanyModel;
+                return await Read(adminCompanyModel.ID);
             }
 
             return null;

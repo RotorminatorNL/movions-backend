@@ -28,18 +28,25 @@ namespace IntegrationTests
 
             var client = GetHttpClient();
 
-            var expectedCompany = new AdminCompanyModel
+            var newCompany = new AdminCompanyModel
             {
                 ID = 1,
                 Name = name,
                 Type = companyType
             };
+
+            var expectedCompany = new CompanyModel
+            {
+                ID = 1,
+                Name = name,
+                Type = companyType.ToString()
+            };
             #endregion
 
             #region Act
-            var response = await client.PostAsJsonAsync("/api/company", expectedCompany);
+            var response = await client.PostAsJsonAsync("/api/company", newCompany);
             var responseBody = await response.Content.ReadAsStreamAsync();
-            var actualCompany = await JsonSerializer.DeserializeAsync<AdminCompanyModel>(responseBody);
+            var actualCompany = await JsonSerializer.DeserializeAsync<CompanyModel>(responseBody);
             #endregion
 
             #region Assert
@@ -86,7 +93,7 @@ namespace IntegrationTests
             };
             invalidCompanyData = invalidCompanyData.Name == "null" ? null : invalidCompanyData;
 
-            var wrongModel = new object[] { 1, null, name, companyType };
+            var wrongModel = System.Array.Empty<object>();
             #endregion
 
             #region Act
@@ -246,18 +253,25 @@ namespace IntegrationTests
             });
             await dbContext.SaveChangesAsync();
 
-            var expectedCompany = new AdminCompanyModel
+            var newCompany = new AdminCompanyModel
             {
                 ID = id,
                 Name = name,
                 Type = companyType
             };
+
+            var expectedCompany = new CompanyModel
+            {
+                ID = id,
+                Name = name,
+                Type = companyType.ToString()
+            };
             #endregion
 
             #region Act
-            var response = await client.PutAsJsonAsync($"/api/company/{expectedCompany.ID}", expectedCompany);
+            var response = await client.PutAsJsonAsync($"/api/company/{newCompany.ID}", newCompany);
             var responseBody = await response.Content.ReadAsStreamAsync();
-            var actualCompany = await JsonSerializer.DeserializeAsync<AdminCompanyModel>(responseBody);
+            var actualCompany = await JsonSerializer.DeserializeAsync<CompanyModel>(responseBody);
             #endregion
 
             #region Assert
@@ -277,7 +291,7 @@ namespace IntegrationTests
             // object = null
             yield return new object[] { 0, "null", 0, new string[] { "" } };
             // object = wrong
-            yield return new object[] { 0, "wrongModel", 0, new string[] { "$.type" } };
+            yield return new object[] { 0, "wrongModel", 0, new string[] { "$" } };
             // name = null
             yield return new object[] { id, null, newCompanyType, new string[] { "Name" } };
             // name = empty
@@ -305,21 +319,21 @@ namespace IntegrationTests
             });
             await dbContext.SaveChangesAsync();
 
-            var expectedCompany = new AdminCompanyModel
+            var newCompany = new AdminCompanyModel
             {
                 ID = id,
                 Name = name,
                 Type = companyType
             };
-            expectedCompany = expectedCompany.Name == "null" ? null : expectedCompany;
+            newCompany = newCompany.Name == "null" ? null : newCompany;
 
-            var wrongModel = new CompanyModel { ID = id, Name = name, Type = companyType.ToString() };
+            var wrongModel = System.Array.Empty<object>();
             #endregion
 
             #region Act
             var response = name == "wrongModel" 
                 ? await client.PutAsJsonAsync($"/api/company/{id}", wrongModel)
-                : await client.PutAsJsonAsync($"/api/company/{id}", expectedCompany);
+                : await client.PutAsJsonAsync($"/api/company/{id}", newCompany);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
@@ -352,7 +366,7 @@ namespace IntegrationTests
             });
             await dbContext.SaveChangesAsync();
 
-            var expectedCompany = new AdminCompanyModel
+            var newCompany = new AdminCompanyModel
             {
                 ID = id,
                 Name = "Some other name",
@@ -361,7 +375,7 @@ namespace IntegrationTests
             #endregion
 
             #region Act
-            var response = await client.PutAsJsonAsync($"/api/company/{id}", expectedCompany);
+            var response = await client.PutAsJsonAsync($"/api/company/{id}", newCompany);
             #endregion
 
             #region Assert
