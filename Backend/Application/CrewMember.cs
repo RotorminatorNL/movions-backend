@@ -72,22 +72,17 @@ namespace Application
 
             if (crewRole != null && _crewMemberValidation.IsInputValid(adminCrewRoleModel))
             {
-                if (_crewMemberValidation.IsInputDifferent(crewRole, adminCrewRoleModel))
+                crewRole.CharacterName = adminCrewRoleModel.CharacterName;
+                crewRole.Role = adminCrewRoleModel.Role;
+
+                await _applicationDbContext.SaveChangesAsync();
+
+                return new AdminCrewMemberModel
                 {
-                    crewRole.CharacterName = adminCrewRoleModel.CharacterName;
-                    crewRole.Role = adminCrewRoleModel.Role;
-
-                    await _applicationDbContext.SaveChangesAsync();
-
-                    return new AdminCrewMemberModel
-                    {
-                        ID = crewRole.CrewMemberID,
-                        CharacterName = crewRole.CharacterName,
-                        Role = crewRole.Role
-                    };
-                }
-
-                return new AdminCrewMemberModel();
+                    ID = crewRole.CrewMemberID,
+                    CharacterName = crewRole.CharacterName,
+                    Role = crewRole.Role
+                };
             }
 
             return null;

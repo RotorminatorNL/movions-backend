@@ -278,42 +278,6 @@ namespace UnitTests
             Assert.Null(actualGenre);
             #endregion
         }
-        
-        [Theory]
-        [InlineData(1, "Name")]
-        public async Task Update_InputIsNotDifferent_ReturnsEmptyAdminGenreModel(int id, string name)
-        {
-            #region Arrange
-            var dbContext = new ApplicationDbContext(_dbContextOptions);
-            await dbContext.Database.EnsureDeletedAsync();
-
-            var genre = new Domain.Genre
-            {
-                Name = name
-            };
-            dbContext.Genres.Add(genre);
-
-            await dbContext.SaveChangesAsync();
-
-            var newGenre = new AdminGenreModel
-            {
-                ID = id,
-                Name = name
-            };
-
-            var expectedGenre = new AdminGenreModel();
-
-            var appGenre = new Genre(dbContext);
-            #endregion
-
-            #region Act
-            var actualGenre = await appGenre.Update(newGenre);
-            #endregion
-
-            #region Assert
-            Assert.Equal(expectedGenre.ID, actualGenre.ID);
-            #endregion
-        }
 
         [Theory]
         [InlineData(1)]

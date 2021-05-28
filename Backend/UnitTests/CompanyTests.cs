@@ -300,44 +300,6 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "Name", CompanyTypes.Distributor)]
-        public async Task Update_InputIsNotDifferent_ReturnsEmptyAdminCompanyModel(int id, string name, CompanyTypes companyType)
-        {
-            #region Arrange
-            var dbContext = new ApplicationDbContext(_dbContextOptions);
-            await dbContext.Database.EnsureDeletedAsync();
-
-            var company = new Domain.Company
-            {
-                Name = name,
-                Type = companyType
-            };
-            dbContext.Companies.Add(company);
-
-            await dbContext.SaveChangesAsync();
-
-            var newCompany = new AdminCompanyModel
-            {
-                ID = id,
-                Name = name,
-                Type = companyType
-            };
-
-            var expectedCompany = new AdminCompanyModel();
-
-            var appCompany = new Company(dbContext);
-            #endregion
-
-            #region Act
-            var actualCompany = await appCompany.Update(newCompany);
-            #endregion
-
-            #region Assert
-            Assert.Equal(expectedCompany.ID, actualCompany.ID);
-            #endregion
-        }
-
-        [Theory]
         [InlineData(1)]
         public async Task Delete_ValidInput_ReturnsTrue(int id)
         {

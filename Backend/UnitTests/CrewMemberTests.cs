@@ -307,44 +307,6 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "Character Name", CrewRoles.Actor)]
-        public async Task Update_InputIsNotDifferent_ReturnsEmptyAdminCrewMemberModel(int id, string characterName, CrewRoles crewRole)
-        {
-            #region Arrange
-            var dbContext = new ApplicationDbContext(_dbContextOptions);
-            await dbContext.Database.EnsureDeletedAsync();
-
-            var crewMember = new Domain.CrewMember
-            {
-                CharacterName = characterName,
-                Role = crewRole
-            };
-            dbContext.CrewMembers.Add(crewMember);
-
-            await dbContext.SaveChangesAsync();
-
-            var newCrewMember = new AdminCrewMemberModel
-            {
-                ID = id,
-                CharacterName = characterName,
-                Role = crewRole
-            };
-
-            var expectedCrewMember = new AdminCrewMemberModel();
-
-            var appCrewMember = new CrewMember(dbContext);
-            #endregion
-
-            #region Act
-            var actualCrewMember = await appCrewMember.Update(newCrewMember);
-            #endregion
-
-            #region Assert
-            Assert.Equal(expectedCrewMember.ID, actualCrewMember.ID);
-            #endregion
-        }
-
-        [Theory]
         [InlineData(1)]
         public async Task Delete_ValidInput_ReturnsTrue(int id)
         {

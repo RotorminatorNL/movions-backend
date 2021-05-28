@@ -13,13 +13,5 @@ namespace Application.Validation
 
             return isNameOk && isCompanyTypeOk;
         }
-
-        public bool IsInputDifferent(Domain.Company company, AdminCompanyModel adminCompanyModel)
-        {
-            bool isNameOk = company.Name != adminCompanyModel.Name;
-            bool isCompanyTypeOk = company.Type != adminCompanyModel.Type;
-
-            return isNameOk || isCompanyTypeOk;
-        }
     }
 }

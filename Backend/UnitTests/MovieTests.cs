@@ -437,64 +437,6 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "Description", 1, 10, "04-10-2010", "Title")]
-        public async Task Update_InputIsNotDifferent_ReturnsEmptyAdminMovieModel(int id, string description, int languageID, int length, string releaseDate, string title)
-        {
-            #region Arrange
-            var dbContext = new ApplicationDbContext(_dbContextOptions);
-            await dbContext.Database.EnsureDeletedAsync();
-
-            var language = new Domain.Language
-            {
-                Name = "English"
-            };
-            var language2 = new Domain.Language
-            {
-                Name = "Dutch"
-            };
-            dbContext.Languages.Add(language);
-            dbContext.Languages.Add(language2);
-
-            var movie = new Domain.Movie
-            {
-                Description = description,
-                LanguageID = languageID,
-                Length = length,
-                ReleaseDate = releaseDate,
-                Title = title
-            };
-            dbContext.Movies.Add(movie);
-
-            await dbContext.SaveChangesAsync();
-
-            var newMovie = new AdminMovieModel
-            {
-                ID = id,
-                Description = description,
-                Language = new AdminLanguageModel
-                {
-                    ID = languageID
-                },
-                Length = length,
-                ReleaseDate = DateTime.Parse(releaseDate),
-                Title = title
-            };
-
-            var expectedMovie = new AdminMovieModel();
-
-            var appMovie = new Movie(dbContext);
-            #endregion
-
-            #region Act
-            var actualMovie = await appMovie.Update(newMovie);
-            #endregion
-
-            #region Assert
-            Assert.Equal(expectedMovie.ID, actualMovie.ID);
-            #endregion
-        }
-
-        [Theory]
         [InlineData(1)]
         public async Task Delete_ValidInput_ReturnsTrue(int id)
         {

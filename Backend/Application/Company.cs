@@ -45,6 +45,11 @@ namespace Application
             return null;
         }
 
+        public async Task<AdminCompanyModel> AddMovie(AdminCompanyModel adminCompanyModel)
+        {
+            return adminCompanyModel;
+        }
+
         public async Task<CompanyModel> Read(int id)
         {
             return await _applicationDbContext.Companies.Select(company => new CompanyModel
@@ -71,22 +76,17 @@ namespace Application
 
             if (company != null && _companyValidation.IsInputValid(adminCompanyModel))
             {
-                if (_companyValidation.IsInputDifferent(company, adminCompanyModel))
+                company.Name = adminCompanyModel.Name;
+                company.Type = adminCompanyModel.Type;
+
+                await _applicationDbContext.SaveChangesAsync();
+
+                return new AdminCompanyModel
                 {
-                    company.Name = adminCompanyModel.Name;
-                    company.Type = adminCompanyModel.Type;
-
-                    await _applicationDbContext.SaveChangesAsync();
-
-                    return new AdminCompanyModel
-                    {
-                        ID = company.ID,
-                        Name = company.Name,
-                        Type = company.Type
-                    };
-                }
-
-                return new AdminCompanyModel();
+                    ID = company.ID,
+                    Name = company.Name,
+                    Type = company.Type
+                };
             }
 
             return null;

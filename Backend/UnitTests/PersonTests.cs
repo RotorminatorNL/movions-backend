@@ -367,50 +367,6 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "04-10-1999", "Rotterdam", "Beautiful description", "Robbert", "Lengton")]
-        public async Task Update_InputIsNotDifferent_ReturnsEmptyAdminPersonModel(int id, string birthDate, string birthPlace, string description, string firstName, string lastName)
-        {
-            #region Arrange
-            var dbContext = new ApplicationDbContext(_dbContextOptions);
-            await dbContext.Database.EnsureDeletedAsync();
-
-            var person = new Domain.Person
-            {
-                BirthDate = birthDate,
-                BirthPlace = birthPlace,
-                Description = description,
-                FirstName = firstName,
-                LastName = lastName
-            };
-            dbContext.Persons.Add(person);
-
-            await dbContext.SaveChangesAsync();
-
-            var newPerson = new AdminPersonModel
-            {
-                ID = id,
-                BirthDate = DateTime.Parse(birthDate),
-                BirthPlace = birthPlace,
-                Description = description,
-                FirstName = firstName,
-                LastName = lastName
-            };
-
-            var expectedPerson = new AdminPersonModel();
-
-            var appPerson = new Person(dbContext);
-            #endregion
-
-            #region Act
-            var actualPerson = await appPerson.Update(newPerson);
-            #endregion
-
-            #region Assert
-            Assert.Equal(expectedPerson.ID, actualPerson.ID);
-            #endregion
-        }
-
-        [Theory]
         [InlineData(1)]
         public async Task Delete_ValidInput_ReturnsTrue(int id)
         {

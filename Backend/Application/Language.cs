@@ -67,20 +67,14 @@ namespace Application
 
             if (language != null && _languageValidation.IsInputValid(adminLanguageModel))
             {
-                if (_languageValidation.IsInputDifferent(language, adminLanguageModel))
-                {
-                    language.Name = adminLanguageModel.Name;
+                language.Name = adminLanguageModel.Name;
 
-                    await _applicationDbContext.SaveChangesAsync();
+                await _applicationDbContext.SaveChangesAsync();
 
-                    return new AdminLanguageModel
-                    {
-                        ID = language.ID,
-                        Name = language.Name
-                    };
-                }
-
-                return new AdminLanguageModel();
+                return new AdminLanguageModel { 
+                    ID = language.ID, 
+                    Name = language.Name 
+                };
             }
 
             return null;

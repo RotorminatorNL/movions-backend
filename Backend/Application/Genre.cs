@@ -67,20 +67,15 @@ namespace Application
             
             if (genre != null && _genreValidation.IsInputValid(adminGenreModel))
             {
-                if (_genreValidation.IsInputDifferent(genre, adminGenreModel))
+                genre.Name = adminGenreModel.Name;
+
+                await _applicationDbContext.SaveChangesAsync();
+
+                return new AdminGenreModel
                 {
-                    genre.Name = adminGenreModel.Name;
-
-                    await _applicationDbContext.SaveChangesAsync();
-
-                    return new AdminGenreModel
-                    {
-                        ID = genre.ID,
-                        Name = genre.Name
-                    };
-                }
-
-                return new AdminGenreModel();
+                    ID = genre.ID,
+                    Name = genre.Name
+                };
             }
 
             return null;

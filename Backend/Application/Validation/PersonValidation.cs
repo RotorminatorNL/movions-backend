@@ -15,16 +15,5 @@ namespace Application.Validation
 
             return isBirthDateOk && isBirthPlaceOk && isDescriptionOk && isFirstNameOk && isLastNameOk;
         }
-
-        public bool IsInputDifferent(Domain.Person person, AdminPersonModel adminPersonModel)
-        {
-            bool isBirthDateOk = person.BirthDate != adminPersonModel.BirthDate.ToString("dd-MM-yyyy");
-            bool isBirthPlaceOk = person.BirthPlace != adminPersonModel.BirthPlace;
-            bool isDescriptionOk = person.Description != adminPersonModel.Description;
-            bool isFirstNameOk = person.FirstName != adminPersonModel.FirstName;
-            bool isLastNameOk = person.LastName != adminPersonModel.LastName;
-
-            return isBirthDateOk || isBirthPlaceOk || isDescriptionOk || isFirstNameOk || isLastNameOk;
-        }
     }
 }

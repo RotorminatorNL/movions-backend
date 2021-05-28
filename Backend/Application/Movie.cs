@@ -92,32 +92,27 @@ namespace Application
 
             if (movie != null && _movieValidation.IsInputValid(adminMovieModel))
             {
-                if (_movieValidation.IsInputDataDifferent(movie, adminMovieModel))
+                movie.Description = adminMovieModel.Description;
+                movie.Length = adminMovieModel.Length;
+                movie.LanguageID = adminMovieModel.Language.ID;
+                movie.ReleaseDate = adminMovieModel.ReleaseDate.ToString("dd-MM-yyyy");
+                movie.Title = adminMovieModel.Title;
+
+                await _applicationDbContext.SaveChangesAsync();
+
+                return new AdminMovieModel
                 {
-                    movie.Description = adminMovieModel.Description;
-                    movie.Length = adminMovieModel.Length;
-                    movie.LanguageID = adminMovieModel.Language.ID;
-                    movie.ReleaseDate = adminMovieModel.ReleaseDate.ToString("dd-MM-yyyy");
-                    movie.Title = adminMovieModel.Title;
-
-                    await _applicationDbContext.SaveChangesAsync();
-
-                    return new AdminMovieModel
+                    ID = movie.ID,
+                    Description = movie.Description,
+                    Language = new AdminLanguageModel
                     {
-                        ID = movie.ID,
-                        Description = movie.Description,
-                        Language = new AdminLanguageModel
-                        {
-                            ID = movie.Language.ID,
-                            Name = movie.Language.Name
-                        },
-                        Length = movie.Length,
-                        ReleaseDate = DateTime.Parse(movie.ReleaseDate),
-                        Title = movie.Title
-                    };
-                }
-
-                return new AdminMovieModel();
+                        ID = movie.Language.ID,
+                        Name = movie.Language.Name
+                    },
+                    Length = movie.Length,
+                    ReleaseDate = DateTime.Parse(movie.ReleaseDate),
+                    Title = movie.Title
+                };
             }
 
             return null;

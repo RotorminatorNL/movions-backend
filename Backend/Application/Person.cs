@@ -83,28 +83,24 @@ namespace Application
 
             if (person != null && _personValidation.IsInputValid(adminPersonModel))
             {
-                if (_personValidation.IsInputDifferent(person, adminPersonModel))
+                person.BirthDate = adminPersonModel.BirthDate.ToString("dd-MM-yyyy");
+                person.BirthPlace = adminPersonModel.BirthPlace;
+                person.Description = adminPersonModel.Description;
+                person.FirstName = adminPersonModel.FirstName;
+                person.LastName = adminPersonModel.LastName;
+
+                await _applicationDbContext.SaveChangesAsync();
+
+                return new AdminPersonModel
                 {
-                    person.BirthDate = adminPersonModel.BirthDate.ToString("dd-MM-yyyy");
-                    person.BirthPlace = adminPersonModel.BirthPlace;
-                    person.Description = adminPersonModel.Description;
-                    person.FirstName = adminPersonModel.FirstName;
-                    person.LastName = adminPersonModel.LastName;
+                    ID = person.ID,
+                    BirthDate = DateTime.Parse(person.BirthDate),
+                    BirthPlace = person.BirthPlace,
+                    Description = person.Description,
+                    FirstName = person.FirstName,
+                    LastName = person.LastName
+                };
 
-                    await _applicationDbContext.SaveChangesAsync();
-
-                    return new AdminPersonModel
-                    {
-                        ID = person.ID,
-                        BirthDate = DateTime.Parse(person.BirthDate),
-                        BirthPlace = person.BirthPlace,
-                        Description = person.Description,
-                        FirstName = person.FirstName,
-                        LastName = person.LastName
-                    };
-                }
-
-                return new AdminPersonModel();
             }
 
             return null;

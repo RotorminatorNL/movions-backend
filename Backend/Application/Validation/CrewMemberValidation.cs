@@ -18,18 +18,5 @@ namespace Application.Validation
 
             return isCharacterNameOk && isRoleOk;
         }
-
-        public bool IsInputDifferent(Domain.CrewMember crewMember, AdminCrewMemberModel adminCrewMemberModel)
-        {
-            bool isCharacterNameOk = crewMember.CharacterName == null;
-            bool isRoleOk = crewMember.Role != adminCrewMemberModel.Role;
-
-            if (adminCrewMemberModel.Role == CrewRoles.Actor)
-            {
-                isCharacterNameOk = crewMember.CharacterName != adminCrewMemberModel.CharacterName;
-            }
-
-            return isCharacterNameOk || isRoleOk;
-        }
     }
 }

@@ -280,42 +280,6 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "Name")]
-        public async Task Update_InputIsNotDifferent_ReturnsEmptyAdminLanguageModel(int id, string name)
-        {
-            #region Arrange
-            var dbContext = new ApplicationDbContext(_dbContextOptions);
-            await dbContext.Database.EnsureDeletedAsync();
-
-            var language = new Domain.Language
-            {
-                Name = name
-            };
-            dbContext.Languages.Add(language);
-
-            await dbContext.SaveChangesAsync();
-
-            var newLanguage = new AdminLanguageModel
-            {
-                ID = id,
-                Name = name
-            };
-
-            var expectedLanguage = new AdminLanguageModel();
-
-            var appLanguage = new Language(dbContext);
-            #endregion
-
-            #region Act
-            var actualLanguage = await appLanguage.Update(newLanguage);
-            #endregion
-
-            #region Assert
-            Assert.Equal(expectedLanguage.ID, actualLanguage.ID);
-            #endregion
-        }
-
-        [Theory]
         [InlineData(1)]
         public async Task Delete_ValidInput_ReturnsTrue(int id)
         {

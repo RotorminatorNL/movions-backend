@@ -10,12 +10,5 @@ namespace Application.Validation
 
             return isNameOk;
         }
-
-        public bool IsInputDifferent(Domain.Language language, AdminLanguageModel adminLanguageModel)
-        {
-            bool isNameOk = language.Name != adminLanguageModel.Name;
-
-            return isNameOk;
-        }
     }
 }

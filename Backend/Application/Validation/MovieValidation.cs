@@ -15,16 +15,5 @@ namespace Application.Validation
 
             return isDescriptionOk && isLanguageOk && isLengthOk && isReleaseDateOk && isTitleOk;
         }
-
-        public bool IsInputDataDifferent(Domain.Movie movie, AdminMovieModel adminMovieModel)
-        {
-            bool isDescriptionDifferent = movie.Description != adminMovieModel.Description;
-            bool isLanguageDifferent = movie.LanguageID != adminMovieModel.Language.ID;
-            bool isLengthDifferent = movie.Length != adminMovieModel.Length;
-            bool isReleaseDateDifferent = movie.ReleaseDate != adminMovieModel.ReleaseDate.ToString("dd-MM-yyyy");
-            bool isTitleDifferent = movie.Title != adminMovieModel.Title;
-
-            return isDescriptionDifferent || isLanguageDifferent || isLengthDifferent || isReleaseDateDifferent || isTitleDifferent;
-        }
     }
 }
