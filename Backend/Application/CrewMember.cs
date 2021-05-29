@@ -3,6 +3,7 @@ using Application.Validation;
 using Application.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using PersistenceInterface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,6 +27,17 @@ namespace Application
             {
                 var movie = _applicationDbContext.Movies.FirstOrDefault(m => m.ID == adminCrewMemberModel.MovieID);
                 var person = _applicationDbContext.Persons.FirstOrDefault(p => p.ID == adminCrewMemberModel.PersonID);
+
+                Console.WriteLine("----------------------------------------");
+                Console.WriteLine("----------------------------------------");
+                Console.WriteLine("----------------------------------------");
+
+                Console.WriteLine($"Movie: {movie}");
+                Console.WriteLine($"Person: {person}");
+
+                Console.WriteLine("----------------------------------------");
+                Console.WriteLine("----------------------------------------");
+                Console.WriteLine("----------------------------------------");
 
                 if (movie != null && person != null)
                 {
