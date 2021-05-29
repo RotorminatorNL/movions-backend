@@ -1,4 +1,4 @@
-name: GitHub CI Backend
+name: GitHub CI
 
 on:
   push:
