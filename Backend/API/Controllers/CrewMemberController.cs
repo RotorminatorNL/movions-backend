@@ -15,6 +15,29 @@ namespace API.Controllers
     {
         private readonly CrewMember crewMember;
 
+        private BadRequestObjectResult GetCustomBadRequest(int id)
+        {
+            switch (id)
+            {
+                case -1:
+                    {
+                        ModelState.AddModelError("MovieID", "Does not exist.");
+                        break;
+                    }
+                case -2:
+                    {
+                        ModelState.AddModelError("PersonID", "Does not exist.");
+                        break;
+                    }
+                default:
+                    ModelState.AddModelError("MovieID", "Does not exist.");
+                    ModelState.AddModelError("PersonID", "Does not exist.");
+                    break;
+            }
+
+            return BadRequest(new ValidationProblemDetails(ModelState));
+        }
+
         public CrewMemberController(IApplicationDbContext applicationDbContext)
         {
             crewMember = new CrewMember(applicationDbContext);
@@ -23,9 +46,16 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminCrewMemberModel adminCrewMemberModel)
         {
-            if (await crewMember.Create(adminCrewMemberModel) is CrewMemberModel result && result != null)
+            var result = await crewMember.Create(adminCrewMemberModel);
+
+            if (result != null)
             {
-                return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
+                if (result.ID > 0)
+                {
+                    return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
+                }
+
+                return GetCustomBadRequest(result.ID);
             }
 
             return StatusCode((int)HttpStatusCode.InternalServerError);
@@ -56,10 +86,18 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] AdminCrewMemberModel adminCrewMemberModel)
         {
-            if (await crewMember.Update(adminCrewMemberModel) is CrewMemberModel result && result != null)
+            var result = await crewMember.Update(adminCrewMemberModel);
+
+            if (result != null)
             {
-                return Ok(result);
+                if (result.ID > 0)
+                {
+                    return Ok(result);
+                }
+
+                return GetCustomBadRequest(result.ID);
             }
+
 
             return NotFound();
         }

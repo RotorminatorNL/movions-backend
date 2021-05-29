@@ -106,29 +106,147 @@ namespace IntegrationTests
             int movieID = 1;
             int personID = 1;
 
-            // object = null
-            yield return new object[] { "null", 0, movieID, personID, new string[] { "" } };
-            // object = wrong
-            yield return new object[] { "wrongModel", 0, movieID, personID, new string[] { "$" } };
-            // Actor's character name cannot be null
-            yield return new object[] { null, crewRoleActor, movieID, personID, new string[] { "CharacterName" } };
-            // Actor's character name cannot be empty
-            yield return new object[] { "", crewRoleActor, movieID, personID, new string[] { "CharacterName" } };
-            // Director's character name must be null
-            yield return new object[] { characterName, crewRoleDirector, movieID, personID, new string[] { "CharacterName" } };
-            // Crew role must exist
-            yield return new object[] { characterName, 100, movieID, personID, new string[] { "Role" } };
-            // Movie cannot be 0
-            yield return new object[] { characterName, crewRoleActor, 0, personID, new string[] { "MovieID" } };
-            // Person cannot be 0
-            yield return new object[] { characterName, crewRoleActor, movieID, 0, new string[] { "PersonID" } };
+            // CharacterName = null
+            yield return new object[]
+            {
+                null, crewRoleActor, movieID, personID,
+                new string[]
+                {
+                    "CharacterName"
+                },
+                new string[]
+                {
+                    "This role must have a character name."
+                }
+            };
+            // CharacterName = empty
+            yield return new object[]
+            {
+                "", crewRoleActor, movieID, personID,
+                new string[]
+                {
+                    "CharacterName"
+                },
+                new string[]
+                {
+                    "This role must have a character name."
+                }
+            };
+            // CharacterName + Director
+            yield return new object[]
+            {
+                characterName, crewRoleDirector, movieID, personID,
+                new string[]
+                {
+                    "CharacterName"
+                },
+                new string[]
+                {
+                    "This role cannot have a character name."
+                }
+            };
+            // Role = 100
+            yield return new object[]
+            {
+                characterName, 100, movieID, personID,
+                new string[]
+                {
+                    "Role"
+                },
+                new string[]
+                {
+                    "Does not exist."
+                }
+            };
+            // MovieID = 0
+            yield return new object[]
+            {
+                characterName, crewRoleActor, 0, personID,
+                new string[]
+                {
+                    "MovieID"
+                },
+                new string[]
+                {
+                    "Must be above 0."
+                }
+            };
+            // MovieID = 2
+            yield return new object[]
+            {
+                characterName, crewRoleActor, 2, personID,
+                new string[]
+                {
+                    "MovieID"
+                },
+                new string[]
+                {
+                    "Does not exist."
+                }
+            };
+            // PersonID = 0
+            yield return new object[]
+            {
+                characterName, crewRoleActor, movieID, 0,
+                new string[]
+                {
+                    "PersonID"
+                },
+                new string[]
+                {
+                    "Must be above 0."
+                }
+            };
+            // PersonID = 2
+            yield return new object[]
+            {
+                characterName, crewRoleActor, movieID, 2,
+                new string[]
+                {
+                    "PersonID"
+                },
+                new string[]
+                {
+                    "Does not exist."
+                }
+            };
+            // MovieID = 2 | PersonID = 2
+            yield return new object[]
+            {
+                characterName, crewRoleActor, 2, 2,
+                new string[]
+                {
+                    "MovieID",
+                    "PersonID"
+                },
+                new string[]
+                {
+                    "Does not exist.",
+                    "Does not exist."
+                }
+            };
             // Everything is wrong
-            yield return new object[] { null, 100, 0, 0, new string[] { "Role", "MovieID", "PersonID" } };
+            yield return new object[]
+            {
+                null, 100, 0, 0,
+                new string[]
+                {
+                    "Role",
+                    "MovieID",
+                    "PersonID"
+                },
+                new string[]
+                {
+                    "Does not exist.",
+                    "Must be above 0.",
+                    "Must be above 0."
+                }
+            };
         }
 
         [Theory]
         [MemberData(nameof(CreateInvalidRequestData))]
-        public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequest(string characterName, CrewRoles crewRole, int movieID, int personID, IEnumerable<string> expectedErrors)
+        public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequest(string characterName, CrewRoles crewRole, int movieID, int personID, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -144,15 +262,10 @@ namespace IntegrationTests
                 MovieID = movieID,
                 PersonID = personID
             };
-            newCrewMember = newCrewMember.CharacterName == "null" ? null : newCrewMember;
-
-            var wrongModel = new object[] { 0, characterName, crewRole, movieID, personID };
             #endregion
 
             #region Act
-            var response = characterName == "wrongModel"
-                ? await client.PostAsJsonAsync("/api/crewmember", wrongModel)
-                : await client.PostAsJsonAsync("/api/crewmember", newCrewMember);
+            var response = await client.PostAsJsonAsync("/api/crewmember", newCrewMember);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCrewMember = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
@@ -162,8 +275,9 @@ namespace IntegrationTests
 
             #region Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal(expectedErrors.Count(), errors.Count());
-            Assert.All(expectedErrors, error => Assert.Contains(error, errors.Select(prop => prop.Name)));
+            Assert.Equal(expectedErrorNames.Count(), errors.Count());
+            Assert.All(expectedErrorNames, errorName => Assert.Contains(errorName, errors.Select(prop => prop.Name)));
+            Assert.All(expectedErrorValues, errorValue => Assert.Contains(errorValue, errors.Select(prop => prop.Value[0].ToString())));
             #endregion
         }
 
@@ -382,33 +496,166 @@ namespace IntegrationTests
             int id = 1;
             string characterName = "Some other name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
-            CrewRoles crewRoleWriter = CrewRoles.Writer;
+            CrewRoles crewRoleDirector = CrewRoles.Director;
             int movieID = 1;
             int personID = 1;
 
-            // object = null
-            yield return new object[] { 0, "null", 0, movieID, personID, new string[] { "" } };
-            // object = wrong
-            yield return new object[] { 0, "wrongModel", 0, movieID, personID, new string[] { "$" } };
-            // Actor's character name cannot be null
-            yield return new object[] { id, null, crewRoleActor, movieID, personID, new string[] { "CharacterName" } };
-            // Actor's character name cannot be empty
-            yield return new object[] { id, "", crewRoleActor, movieID, personID, new string[] { "CharacterName" } };
-            // Writer's character name must be null
-            yield return new object[] { id, characterName, crewRoleWriter, movieID, personID, new string[] { "CharacterName" } };
-            // Crew role must exist
-            yield return new object[] { id, characterName, 100, movieID, personID, new string[] { "Role" } };
-            // Movie cannot be 0
-            yield return new object[] { id, characterName, crewRoleActor, 0, personID, new string[] { "MovieID" } };
-            // Person cannot be 0
-            yield return new object[] { id, characterName, crewRoleActor, movieID, 0, new string[] { "PersonID" } };
+            // ID = 0
+            yield return new object[]
+            {
+                0, characterName, crewRoleActor, movieID, personID,
+                new string[]
+                {
+                    "ID"
+                },
+                new string[]
+                {
+                    "Must be above 0."
+                }
+            };
+            // CharacterName = null
+            yield return new object[]
+            {
+                id, null, crewRoleActor, movieID, personID,
+                new string[]
+                {
+                    "CharacterName"
+                },
+                new string[]
+                {
+                    "This role must have a character name."
+                }
+            };
+            // CharacterName = empty
+            yield return new object[]
+            {
+                id, "", crewRoleActor, movieID, personID,
+                new string[]
+                {
+                    "CharacterName"
+                },
+                new string[]
+                {
+                    "This role must have a character name."
+                }
+            };
+            // CharacterName + Director
+            yield return new object[]
+            {
+                id, characterName, crewRoleDirector, movieID, personID,
+                new string[]
+                {
+                    "CharacterName"
+                },
+                new string[]
+                {
+                    "This role cannot have a character name."
+                }
+            };
+            // Role = 100
+            yield return new object[]
+            {
+                id, characterName, 100, movieID, personID,
+                new string[]
+                {
+                    "Role"
+                },
+                new string[]
+                {
+                    "Does not exist."
+                }
+            };
+            // MovieID = 0
+            yield return new object[]
+            {
+                id, characterName, crewRoleActor, 0, personID,
+                new string[]
+                {
+                    "MovieID"
+                },
+                new string[]
+                {
+                    "Must be above 0."
+                }
+            };
+            // MovieID = 2
+            yield return new object[]
+            {
+                id, characterName, crewRoleActor, 2, personID,
+                new string[]
+                {
+                    "MovieID"
+                },
+                new string[]
+                {
+                    "Does not exist."
+                }
+            };
+            // PersonID = 0
+            yield return new object[]
+            {
+                id, characterName, crewRoleActor, movieID, 0,
+                new string[]
+                {
+                    "PersonID"
+                },
+                new string[]
+                {
+                    "Must be above 0."
+                }
+            };
+            // PersonID = 2
+            yield return new object[]
+            {
+                id, characterName, crewRoleActor, movieID, 2,
+                new string[]
+                {
+                    "PersonID"
+                },
+                new string[]
+                {
+                    "Does not exist."
+                }
+            };
+            // MovieID = 2 | PersonID = 2
+            yield return new object[]
+            {
+                id, characterName, crewRoleActor, 2, 2,
+                new string[]
+                {
+                    "MovieID",
+                    "PersonID"
+                },
+                new string[]
+                {
+                    "Does not exist.",
+                    "Does not exist."
+                }
+            };
             // Everything is wrong
-            yield return new object[] { id, null, 100, 0, 0, new string[] { "Role", "MovieID", "PersonID" } };
+            yield return new object[]
+            {
+                0, null, 100, 0, 0,
+                new string[]
+                {
+                    "ID",
+                    "Role",
+                    "MovieID",
+                    "PersonID"
+                },
+                new string[]
+                {
+                    "Must be above 0.",
+                    "Does not exist.",
+                    "Must be above 0.",
+                    "Must be above 0."
+                }
+            };
         }
 
         [Theory]
         [MemberData(nameof(UpdateInvalidRequestData))]
-        public async Task Update_InvalidRequest_ReturnsJsonResponseAndBadRequest(int id, string characterName, CrewRoles crewRole, int movieID, int personID, IEnumerable<string> expectedErrors)
+        public async Task Update_InvalidRequest_ReturnsJsonResponseAndBadRequest(int id, string characterName, CrewRoles crewRole, int movieID, int personID, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -454,13 +701,13 @@ namespace IntegrationTests
 
             #region Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal(expectedErrors.Count(), errors.Count());
-            Assert.All(expectedErrors, error => Assert.Contains(error, errors.Select(prop => prop.Name)));
+            Assert.Equal(expectedErrorNames.Count(), errors.Count());
+            Assert.All(expectedErrorNames, errorName => Assert.Contains(errorName, errors.Select(prop => prop.Name)));
+            Assert.All(expectedErrorValues, errorValue => Assert.Contains(errorValue, errors.Select(prop => prop.Value[0].ToString())));
             #endregion
         }
 
         [Theory]
-        [InlineData(0)]
         [InlineData(2)]
         public async Task Update_InvalidRequest_ReturnsJsonResponseAndNotFound(int id)
         {

@@ -116,10 +116,6 @@ namespace UnitTests
             yield return new object[] { "Epic Name", crewRoleDirector, movieID, personID };
             // Crew role must exist
             yield return new object[] { characterName, 100, movieID, personID };
-            // Movie must exist
-            yield return new object[] { characterName, crewRoleActor, 2, personID };
-            // Person must exist
-            yield return new object[] { characterName, crewRoleActor, movieID, 2 };
         }
 
         [Theory]
@@ -150,6 +146,72 @@ namespace UnitTests
 
             #region Assert
             Assert.Null(actualCrewMember);
+            #endregion
+        }
+
+        public static IEnumerable<object[]> CreateInvalidInputData2()
+        {
+            string characterName = "Name";
+            CrewRoles crewRoleActor = CrewRoles.Actor;
+            int movieID = 1;
+            int personID = 1;
+
+            // MovieID = 0
+            yield return new object[] 
+            { 
+                characterName, crewRoleActor, 0, personID,
+                new CrewMemberModel 
+                {
+                    ID = -1
+                }
+            };
+            // PersonID = 0
+            yield return new object[] 
+            { 
+                characterName, crewRoleActor, movieID, 0,
+                new CrewMemberModel
+                {
+                    ID = -2
+                }
+            };
+            // MovieID = 0 | PersonID = 0
+            yield return new object[] 
+            { 
+                characterName, crewRoleActor, 0, 0,
+                new CrewMemberModel
+                {
+                    ID = -3
+                }
+            };
+        }
+
+        [Theory]
+        [MemberData(nameof(CreateInvalidInputData2))]
+        public async Task Create_InvalidInput_ReturnsCrewMemberModelWithErrorID(string characterName, CrewRoles crewRole, int movieID, int personID, CrewMemberModel expectedCrewMember)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            await CreateMovieAndPerson(dbContext);
+
+            var newCrewMember = new AdminCrewMemberModel
+            {
+                CharacterName = characterName,
+                Role = crewRole,
+                MovieID = movieID,
+                PersonID = personID
+            };
+
+            var appCrewMember = new CrewMember(dbContext);
+            #endregion
+
+            #region Act
+            var actualCrewMember = await appCrewMember.Create(newCrewMember);
+            #endregion
+
+            #region Assert
+            Assert.Equal(actualCrewMember.ID, expectedCrewMember.ID);
             #endregion
         }
 
@@ -384,10 +446,6 @@ namespace UnitTests
             yield return new object[] { id, "", crewRoleActor, movieID, personID };
             // Crew role must exist
             yield return new object[] { id, characterName, 100, movieID, personID };
-            // Movie must exist
-            yield return new object[] { id, characterName, crewRoleActor, 2, personID };
-            // Person must exist
-            yield return new object[] { id, characterName, crewRoleActor, movieID, 2 };
         }
 
         [Theory]
@@ -431,6 +489,88 @@ namespace UnitTests
 
             #region Assert
             Assert.Null(actualCrewMember);
+            #endregion
+        }
+
+
+        public static IEnumerable<object[]> UpdateInvalidInputData2()
+        {
+            int id = 1;
+            string characterName = "Name";
+            CrewRoles crewRoleActor = CrewRoles.Actor;
+            int movieID = 1;
+            int personID = 1;
+
+            // MovieID = 0
+            yield return new object[]
+            {
+                id, characterName, crewRoleActor, 0, personID,
+                new CrewMemberModel
+                {
+                    ID = -1
+                }
+            };
+            // PersonID = 0
+            yield return new object[]
+            {
+                id, characterName, crewRoleActor, movieID, 0,
+                new CrewMemberModel
+                {
+                    ID = -2
+                }
+            };
+            // MovieID = 0 | PersonID = 0
+            yield return new object[]
+            {
+                id, characterName, crewRoleActor, 0, 0,
+                new CrewMemberModel
+                {
+                    ID = -3
+                }
+            };
+        }
+
+        [Theory]
+        [MemberData(nameof(UpdateInvalidInputData2))]
+        public async Task Update_InvalidInput_ReturnsCrewMemberModelWithErrorID(int id, string characterName, CrewRoles crewRole, int movieID, int personID, CrewMemberModel expectedCrewMember)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var data = await CreateMovieAndPerson(dbContext);
+            var movie = data[0] as Domain.Movie;
+            var person = data[1] as Domain.Person;
+
+            var crewMember = new Domain.CrewMember
+            {
+                CharacterName = "Character Name",
+                Role = CrewRoles.Actor,
+                MovieID = movie.ID,
+                PersonID = person.ID
+            };
+
+            dbContext.CrewMembers.Add(crewMember);
+            await dbContext.SaveChangesAsync();
+
+            var newCrewMember = new AdminCrewMemberModel
+            {
+                ID = id,
+                CharacterName = characterName,
+                Role = crewRole,
+                MovieID = movieID,
+                PersonID = personID
+            };
+
+            var appCrewMember = new CrewMember(dbContext);
+            #endregion
+
+            #region Act
+            var actualCrewMember = await appCrewMember.Update(newCrewMember);
+            #endregion
+
+            #region Assert
+            Assert.Equal(actualCrewMember.ID, expectedCrewMember.ID);
             #endregion
         }
 

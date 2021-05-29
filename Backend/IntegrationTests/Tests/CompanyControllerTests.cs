@@ -58,46 +58,83 @@ namespace IntegrationTests
 
         public static IEnumerable<object[]> CreateInvalidRequestData()
         {
-            string name = "Name";
-            CompanyTypes companyType = CompanyTypes.Producer;
+            string newName = "Name";
+            CompanyTypes newCompanyType = CompanyTypes.Producer;
 
-            // object = null
-            yield return new object[] { "null", 0, new string[] { "" } };
-            // object = wrong model
-            yield return new object[] { "wrongModel", 0, new string[] { "$" } };
-            // name = null | companyType = 100 (does not exists)
-            yield return new object[] { null, 100, new string[] { "Name", "Type" } };
-            // name = null
-            yield return new object[] { null, companyType, new string[] { "Name" } };
-            // name = empty
-            yield return new object[] { "", companyType, new string[] { "Name" } };
-            // companyType = 100 (does not exists)
-            yield return new object[] { name, 100, new string[] { "Type" } };
+            // Name = null
+            yield return new object[]
+            {
+                null, newCompanyType,
+                new string[]
+                {
+                    "Name"
+                },
+                new string[]
+                {
+                    "Cannot be null or empty."
+                }
+            };
+            // Name = empty
+            yield return new object[]
+            {
+                "", newCompanyType,
+                new string[]
+                {
+                    "Name"
+                },
+                new string[]
+                {
+                    "Cannot be null or empty."
+                }
+            };
+            // CompanyType = 100
+            yield return new object[]
+            {
+                newName, 100,
+                new string[]
+                {
+                    "Type"
+                },
+                new string[]
+                {
+                    "Does not exist."
+                }
+            };
+            // Everything wrong
+            yield return new object[]
+            {
+                null, 100,
+                new string[]
+                {
+                    "Name",
+                    "Type"
+                },
+                new string[]
+                {
+                    "Cannot be null or empty.",
+                    "Does not exist."
+                }
+            };
         }
 
         [Theory]
         [MemberData(nameof(CreateInvalidRequestData))]
-        public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequest(string name, CompanyTypes companyType, IEnumerable<string> expectedErrors)
+        public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequest(string name, CompanyTypes companyType, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
         {
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
 
-            var invalidCompanyData = new AdminCompanyModel
+            var newCompany = new AdminCompanyModel
             {
                 ID = 1,
                 Name = name,
                 Type = companyType
             };
-            invalidCompanyData = invalidCompanyData.Name == "null" ? null : invalidCompanyData;
-
-            var wrongModel = System.Array.Empty<object>();
             #endregion
 
             #region Act
-            var response = name == "wrongModel" 
-                ? await client.PostAsJsonAsync("/api/company", wrongModel) 
-                : await client.PostAsJsonAsync("/api/company", invalidCompanyData);
+            var response = await client.PostAsJsonAsync("/api/company", newCompany);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
@@ -107,8 +144,9 @@ namespace IntegrationTests
 
             #region Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal(expectedErrors.Count(), errors.Count());
-            Assert.All(expectedErrors, error => Assert.Contains(error, errors.Select(prop => prop.Name)));
+            Assert.Equal(expectedErrorNames.Count(), errors.Count());
+            Assert.All(expectedErrorNames, errorName => Assert.Contains(errorName, errors.Select(prop => prop.Name)));
+            Assert.All(expectedErrorValues, errorValue => Assert.Contains(errorValue, errors.Select(prop => prop.Value[0].ToString())));
             #endregion
         }
 
@@ -153,7 +191,7 @@ namespace IntegrationTests
         [Theory]
         [InlineData(0)]
         [InlineData(2)]
-        public async Task Read_InvalidRequest_ReturnsJsonResponseAndBadRequest(int id)
+        public async Task Read_InvalidRequest_ReturnsJsonResponseAndNotFound(int id)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -189,7 +227,7 @@ namespace IntegrationTests
             {
                 Name = "Name",
                 Type = CompanyTypes.Producer
-            }); 
+            });
             dbContext.Companies.Add(new Domain.Company
             {
                 Name = "Some other company",
@@ -281,23 +319,80 @@ namespace IntegrationTests
             string newName = "Some other name";
             CompanyTypes newCompanyType = CompanyTypes.Producer;
 
-            // object = null
-            yield return new object[] { 0, "null", 0, new string[] { "" } };
-            // object = wrong
-            yield return new object[] { 0, "wrongModel", 0, new string[] { "$" } };
-            // name = null
-            yield return new object[] { id, null, newCompanyType, new string[] { "Name" } };
-            // name = empty
-            yield return new object[] { id, "", newCompanyType, new string[] { "Name" } };
-            // companyType = 100 (does not exist)
-            yield return new object[] { id, newName, 100, new string[] { "Type" } };
-            // name = null | companyType = 100 (does not exist)
-            yield return new object[] { id, null, 100, new string[] { "Name", "Type" } };
+            // ID = 0
+            yield return new object[] 
+            { 
+                0, newName, newCompanyType, 
+                new string[] 
+                { 
+                    "ID" 
+                },  
+                new string[]
+                {
+                    "Must be above 0."
+                }
+            };
+            // Name = null
+            yield return new object[] 
+            {
+                id, null, newCompanyType, 
+                new string[] 
+                {
+                    "Name" 
+                },
+                new string[]
+                {
+                    "Cannot be null or empty."
+                }
+            };
+            // Name = empty
+            yield return new object[] 
+            { 
+                id, "", newCompanyType, 
+                new string[] 
+                { 
+                    "Name" 
+                },
+                new string[]
+                {
+                    "Cannot be null or empty."
+                }
+            };
+            // CompanyType = 100
+            yield return new object[] 
+            { 
+                id, newName, 100, 
+                new string[]
+                { 
+                    "Type" 
+                }, 
+                new string[]
+                {
+                    "Does not exist."
+                }
+            };
+            // Everything wrong
+            yield return new object[] 
+            { 
+                0, null, 100, 
+                new string[] 
+                { 
+                    "ID", 
+                    "Name", 
+                    "Type" 
+                }, 
+                new string[]
+                {
+                    "Must be above 0.",
+                    "Cannot be null or empty.",
+                    "Does not exist."
+                }
+            };
         }
 
         [Theory]
         [MemberData(nameof(UpdateInvalidRequestData))]
-        public async Task Update_InvalidRequest_ReturnsJsonResponseAndBadRequest(int id, string name, CompanyTypes companyType, IEnumerable<string> expectedErrors)
+        public async Task Update_InvalidRequest_ReturnsJsonResponseAndBadRequest(int id, string name, CompanyTypes companyType, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorMessages)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -317,15 +412,10 @@ namespace IntegrationTests
                 Name = name,
                 Type = companyType
             };
-            newCompany = newCompany.Name == "null" ? null : newCompany;
-
-            var wrongModel = System.Array.Empty<object>();
             #endregion
 
             #region Act
-            var response = name == "wrongModel" 
-                ? await client.PutAsJsonAsync($"/api/company/{id}", wrongModel)
-                : await client.PutAsJsonAsync($"/api/company/{id}", newCompany);
+            var response = await client.PutAsJsonAsync($"/api/company/{id}", newCompany);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
@@ -335,13 +425,13 @@ namespace IntegrationTests
 
             #region Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal(expectedErrors.Count(), errors.Count());
-            Assert.All(expectedErrors, error => Assert.Contains(error, errors.Select(prop => prop.Name)));
+            Assert.Equal(expectedErrorNames.Count(), errors.Count());
+            Assert.All(expectedErrorNames, errorName => Assert.Contains(errorName, errors.Select(prop => prop.Name)));
+            Assert.All(expectedErrorMessages, errorMessage => Assert.Contains(errorMessage, errors.Select(prop => prop.Value[0].ToString())));
             #endregion
         }
 
         [Theory]
-        [InlineData(0)]
         [InlineData(2)]
         public async Task Update_InvalidRequest_ReturnsJsonResponseAndNotFound(int id)
         {
@@ -433,6 +523,54 @@ namespace IntegrationTests
             Assert.Equal(expectedCompany.Movies.Count(), actualCompany.Movies.Count());
             Assert.Equal(expectedCompany.Movies.ToList()[0].ID, actualCompany.Movies.ToList()[0].ID);
             Assert.Equal(expectedCompany.Movies.ToList()[0].Title, actualCompany.Movies.ToList()[0].Title);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(0, 0, new string[] { "CompanyID","MovieID" })]
+        [InlineData(0, 1, new string[] { "CompanyID" })]
+        [InlineData(1, 0, new string[] { "MovieID" })]
+        public async Task ConnectMovie_InvalidRequest_ReturnsJsonResponseAndBadRequest(int id, int movieID, IEnumerable<string> expectedErrors)
+        {
+            #region Arrange 
+            await DeleteDbContent();
+            var client = GetHttpClient();
+            var dbContext = GetDbContext();
+
+            var company = new Domain.Company
+            {
+                Name = "Epic Producer",
+                Type = CompanyTypes.Producer
+            };
+            dbContext.Companies.Add(company);
+
+            var movie = new Domain.Movie
+            {
+                Title = "Epic Title"
+            };
+            dbContext.Movies.Add(movie);
+            await dbContext.SaveChangesAsync();
+
+            var newCompany = new AdminCompanyMovieModel
+            {
+                CompanyID = id,
+                MovieID = movieID
+            };
+            #endregion
+
+            #region Act
+            var response = await client.PutAsJsonAsync($"/api/company/{newCompany.CompanyID}/connectmovie", newCompany);
+            var responseBody = await response.Content.ReadAsStreamAsync();
+            var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
+
+            var errorProp = actualCompany.GetProperty("errors");
+            var errors = errorProp.EnumerateObject();
+            #endregion
+
+            #region Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(expectedErrors.Count(), errors.Count());
+            Assert.All(expectedErrors, error => Assert.Contains(error, errors.Select(prop => prop.Name)));
             #endregion
         }
 

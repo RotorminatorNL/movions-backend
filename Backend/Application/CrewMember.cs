@@ -15,6 +15,30 @@ namespace Application
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly CrewMemberValidation _crewMemberValidation;
 
+        private CrewMemberModel GetCrewMemberModelWithErrorID(object movie, object person)
+        {
+            if (movie == null && person != null)
+            {
+                return new CrewMemberModel
+                {
+                    ID = -1
+                };
+            }
+
+            if (movie != null && person == null)
+            {
+                return new CrewMemberModel
+                {
+                    ID = -2
+                };
+            }
+
+            return new CrewMemberModel
+            {
+                ID = -3
+            };
+        }
+
         public CrewMember(IApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
@@ -43,6 +67,9 @@ namespace Application
 
                     return await Read(crewMember.CrewMemberID);
                 }
+
+                return GetCrewMemberModelWithErrorID(movie, person);
+
             }
 
             return null;
@@ -108,6 +135,8 @@ namespace Application
 
                     return await Read(crewMember.CrewMemberID);
                 }
+
+                return GetCrewMemberModelWithErrorID(movie, person);
             }
 
             return null;
