@@ -15,6 +15,26 @@ namespace UnitTests
     {
         private readonly DbContextOptions<ApplicationDbContext> _dbContextOptions;
 
+        private async Task<object[]> CreateMovieAndPerson(ApplicationDbContext dbContext)
+        {
+            var movie = new Domain.Movie
+            {
+                Title = "Epic Movie"
+            };
+
+            var person = new Domain.Person
+            {
+                FirstName = "Don",
+                LastName = "Diablo"
+            };
+
+            dbContext.Movies.Add(movie);
+            dbContext.Persons.Add(person);
+            await dbContext.SaveChangesAsync();
+
+            return new object[] { movie, person };
+        }
+
         public CrewMemberTests()
         {
             _dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
@@ -23,34 +43,60 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData("Character Name", CrewRoles.Actor)]
-        [InlineData(null, CrewRoles.Director)]
-        public async Task Create_ValidInput_ReturnsCorrectData(string characterName, CrewRoles crewRole)
+        [InlineData("Character Name", CrewRoles.Actor, 1, 1)]
+        [InlineData(null, CrewRoles.Director, 1, 1)]
+        public async Task Create_ValidInput_ReturnsCorrectData(string characterName, CrewRoles crewRole, int movieID, int personID)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            await dbContext.SaveChangesAsync();
+            var data = await CreateMovieAndPerson(dbContext);
+            var movie = data[0] as Domain.Movie;
+            var person = data[1] as Domain.Person;
 
-            var expectedCrewMember = new AdminCrewMemberModel
+            var newCrewMember = new AdminCrewMemberModel
+            {
+                CharacterName = characterName,
+                Role = crewRole,
+                MovieID = movieID,
+                PersonID = personID
+            };
+
+            var expectedCrewMember = new CrewMemberModel
             {
                 ID = 1,
                 CharacterName = characterName,
-                Role = crewRole
+                Role = crewRole.ToString(),
+                Movie = new MovieModel
+                {
+                    ID = movie.ID,
+                    Title = movie.Title
+                },
+                Person = new PersonModel
+                {
+                    ID = person.ID,
+                    FirstName = person.FirstName,
+                    LastName = person.LastName
+                }
             };
 
             var appCrewMember = new CrewMember(dbContext);
             #endregion
 
             #region Act
-            var actualCrewMember = await appCrewMember.Create(expectedCrewMember);
+            var actualCrewMember = await appCrewMember.Create(newCrewMember);
             #endregion
 
             #region Assert
             Assert.Equal(expectedCrewMember.ID, actualCrewMember.ID);
             Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
             Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
+            Assert.Equal(expectedCrewMember.Movie.ID, actualCrewMember.Movie.ID);
+            Assert.Equal(expectedCrewMember.Movie.Title, actualCrewMember.Movie.Title);
+            Assert.Equal(expectedCrewMember.Person.ID, actualCrewMember.Person.ID);
+            Assert.Equal(expectedCrewMember.Person.FirstName, actualCrewMember.Person.FirstName);
+            Assert.Equal(expectedCrewMember.Person.LastName, actualCrewMember.Person.LastName);
             #endregion
         }
 
@@ -59,32 +105,40 @@ namespace UnitTests
             string characterName = "Name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
             CrewRoles crewRoleDirector = CrewRoles.Director;
+            int movieID = 1;
+            int personID = 1;
 
-            // characterName = null
-            yield return new object[] { null, crewRoleActor };
-            // characterName = empty
-            yield return new object[] { "", crewRoleActor };
-            // Director should not have a character name
-            yield return new object[] { "Epic Name", crewRoleDirector };
-            // crewRole = 100 (does not exists)
-            yield return new object[] { characterName, 100 };
+            // Actor's character name cannot be null
+            yield return new object[] { null, crewRoleActor, movieID, personID };
+            // Actor's character name cannot be empty
+            yield return new object[] { "", crewRoleActor, movieID, personID };
+            // Director's character name must be null
+            yield return new object[] { "Epic Name", crewRoleDirector, movieID, personID };
+            // Crew role must exist
+            yield return new object[] { characterName, 100, movieID, personID };
+            // Movie must exist
+            yield return new object[] { characterName, crewRoleActor, 2, personID };
+            // Person must exist
+            yield return new object[] { characterName, crewRoleActor, movieID, 2 };
         }
 
         [Theory]
         [MemberData(nameof(CreateInvalidInputData))]
-        public async Task Create_InvalidInput_ReturnNull(string characterName, CrewRoles crewRole)
+        public async Task Create_InvalidInput_ReturnNull(string characterName, CrewRoles crewRole, int movieID, int personID)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            await dbContext.SaveChangesAsync();
+            await CreateMovieAndPerson(dbContext);
 
             var expectedCrewMember = new AdminCrewMemberModel
             {
                 ID = 1,
                 CharacterName = characterName,
-                Role = crewRole
+                Role = crewRole,
+                MovieID = movieID,
+                PersonID = personID
             };
 
             var appCrewMember = new CrewMember(dbContext);
@@ -107,16 +161,40 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedCrewMember = new AdminCrewMemberModel
+            var data = await CreateMovieAndPerson(dbContext);
+            var movie = data[0] as Domain.Movie;
+            var person = data[1] as Domain.Person;
+
+            var crewMember = new Domain.CrewMember
+            {
+                CharacterName = "Diego Lopez",
+                Role = CrewRoles.Actor,
+                MovieID = movie.ID,
+                PersonID = person.ID
+            };
+
+            dbContext.CrewMembers.Add(crewMember);
+            await dbContext.SaveChangesAsync();
+
+            var expectedCrewMember = new CrewMemberModel
             {
                 ID = id,
-                CharacterName = "Character Name",
-                Role = CrewRoles.Actor
+                CharacterName = "Diego Lopez",
+                Role = CrewRoles.Actor.ToString(),
+                Movie = new MovieModel
+                {
+                    ID = movie.ID,
+                    Title = movie.Title
+                },
+                Person = new PersonModel
+                {
+                    ID = person.ID,
+                    FirstName = person.FirstName,
+                    LastName = person.LastName
+                }
             };
 
             var appCrewMember = new CrewMember(dbContext);
-
-            await appCrewMember.Create(expectedCrewMember);
             #endregion
 
             #region Act
@@ -125,6 +203,13 @@ namespace UnitTests
 
             #region Assert
             Assert.Equal(expectedCrewMember.ID, actualCrewMember.ID);
+            Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
+            Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
+            Assert.Equal(expectedCrewMember.Movie.ID, actualCrewMember.Movie.ID);
+            Assert.Equal(expectedCrewMember.Movie.Title, actualCrewMember.Movie.Title);
+            Assert.Equal(expectedCrewMember.Person.ID, actualCrewMember.Person.ID);
+            Assert.Equal(expectedCrewMember.Person.FirstName, actualCrewMember.Person.FirstName);
+            Assert.Equal(expectedCrewMember.Person.LastName, actualCrewMember.Person.LastName);
             #endregion
         }
 
@@ -137,16 +222,12 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedCrewMember = new AdminCrewMemberModel
-            {
-                ID = id,
-                CharacterName = "Name",
-                Role = CrewRoles.Actor
-            };
+            await CreateMovieAndPerson(dbContext);
+
+            dbContext.CrewMembers.Add(new Domain.CrewMember());
+            await dbContext.SaveChangesAsync();
 
             var appCrewMember = new CrewMember(dbContext);
-
-            await appCrewMember.Create(expectedCrewMember);
             #endregion
 
             #region Act
@@ -165,14 +246,19 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
+            var data = await CreateMovieAndPerson(dbContext);
+            var movie = data[0] as Domain.Movie;
+            var person = data[1] as Domain.Person;
+
             int expectedAmount = 5;
 
             dbContext.CrewMembers.AddRange(
-                Enumerable.Range(1, expectedAmount).Select(c => new Domain.CrewMember
-                {
-                    CrewMemberID = c,
-                    CharacterName = $"Character Name {c}",
-                    Role = CrewRoles.Actor
+                Enumerable.Range(1, expectedAmount).Select(c => new Domain.CrewMember 
+                { 
+                    CharacterName = "Diego Lopez",
+                    Role = CrewRoles.Actor,
+                    MovieID = movie.ID,
+                    PersonID = person.ID
                 })
             );
 
@@ -214,34 +300,60 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, null, CrewRoles.Writer)]
-        public async Task Update_ValidInput_ReturnsCorrectData(int id, string characterName, CrewRoles crewRole)
+        [InlineData(1, null, CrewRoles.Writer, 1, 1)]
+        public async Task Update_ValidInput_ReturnsCorrectData(int id, string characterName, CrewRoles crewRole, int movieID, int personID)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
+            var data = await CreateMovieAndPerson(dbContext);
+            var movie = data[0] as Domain.Movie;
+            var person = data[1] as Domain.Person;
+
             var crewMember = new Domain.CrewMember
             {
                 CharacterName = "Name",
-                Role = CrewRoles.Actor
+                Role = CrewRoles.Actor,
+                MovieID = movie.ID,
+                PersonID = person.ID
             };
-            dbContext.CrewMembers.Add(crewMember);
 
+            dbContext.CrewMembers.Add(crewMember);
             await dbContext.SaveChangesAsync();
 
-            var expectedCrewMember = new AdminCrewMemberModel
+            var newCrewMember = new AdminCrewMemberModel
             {
                 ID = id,
                 CharacterName = characterName,
-                Role = crewRole
+                Role = crewRole,
+                MovieID = movieID,
+                PersonID = personID
+            };
+
+            var expectedCrewMember = new CrewMemberModel
+            {
+                ID = id,
+                CharacterName = characterName,
+                Role = crewRole.ToString(),
+                Movie = new MovieModel
+                {
+                    ID = movie.ID,
+                    Title = movie.Title
+                },
+                Person = new PersonModel
+                {
+                    ID = person.ID,
+                    FirstName = person.FirstName,
+                    LastName = person.LastName
+                }
             };
 
             var appCrewMember = new CrewMember(dbContext);
             #endregion
 
             #region Act
-            var actualCrewMember = await appCrewMember.Update(expectedCrewMember);
+            var actualCrewMember = await appCrewMember.Update(newCrewMember);
             #endregion
 
             #region Assert
@@ -257,48 +369,64 @@ namespace UnitTests
             string characterName = "Name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
             CrewRoles crewRoleWriter = CrewRoles.Writer;
+            int movieID = 1;
+            int personID = 1;
 
             // id = 0
-            yield return new object[] { 0, characterName, crewRoleWriter };
+            yield return new object[] { 0, characterName, crewRoleWriter, movieID, personID };
             // id = 2 (does not exist)
-            yield return new object[] { 2, characterName, crewRoleWriter };
-            // Only an actor should have a character name
-            yield return new object[] { id, characterName, crewRoleWriter };
-            // An actor should have a character name
-            yield return new object[] { id, null, crewRoleActor };
-            // crewRole = 100 (does not exist)
-            yield return new object[] { id, characterName, 100 };
+            yield return new object[] { 2, characterName, crewRoleWriter, movieID, personID };
+            // Writer's character name must be null
+            yield return new object[] { id, characterName, crewRoleWriter, movieID, personID };
+            // Actor's character name cannot be null
+            yield return new object[] { id, null, crewRoleActor, movieID, personID };
+            // Actor's character name cannot be empty
+            yield return new object[] { id, "", crewRoleActor, movieID, personID };
+            // Crew role must exist
+            yield return new object[] { id, characterName, 100, movieID, personID };
+            // Movie must exist
+            yield return new object[] { id, characterName, crewRoleActor, 2, personID };
+            // Person must exist
+            yield return new object[] { id, characterName, crewRoleActor, movieID, 2 };
         }
 
         [Theory]
         [MemberData(nameof(UpdateInvalidInputData))]
-        public async Task Update_InvalidInput_ReturnsNull(int id, string characterName, CrewRoles crewRole)
+        public async Task Update_InvalidInput_ReturnsNull(int id, string characterName, CrewRoles crewRole, int movieID, int personID)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
+            var data = await CreateMovieAndPerson(dbContext);
+            var movie = data[0] as Domain.Movie;
+            var person = data[1] as Domain.Person;
+
             var crewMember = new Domain.CrewMember
             {
                 CharacterName = "Character Name",
-                Role = CrewRoles.Actor
+                Role = CrewRoles.Actor,
+                MovieID = movie.ID,
+                PersonID = person.ID
             };
-            dbContext.CrewMembers.Add(crewMember);
 
+            dbContext.CrewMembers.Add(crewMember);
             await dbContext.SaveChangesAsync();
 
-            var expectedCrewMember = new AdminCrewMemberModel
+            var newCrewMember = new AdminCrewMemberModel
             {
                 ID = id,
                 CharacterName = characterName,
-                Role = crewRole
+                Role = crewRole,
+                MovieID = movieID,
+                PersonID = personID
             };
 
             var appCrewMember = new CrewMember(dbContext);
             #endregion
 
             #region Act
-            var actualCrewMember = await appCrewMember.Update(expectedCrewMember);
+            var actualCrewMember = await appCrewMember.Update(newCrewMember);
             #endregion
 
             #region Assert

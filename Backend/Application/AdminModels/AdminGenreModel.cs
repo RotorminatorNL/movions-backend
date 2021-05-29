@@ -15,8 +15,5 @@ namespace Application.AdminModels
         [JsonPropertyName("name")]
         [Required]
         public string Name { get; set; }
-
-        [JsonPropertyName("movies")]
-        public IEnumerable<AdminMovieModel> Movies { get; set; }
     }
 }

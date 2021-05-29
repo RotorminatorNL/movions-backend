@@ -64,10 +64,32 @@ namespace API.Controllers
             return NotFound();
         }
 
+        [HttpPut("{id}/[action]")]
+        public async Task<IActionResult> ConnectMovie([FromBody] AdminCompanyMovieModel adminCompanyMovieModel)
+        {
+            if (await company.ConnectMovie(adminCompanyMovieModel) is CompanyModel result && result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             if (await company.Delete(id))
+            {
+                return Ok();
+            }
+
+            return NotFound();
+        }
+
+        [HttpDelete("{id}/[action]")]
+        public async Task<IActionResult> DisconnectMovie(int id, [FromBody] AdminCompanyMovieModel adminCompanyMovieModel)
+        {
+            if (await company.DisconnectMovie(id, adminCompanyMovieModel.MovieID))
             {
                 return Ok();
             }

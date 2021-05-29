@@ -12,7 +12,7 @@ namespace Application.ViewModels
         [JsonPropertyName("birthDate")]
         public DateTime BirthDate { get; set; }
 
-        [JsonPropertyName("birthDate")]
+        [JsonPropertyName("birthPlace")]
         public string BirthPlace { get; set; }
 
         [JsonPropertyName("description")]

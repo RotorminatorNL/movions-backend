@@ -28,15 +28,6 @@ namespace Application.AdminModels
         [Required]
         public string Title { get; set; }
 
-        [JsonPropertyName("companies")]
-        public IEnumerable<AdminCompanyModel> Companies { get; set; }
-
-        [JsonPropertyName("crew")]
-        public IEnumerable<AdminCrewMemberModel> Crew { get; set; }
-
-        [JsonPropertyName("genres")]
-        public IEnumerable<AdminGenreModel> Genres { get; set; }
-
         [JsonPropertyName("language")]
         [Required]
         public AdminLanguageModel Language { get; set; }

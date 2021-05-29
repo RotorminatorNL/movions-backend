@@ -22,16 +22,12 @@ namespace Application.AdminModels
         public CrewRoles Role { get; set; }
 
         [JsonPropertyName("movieID")]
+        [Range(1, int.MaxValue)]
         public int MovieID { get; set; }
 
-        [JsonPropertyName("movie")]
-        public AdminMovieModel Movie { get; set; }
-
         [JsonPropertyName("personID")]
+        [Range(1, int.MaxValue)]
         public int PersonID { get; set; }
-
-        [JsonPropertyName("person")]
-        public AdminPersonModel Person { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

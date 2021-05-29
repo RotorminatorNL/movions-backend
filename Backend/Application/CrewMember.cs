@@ -20,25 +20,28 @@ namespace Application
             _crewMemberValidation = new CrewMemberValidation();
         }
 
-        public async Task<AdminCrewMemberModel> Create(AdminCrewMemberModel adminCrewRoleModel)
+        public async Task<CrewMemberModel> Create(AdminCrewMemberModel adminCrewMemberModel)
         {
-            if (_crewMemberValidation.IsInputValid(adminCrewRoleModel))
+            if (_crewMemberValidation.IsInputValid(adminCrewMemberModel))
             {
-                var crewRole = new Domain.CrewMember
-                {
-                    CharacterName = adminCrewRoleModel.CharacterName,
-                    Role = adminCrewRoleModel.Role
-                };
+                var movie = _applicationDbContext.Movies.FirstOrDefault(m => m.ID == adminCrewMemberModel.MovieID);
+                var person = _applicationDbContext.Persons.FirstOrDefault(p => p.ID == adminCrewMemberModel.PersonID);
 
-                _applicationDbContext.CrewMembers.Add(crewRole);
-                await _applicationDbContext.SaveChangesAsync();
-
-                return new AdminCrewMemberModel
+                if (movie != null && person != null)
                 {
-                    ID = crewRole.CrewMemberID,
-                    CharacterName = crewRole.CharacterName,
-                    Role = crewRole.Role
-                };
+                    var crewMember = new Domain.CrewMember
+                    {
+                        CharacterName = adminCrewMemberModel.CharacterName,
+                        Role = adminCrewMemberModel.Role,
+                        MovieID = adminCrewMemberModel.MovieID,
+                        PersonID = adminCrewMemberModel.PersonID
+                    };
+
+                    _applicationDbContext.CrewMembers.Add(crewMember);
+                    await _applicationDbContext.SaveChangesAsync();
+
+                    return await Read(crewMember.CrewMemberID);
+                }
             }
 
             return null;
@@ -46,43 +49,58 @@ namespace Application
 
         public async Task<CrewMemberModel> Read(int id)
         {
-            return await _applicationDbContext.CrewMembers.Select(crewRole => new CrewMemberModel
+            return await _applicationDbContext.CrewMembers.Select(c => new CrewMemberModel
             {
-                ID = crewRole.CrewMemberID,
-                CharacterName = crewRole.CharacterName,
-                Role = crewRole.Role.ToString(),
-                MovieID = crewRole.MovieID,
-            }).FirstOrDefaultAsync(x => x.ID == id);
+                ID = c.CrewMemberID,
+                CharacterName = c.CharacterName,
+                Role = c.Role.ToString(),
+                Movie = new MovieModel 
+                { 
+                    ID = c.Movie.ID,
+                    Title = c.Movie.Title
+                },
+                Person = new PersonModel
+                {
+                    ID = c.Person.ID,
+                    FirstName = c.Person.FirstName,
+                    LastName = c.Person.LastName
+                }
+            }).FirstOrDefaultAsync(c => c.ID == id);
         }
 
         public async Task<IEnumerable<CrewMemberModel>> ReadAll()
         {
-            return await _applicationDbContext.CrewMembers.Select(crewRole => new CrewMemberModel
+            return await _applicationDbContext.CrewMembers.Select(c => new CrewMemberModel
             {
-                ID = crewRole.CrewMemberID,
-                CharacterName = crewRole.CharacterName,
-                Role = crewRole.Role.ToString(),
-                MovieID = crewRole.MovieID,
+                ID = c.CrewMemberID,
+                CharacterName = c.CharacterName,
+                Role = c.Role.ToString(),
+                Movie = new MovieModel
+                {
+                    ID = c.Movie.ID,
+                    Title = c.Movie.Title
+                },
+                Person = new PersonModel
+                {
+                    ID = c.Person.ID,
+                    FirstName = c.Person.FirstName,
+                    LastName = c.Person.LastName
+                }
             }).ToListAsync();
         }
 
-        public async Task<AdminCrewMemberModel> Update(AdminCrewMemberModel adminCrewRoleModel)
+        public async Task<CrewMemberModel> Update(AdminCrewMemberModel adminCrewMemberModel)
         {
-            var crewRole = _applicationDbContext.CrewMembers.FirstOrDefault(x => x.CrewMemberID == adminCrewRoleModel.ID);
+            var crewMember = _applicationDbContext.CrewMembers.FirstOrDefault(x => x.CrewMemberID == adminCrewMemberModel.ID);
 
-            if (crewRole != null && _crewMemberValidation.IsInputValid(adminCrewRoleModel))
+            if (crewMember != null && _crewMemberValidation.IsInputValid(adminCrewMemberModel))
             {
-                crewRole.CharacterName = adminCrewRoleModel.CharacterName;
-                crewRole.Role = adminCrewRoleModel.Role;
+                crewMember.CharacterName = adminCrewMemberModel.CharacterName;
+                crewMember.Role = adminCrewMemberModel.Role;
 
                 await _applicationDbContext.SaveChangesAsync();
 
-                return new AdminCrewMemberModel
-                {
-                    ID = crewRole.CrewMemberID,
-                    CharacterName = crewRole.CharacterName,
-                    Role = crewRole.Role
-                };
+                return await Read(crewMember.CrewMemberID);
             }
 
             return null;
@@ -90,11 +108,11 @@ namespace Application
 
         public async Task<bool> Delete(int id)
         {
-            var crewRole = _applicationDbContext.CrewMembers.FirstOrDefault(x => x.CrewMemberID == id);
+            var crewMember = _applicationDbContext.CrewMembers.FirstOrDefault(x => x.CrewMemberID == id);
 
-            if (crewRole != null)
+            if (crewMember != null)
             {
-                _applicationDbContext.CrewMembers.Remove(crewRole);
+                _applicationDbContext.CrewMembers.Remove(crewMember);
                 await _applicationDbContext.SaveChangesAsync();
 
                 return true;

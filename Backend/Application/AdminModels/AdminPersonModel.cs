@@ -15,7 +15,7 @@ namespace Application.AdminModels
         [Required]
         public DateTime BirthDate { get; set; }
 
-        [JsonPropertyName("birthDate")]
+        [JsonPropertyName("birthPlace")]
         [Required]
         public string BirthPlace { get; set; }
 
@@ -30,8 +30,5 @@ namespace Application.AdminModels
         [JsonPropertyName("lastName")]
         [Required]
         public string LastName { get; set; }
-
-        [JsonPropertyName("roles")]
-        public IEnumerable<AdminCrewMemberModel> Roles { get; set; }
     }
 }

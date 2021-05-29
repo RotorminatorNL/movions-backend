@@ -23,7 +23,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminCrewMemberModel adminCrewMemberModel)
         {
-            if (await crewMember.Create(adminCrewMemberModel) is AdminCrewMemberModel result && result != null)
+            if (await crewMember.Create(adminCrewMemberModel) is CrewMemberModel result && result != null)
             {
                 return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
             }
@@ -56,7 +56,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] AdminCrewMemberModel adminCrewMemberModel)
         {
-            if (await crewMember.Update(adminCrewMemberModel) is AdminCrewMemberModel result && result != null)
+            if (await crewMember.Update(adminCrewMemberModel) is CrewMemberModel result && result != null)
             {
                 return Ok(result);
             }
