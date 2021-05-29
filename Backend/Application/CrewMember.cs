@@ -28,23 +28,7 @@ namespace Application
                 var movie = _applicationDbContext.Movies.FirstOrDefault(m => m.ID == adminCrewMemberModel.MovieID);
                 var person = _applicationDbContext.Persons.FirstOrDefault(p => p.ID == adminCrewMemberModel.PersonID);
 
-                Console.WriteLine("----------------------------------------");
-                Console.WriteLine("----------------------------------------");
-                Console.WriteLine("----------------------------------------");
-
-                Console.WriteLine($"Actual Movie: {movie}");
-                Console.WriteLine($"Actual MovieID: {movie.ID}");
-                Console.WriteLine($"Wanted MovieID: {adminCrewMemberModel.MovieID}");
-                Console.WriteLine("----------------------------------------");
-                Console.WriteLine($"Actual Person: {person}");
-                Console.WriteLine($"Actual PersonID: {person.ID}");
-                Console.WriteLine($"Wanted PersonID: {adminCrewMemberModel.PersonID}");
-
-                Console.WriteLine("----------------------------------------");
-                Console.WriteLine("----------------------------------------");
-                Console.WriteLine("----------------------------------------");
-
-                if (movie != null && movie.ID == adminCrewMemberModel.MovieID && person != null && person.ID == adminCrewMemberModel.PersonID)
+                if (movie != null && person != null)
                 {
                     var crewMember = new Domain.CrewMember
                     {
@@ -112,12 +96,18 @@ namespace Application
 
             if (crewMember != null && _crewMemberValidation.IsInputValid(adminCrewMemberModel))
             {
-                crewMember.CharacterName = adminCrewMemberModel.CharacterName;
-                crewMember.Role = adminCrewMemberModel.Role;
+                var movie = _applicationDbContext.Movies.FirstOrDefault(m => m.ID == adminCrewMemberModel.MovieID);
+                var person = _applicationDbContext.Persons.FirstOrDefault(p => p.ID == adminCrewMemberModel.PersonID);
 
-                await _applicationDbContext.SaveChangesAsync();
+                if (movie != null && person != null)
+                {
+                    crewMember.CharacterName = adminCrewMemberModel.CharacterName;
+                    crewMember.Role = adminCrewMemberModel.Role;
 
-                return await Read(crewMember.CrewMemberID);
+                    await _applicationDbContext.SaveChangesAsync();
+
+                    return await Read(crewMember.CrewMemberID);
+                }
             }
 
             return null;
