@@ -302,7 +302,6 @@ namespace IntegrationTests
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
             #endregion
 
@@ -507,7 +506,6 @@ namespace IntegrationTests
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
@@ -535,7 +533,6 @@ namespace IntegrationTests
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 

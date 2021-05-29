@@ -25,7 +25,6 @@ namespace IntegrationTests
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
 
             var newCompany = new AdminCompanyModel
@@ -82,7 +81,6 @@ namespace IntegrationTests
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
 
             var invalidCompanyData = new AdminCompanyModel
@@ -115,74 +113,11 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(1, 1)]
-        public async Task ConnectMovie_ValidRequest_ReturnsJsonResponseAndCreated(int id, int movieID)
-        {
-            #region Arrange 
-            await DeleteDbContent();
-
-            var client = GetHttpClient();
-
-            var company = new Domain.Company
-            {
-                Name = "Epic Producer",
-                Type = CompanyTypes.Producer
-            };
-            GetDbContext().Companies.Add(company);
-
-            var movie = new Domain.Movie
-            {
-                Title = "Epic Title"
-            };
-            GetDbContext().Movies.Add(movie);
-            await GetDbContext().SaveChangesAsync();
-
-            var newCompany = new AdminCompanyMovieModel
-            {
-                CompanyID = id,
-                MovieID = movieID
-            };
-
-            var expectedCompany = new CompanyModel
-            {
-                ID = company.ID,
-                Name = company.Name,
-                Type = company.Type.ToString(),
-                Movies = new List<MovieModel> 
-                { 
-                    new MovieModel
-                    {
-                        ID = movie.ID,
-                        Title = movie.Title
-                    } 
-                }
-            };
-            #endregion
-
-            #region Act
-            var response = await client.PutAsJsonAsync($"/api/company/{newCompany.CompanyID}/connectmovie", newCompany);
-            var responseBody = await response.Content.ReadAsStreamAsync();
-            var actualCompany = await JsonSerializer.DeserializeAsync<CompanyModel>(responseBody);
-            #endregion
-
-            #region Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedCompany.ID, actualCompany.ID);
-            Assert.Equal(expectedCompany.Name, actualCompany.Name);
-            Assert.Equal(expectedCompany.Type, actualCompany.Type);
-            Assert.Equal(expectedCompany.Movies.Count(), actualCompany.Movies.Count());
-            Assert.Equal(expectedCompany.Movies.ToList()[0].ID, actualCompany.Movies.ToList()[0].ID);
-            Assert.Equal(expectedCompany.Movies.ToList()[0].Title, actualCompany.Movies.ToList()[0].Title);
-            #endregion
-        }
-
-        [Theory]
         [InlineData(1)]
         public async Task Read_ValidRequest_ReturnsJsonResponseAndOk(int id)
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
@@ -222,7 +157,6 @@ namespace IntegrationTests
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
@@ -248,7 +182,6 @@ namespace IntegrationTests
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
@@ -285,7 +218,6 @@ namespace IntegrationTests
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
             #endregion
 
@@ -304,7 +236,6 @@ namespace IntegrationTests
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
@@ -370,7 +301,6 @@ namespace IntegrationTests
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
@@ -417,7 +347,6 @@ namespace IntegrationTests
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
@@ -446,12 +375,73 @@ namespace IntegrationTests
         }
 
         [Theory]
+        [InlineData(1, 1)]
+        public async Task ConnectMovie_ValidRequest_ReturnsJsonResponseAndCreated(int id, int movieID)
+        {
+            #region Arrange 
+            await DeleteDbContent();
+            var client = GetHttpClient();
+            var dbContext = GetDbContext();
+
+            var company = new Domain.Company
+            {
+                Name = "Epic Producer",
+                Type = CompanyTypes.Producer
+            };
+            dbContext.Companies.Add(company);
+
+            var movie = new Domain.Movie
+            {
+                Title = "Epic Title"
+            };
+            dbContext.Movies.Add(movie);
+            await dbContext.SaveChangesAsync();
+
+            var newCompany = new AdminCompanyMovieModel
+            {
+                CompanyID = id,
+                MovieID = movieID
+            };
+
+            var expectedCompany = new CompanyModel
+            {
+                ID = company.ID,
+                Name = company.Name,
+                Type = company.Type.ToString(),
+                Movies = new List<MovieModel>
+                {
+                    new MovieModel
+                    {
+                        ID = movie.ID,
+                        Title = movie.Title
+                    }
+                }
+            };
+            #endregion
+
+            #region Act
+            var response = await client.PutAsJsonAsync($"/api/company/{newCompany.CompanyID}/connectmovie", newCompany);
+            var responseBody = await response.Content.ReadAsStreamAsync();
+            var actualCompany = await JsonSerializer.DeserializeAsync<CompanyModel>(responseBody);
+            #endregion
+
+            #region Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(expectedCompany.ID, actualCompany.ID);
+            Assert.Equal(expectedCompany.Name, actualCompany.Name);
+            Assert.Equal(expectedCompany.Type, actualCompany.Type);
+            Assert.Equal(expectedCompany.Movies.Count(), actualCompany.Movies.Count());
+            Assert.Equal(expectedCompany.Movies.ToList()[0].ID, actualCompany.Movies.ToList()[0].ID);
+            Assert.Equal(expectedCompany.Movies.ToList()[0].Title, actualCompany.Movies.ToList()[0].Title);
+            #endregion
+        }
+
+        [Theory]
         [InlineData(1)]
         public async Task Delete_ValidRequest_ReturnsJsonResponseAndOk(int id)
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
@@ -479,7 +469,6 @@ namespace IntegrationTests
         {
             #region Arrange 
             await DeleteDbContent();
-
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
