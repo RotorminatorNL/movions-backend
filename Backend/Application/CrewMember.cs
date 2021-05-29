@@ -32,14 +32,19 @@ namespace Application
                 Console.WriteLine("----------------------------------------");
                 Console.WriteLine("----------------------------------------");
 
-                Console.WriteLine($"Movie: {movie}");
-                Console.WriteLine($"Person: {person}");
+                Console.WriteLine($"Actual Movie: {movie}");
+                Console.WriteLine($"Actual MovieID: {movie.ID}");
+                Console.WriteLine($"Wanted MovieID: {adminCrewMemberModel.MovieID}");
+                Console.WriteLine("----------------------------------------");
+                Console.WriteLine($"Actual Person: {person}");
+                Console.WriteLine($"Actual PersonID: {person.ID}");
+                Console.WriteLine($"Wanted PersonID: {adminCrewMemberModel.PersonID}");
 
                 Console.WriteLine("----------------------------------------");
                 Console.WriteLine("----------------------------------------");
                 Console.WriteLine("----------------------------------------");
 
-                if (movie != null && person != null)
+                if (movie != null && movie.ID == adminCrewMemberModel.MovieID && person != null && person.ID == adminCrewMemberModel.PersonID)
                 {
                     var crewMember = new Domain.CrewMember
                     {
