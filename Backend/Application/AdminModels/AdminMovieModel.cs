@@ -9,7 +9,7 @@ namespace Application.AdminModels
     public class AdminMovieModel
     {
         [JsonPropertyName("id")]
-        [Required]
+        [Range(1, int.MaxValue)]
         public int ID { get; set; }
 
         [JsonPropertyName("description")]
@@ -17,7 +17,7 @@ namespace Application.AdminModels
         public string Description { get; set; }
 
         [JsonPropertyName("length")]
-        [Required]
+        [Range(1, int.MaxValue)]
         public int Length { get; set; }
 
         [JsonPropertyName("releaseDate")]

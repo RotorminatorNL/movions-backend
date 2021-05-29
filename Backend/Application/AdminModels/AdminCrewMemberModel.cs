@@ -10,7 +10,7 @@ namespace Application.AdminModels
     public class AdminCrewMemberModel : IValidatableObject
     {
         [JsonPropertyName("id")]
-        [Required]
+        [Range(1, int.MaxValue)]
         public int ID { get; set; }
 
         [JsonPropertyName("characterName")]
@@ -18,7 +18,6 @@ namespace Application.AdminModels
 
         [EnumDataType(typeof(CrewRoles))]
         [JsonPropertyName("role")]
-        [Required]
         public CrewRoles Role { get; set; }
 
         [JsonPropertyName("movieID")]

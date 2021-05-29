@@ -8,7 +8,7 @@ namespace Application.AdminModels
     public class AdminCompanyModel
     {
         [JsonPropertyName("id")]
-        [Required]
+        [Range(1, int.MaxValue)]
         public int ID { get; set; }
 
         [JsonPropertyName("name")]
@@ -17,7 +17,6 @@ namespace Application.AdminModels
 
         [EnumDataType(typeof(CompanyTypes))]
         [JsonPropertyName("type")]
-        [Required]
         public CompanyTypes Type { get; set; }
     }
 }

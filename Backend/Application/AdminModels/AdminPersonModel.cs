@@ -8,7 +8,7 @@ namespace Application.AdminModels
     public class AdminPersonModel
     {
         [JsonPropertyName("id")]
-        [Required]
+        [Range(1, int.MaxValue)]
         public int ID { get; set; }
 
         [JsonPropertyName("birthDate")]

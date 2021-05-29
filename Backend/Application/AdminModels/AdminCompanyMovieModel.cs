@@ -6,11 +6,11 @@ namespace Application.AdminModels
     public class AdminCompanyMovieModel
     {
         [JsonPropertyName("companyID")]
-        [Required]
+        [Range(1, int.MaxValue)]
         public int CompanyID { get; set; }
 
         [JsonPropertyName("movieID")]
-        [Required]
+        [Range(1, int.MaxValue)]
         public int MovieID { get; set; }
     }
 }
