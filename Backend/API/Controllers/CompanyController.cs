@@ -1,49 +1,100 @@
 ﻿using Application;
+using Application.AdminModels;
+using Application.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]")]
     public class CompanyController : Controller
     {
-        private readonly Company Company;
+        private readonly Company company;
 
         public CompanyController(IApplicationDbContext applicationDbContext)
         {
-            Company = new Company(applicationDbContext);
+            company = new Company(applicationDbContext);
         }
 
-        [HttpPost()]
-        public async Task<IActionResult> Create(AdminCompanyModel adminCompanyModel)
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] AdminCompanyModel adminCompanyModel)
         {
-            return Ok(await Company.Create(adminCompanyModel));
-        }
+            if (await company.Create(adminCompanyModel) is CompanyModel result && result != null)
+            {
+                return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
+            }
 
-        [HttpGet()]
-        public IActionResult ReadAll()
-        {
-            return Ok(Company.ReadAll());
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Read(int id)
+        public async Task<IActionResult> Read(int id)
         {
-            return Ok(Company.Read(id));
+            if (await company.Read(id) is CompanyModel result && result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ReadAll()
+        {
+            if (await company.ReadAll() is ICollection<CompanyModel> result && result.Count > 0)
+            {
+                return Ok(result);
+            }
+
+            return NoContent();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(AdminCompanyModel adminCompanyModel)
+        public async Task<IActionResult> Update([FromBody] AdminCompanyModel adminCompanyModel)
         {
-            return Ok(await Company.Update(adminCompanyModel));
+            if (await company.Update(adminCompanyModel) is CompanyModel result && result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
+        }
+
+        [HttpPut("{id}/[action]")]
+        public async Task<IActionResult> ConnectMovie([FromBody] AdminCompanyMovieModel adminCompanyMovieModel)
+        {
+            if (await company.ConnectMovie(adminCompanyMovieModel) is CompanyModel result && result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok(await Company.Delete(id));
+            if (await company.Delete(id))
+            {
+                return Ok();
+            }
+
+            return NotFound();
+        }
+
+        [HttpDelete("{id}/[action]")]
+        public async Task<IActionResult> DisconnectMovie(int id, [FromBody] AdminCompanyMovieModel adminCompanyMovieModel)
+        {
+            if (await company.DisconnectMovie(id, adminCompanyMovieModel.MovieID))
+            {
+                return Ok();
+            }
+
+            return NotFound();
         }
     }
 }

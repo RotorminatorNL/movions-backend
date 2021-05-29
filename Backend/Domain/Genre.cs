@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Domain
 {
@@ -8,6 +6,6 @@ namespace Domain
     {
         public int ID { get; set; }
         public string Name { get; set; }
-        public IEnumerable<Movie> Movies { get; set; }
+        public IEnumerable<GenreMovie> Movies { get; set; }
     }
 }

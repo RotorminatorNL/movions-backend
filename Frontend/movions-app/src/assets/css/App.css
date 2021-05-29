@@ -21,6 +21,25 @@ textarea:focus {
     box-sizing: inherit;
 }
 
+html {
+    overflow-x: hidden;
+}
+
+html::-webkit-scrollbar {
+    width: 10px;
+}
+
+html::-webkit-scrollbar-track {
+    background-color:rgba(0, 35, 62, 0.8);
+}
+
+html::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.6);
+}
+html::-webkit-scrollbar-thumb:hover {
+    background: rgb(255 255 255);
+}
+
 body {
     margin: 0;
 }
@@ -32,7 +51,6 @@ a {
 .app {
     position: relative;
     min-height: calc(100vh - 70px);
-
 }
 
 .app > .background {
@@ -46,25 +64,8 @@ a {
     background-position: center;
 }
 
-.content {
+.app {
     height: calc(100vh - 178px);
-    padding: 18px 0;
-    overflow-y: auto;
-}
-
-.content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.content::-webkit-scrollbar-track {
-    background-color: rgb(255 255 255 / 20%);
-}
-
-.content::-webkit-scrollbar-thumb {
-    background: rgb(255 255 255 / 50%);
-}
-.content::-webkit-scrollbar-thumb:hover {
-    background: rgb(255 255 255);
 }
 
 .container {
@@ -72,6 +73,10 @@ a {
     margin: 0 auto;
     position: relative;
     width: auto;
+}
+
+.content {
+    margin: 80px 0;
 }
 @media screen and (min-width: 1024px) {
     .container {

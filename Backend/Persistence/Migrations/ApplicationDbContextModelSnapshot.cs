@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
-namespace DataAccessLayer.Migrations
+namespace Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -18,21 +18,6 @@ namespace DataAccessLayer.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.5")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("CompanyMovie", b =>
-                {
-                    b.Property<int>("CompaniesID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MoviesID")
-                        .HasColumnType("int");
-
-                    b.HasKey("CompaniesID", "MoviesID");
-
-                    b.HasIndex("MoviesID");
-
-                    b.ToTable("CompanyMovie");
-                });
 
             modelBuilder.Entity("Domain.Company", b =>
                 {
@@ -52,9 +37,31 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("Companies");
                 });
 
-            modelBuilder.Entity("Domain.CrewRole", b =>
+            modelBuilder.Entity("Domain.CompanyMovie", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("CompanyMovieID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CompanyID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MovieID")
+                        .HasColumnType("int");
+
+                    b.HasKey("CompanyMovieID");
+
+                    b.HasIndex("CompanyID");
+
+                    b.HasIndex("MovieID");
+
+                    b.ToTable("CompanyMovies");
+                });
+
+            modelBuilder.Entity("Domain.CrewMember", b =>
+                {
+                    b.Property<int>("CrewMemberID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -71,13 +78,13 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
-                    b.HasKey("ID");
+                    b.HasKey("CrewMemberID");
 
                     b.HasIndex("MovieID");
 
                     b.HasIndex("PersonID");
 
-                    b.ToTable("CrewRoles");
+                    b.ToTable("CrewMembers");
                 });
 
             modelBuilder.Entity("Domain.Genre", b =>
@@ -93,6 +100,28 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Genres");
+                });
+
+            modelBuilder.Entity("Domain.GenreMovie", b =>
+                {
+                    b.Property<int>("GenreMovieID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("GenreID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MovieID")
+                        .HasColumnType("int");
+
+                    b.HasKey("GenreMovieID");
+
+                    b.HasIndex("GenreID");
+
+                    b.HasIndex("MovieID");
+
+                    b.ToTable("GenreMovies");
                 });
 
             modelBuilder.Entity("Domain.Language", b =>
@@ -120,14 +149,14 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("LanguageID")
+                    b.Property<int>("LanguageID")
                         .HasColumnType("int");
 
                     b.Property<int>("Length")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ReleaseDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ReleaseDate")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -146,8 +175,8 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("BirthDate")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BirthPlace")
                         .HasColumnType("nvarchar(max)");
@@ -164,21 +193,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Persons");
-                });
-
-            modelBuilder.Entity("GenreMovie", b =>
-                {
-                    b.Property<int>("GenresID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MoviesID")
-                        .HasColumnType("int");
-
-                    b.HasKey("GenresID", "MoviesID");
-
-                    b.HasIndex("MoviesID");
-
-                    b.ToTable("GenreMovie");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -377,22 +391,26 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("CompanyMovie", b =>
+            modelBuilder.Entity("Domain.CompanyMovie", b =>
                 {
-                    b.HasOne("Domain.Company", null)
-                        .WithMany()
-                        .HasForeignKey("CompaniesID")
+                    b.HasOne("Domain.Company", "Company")
+                        .WithMany("Movies")
+                        .HasForeignKey("CompanyID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Movie", null)
-                        .WithMany()
-                        .HasForeignKey("MoviesID")
+                    b.HasOne("Domain.Movie", "Movie")
+                        .WithMany("Companies")
+                        .HasForeignKey("MovieID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Movie");
                 });
 
-            modelBuilder.Entity("Domain.CrewRole", b =>
+            modelBuilder.Entity("Domain.CrewMember", b =>
                 {
                     b.HasOne("Domain.Movie", "Movie")
                         .WithMany("Crew")
@@ -411,28 +429,34 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Person");
                 });
 
+            modelBuilder.Entity("Domain.GenreMovie", b =>
+                {
+                    b.HasOne("Domain.Genre", "Genre")
+                        .WithMany("Movies")
+                        .HasForeignKey("GenreID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Movie", "Movie")
+                        .WithMany("Genres")
+                        .HasForeignKey("MovieID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Genre");
+
+                    b.Navigation("Movie");
+                });
+
             modelBuilder.Entity("Domain.Movie", b =>
                 {
                     b.HasOne("Domain.Language", "Language")
                         .WithMany("Movies")
-                        .HasForeignKey("LanguageID");
+                        .HasForeignKey("LanguageID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Language");
-                });
-
-            modelBuilder.Entity("GenreMovie", b =>
-                {
-                    b.HasOne("Domain.Genre", null)
-                        .WithMany()
-                        .HasForeignKey("GenresID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Movie", null)
-                        .WithMany()
-                        .HasForeignKey("MoviesID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -486,6 +510,16 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Company", b =>
+                {
+                    b.Navigation("Movies");
+                });
+
+            modelBuilder.Entity("Domain.Genre", b =>
+                {
+                    b.Navigation("Movies");
+                });
+
             modelBuilder.Entity("Domain.Language", b =>
                 {
                     b.Navigation("Movies");
@@ -493,7 +527,11 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("Domain.Movie", b =>
                 {
+                    b.Navigation("Companies");
+
                     b.Navigation("Crew");
+
+                    b.Navigation("Genres");
                 });
 
             modelBuilder.Entity("Domain.Person", b =>

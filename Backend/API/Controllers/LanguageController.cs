@@ -1,49 +1,78 @@
 ﻿using Application;
+using Application.AdminModels;
+using Application.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]")]
     public class LanguageController : Controller
     {
-        private readonly Language Language;
+        private readonly Language language;
 
         public LanguageController(IApplicationDbContext applicationDbContext)
         {
-            Language = new Language(applicationDbContext);
+            language = new Language(applicationDbContext);
         }
 
-        [HttpPost()]
-        public async Task<IActionResult> Create(AdminLanguageModel adminLanguageModel)
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] AdminLanguageModel adminLanguageModel)
         {
-            return Ok(await Language.Create(adminLanguageModel));
-        }
+            if (await language.Create(adminLanguageModel) is AdminLanguageModel result && result != null)
+            {
+                return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
+            }
 
-        [HttpGet()]
-        public IActionResult ReadAll()
-        {
-            return Ok(Language.ReadAll());
+            return StatusCode((int)HttpStatusCode.BadRequest);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Read(int id)
+        public async Task<IActionResult> Read(int id)
         {
-            return Ok(Language.Read(id));
+            if (await language.Read(id) is LanguageModel result && result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ReadAll()
+        {
+            if (await language.ReadAll() is ICollection<LanguageModel> result && result.Count > 0)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(AdminLanguageModel adminCompanyModel)
+        public async Task<IActionResult> Update([FromBody] AdminLanguageModel adminLanguageModel)
         {
-            return Ok(await Language.Update(adminCompanyModel));
+            if (await language.Update(adminLanguageModel) is AdminLanguageModel result && result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok(await Language.Delete(id));
+            if (await language.Delete(id))
+            {
+                return Ok();
+            }
+
+            return NotFound();
         }
     }
 }

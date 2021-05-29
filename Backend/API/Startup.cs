@@ -1,3 +1,4 @@
+using Application;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -11,24 +12,43 @@ namespace API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _isTesting = env.IsEnvironment("Testing");
         }
 
         public IConfiguration Configuration { get; }
 
-        readonly string AllowFrontend = "_allowFrontend";
+        private readonly bool _isTesting = false;
+        private readonly string AllowFrontend = "_allowFrontend";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
-                options => options.UseSqlServer(
-                    Configuration.GetConnectionString("MovionsDB"), 
-                    b => b.MigrationsAssembly("DataAccessLayer")
-                )
-            );
+            if (_isTesting)
+            {
+                services.AddTransient<Company>();
+                services.AddTransient<CrewMember>();
+                services.AddTransient<Genre>();
+                services.AddTransient<Language>();
+                services.AddTransient<Movie>();
+                services.AddTransient<Person>();
+            }
+            else
+            {
+                services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
+                    options => options.UseSqlServer(
+                        Configuration.GetConnectionString("MovionsDB"),
+                        b => b.MigrationsAssembly("Persistence")
+                    )
+                );
+            }
+
+            services.AddControllers(options =>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+            });
 
             services.AddCors(options =>
             {
@@ -40,8 +60,6 @@ namespace API
                            .AllowAnyMethod();
                 });
             });
-
-            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

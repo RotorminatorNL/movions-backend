@@ -5,7 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PersistenceInterface\PersistenceInterface.csproj" />
+    <PackageReference Include="System.Linq" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PersistenceInterface\PersistenceInterface.csproj" />
+  </ItemGroup>
 </Project>
