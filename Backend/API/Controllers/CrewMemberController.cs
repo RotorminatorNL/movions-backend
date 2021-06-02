@@ -15,7 +15,7 @@ namespace API.Controllers
     {
         private readonly CrewMember crewMember;
 
-        private BadRequestObjectResult GetCustomBadRequest(int id)
+        private NotFoundObjectResult GetCustomNotFound(int id)
         {
             switch (id)
             {
@@ -35,7 +35,7 @@ namespace API.Controllers
                     break;
             }
 
-            return BadRequest(new ValidationProblemDetails(ModelState));
+            return NotFound(new ValidationProblemDetails(ModelState));
         }
 
         public CrewMemberController(IApplicationDbContext applicationDbContext)
@@ -55,7 +55,7 @@ namespace API.Controllers
                     return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
                 }
 
-                return GetCustomBadRequest(result.ID);
+                return GetCustomNotFound(result.ID);
             }
 
             return StatusCode((int)HttpStatusCode.InternalServerError);
@@ -95,7 +95,7 @@ namespace API.Controllers
                     return Ok(result);
                 }
 
-                return GetCustomBadRequest(result.ID);
+                return GetCustomNotFound(result.ID);
             }
 
 

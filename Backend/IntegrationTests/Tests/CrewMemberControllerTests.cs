@@ -98,7 +98,7 @@ namespace IntegrationTests
             #endregion
         }
 
-        public static IEnumerable<object[]> CreateInvalidRequestData()
+        public static IEnumerable<object[]> Data_Create_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors()
         {
             string characterName = "Name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
@@ -171,19 +171,6 @@ namespace IntegrationTests
                     "Must be above 0."
                 }
             };
-            // MovieID = 2
-            yield return new object[]
-            {
-                characterName, crewRoleActor, 2, personID,
-                new string[]
-                {
-                    "MovieID"
-                },
-                new string[]
-                {
-                    "Does not exist."
-                }
-            };
             // PersonID = 0
             yield return new object[]
             {
@@ -195,6 +182,82 @@ namespace IntegrationTests
                 new string[]
                 {
                     "Must be above 0."
+                }
+            };
+            // Everything is wrong
+            yield return new object[]
+            {
+                null, 100, 0, 0,
+                new string[]
+                {
+                    "Role",
+                    "MovieID",
+                    "PersonID"
+                },
+                new string[]
+                {
+                    "Does not exist.",
+                    "Must be above 0.",
+                    "Must be above 0."
+                }
+            };
+        }
+
+        [Theory]
+        [MemberData(nameof(Data_Create_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors))]
+        public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors(string characterName, CrewRoles crewRole, int movieID, int personID, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
+        {
+            #region Arrange 
+            await DeleteDbContent();
+            var client = GetHttpClient();
+
+            var data = await CreatePersonAndMovie();
+
+            var newCrewMember = new AdminCrewMemberModel
+            {
+                ID = 1,
+                CharacterName = characterName,
+                Role = crewRole,
+                MovieID = movieID,
+                PersonID = personID
+            };
+            #endregion
+
+            #region Act
+            var response = await client.PostAsJsonAsync("/api/crewmember", newCrewMember);
+            var responseBody = await response.Content.ReadAsStreamAsync();
+            var actualCrewMember = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
+
+            var errorProp = actualCrewMember.GetProperty("errors");
+            var errors = errorProp.EnumerateObject();
+            #endregion
+
+            #region Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(expectedErrorNames.Count(), errors.Count());
+            Assert.All(expectedErrorNames, errorName => Assert.Contains(errorName, errors.Select(prop => prop.Name)));
+            Assert.All(expectedErrorValues, errorValue => Assert.Contains(errorValue, errors.Select(prop => prop.Value[0].ToString())));
+            #endregion
+        }
+
+        public static IEnumerable<object[]> Data_Create_InvalidRequest_ReturnsJsonResponseAndNotFoundWithErrors()
+        {
+            string characterName = "Name";
+            CrewRoles crewRoleActor = CrewRoles.Actor;
+            int movieID = 1;
+            int personID = 1;
+
+            // MovieID = 2
+            yield return new object[]
+            {
+                characterName, crewRoleActor, 2, personID,
+                new string[]
+                {
+                    "MovieID"
+                },
+                new string[]
+                {
+                    "Does not exist."
                 }
             };
             // PersonID = 2
@@ -225,28 +288,11 @@ namespace IntegrationTests
                     "Does not exist."
                 }
             };
-            // Everything is wrong
-            yield return new object[]
-            {
-                null, 100, 0, 0,
-                new string[]
-                {
-                    "Role",
-                    "MovieID",
-                    "PersonID"
-                },
-                new string[]
-                {
-                    "Does not exist.",
-                    "Must be above 0.",
-                    "Must be above 0."
-                }
-            };
         }
 
         [Theory]
-        [MemberData(nameof(CreateInvalidRequestData))]
-        public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequest(string characterName, CrewRoles crewRole, int movieID, int personID, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
+        [MemberData(nameof(Data_Create_InvalidRequest_ReturnsJsonResponseAndNotFoundWithErrors))]
+        public async Task Create_InvalidRequest_ReturnsJsonResponseAndNotFoundWithErrors(string characterName, CrewRoles crewRole, int movieID, int personID, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -274,7 +320,7 @@ namespace IntegrationTests
             #endregion
 
             #region Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal(expectedErrorNames.Count(), errors.Count());
             Assert.All(expectedErrorNames, errorName => Assert.Contains(errorName, errors.Select(prop => prop.Name)));
             Assert.All(expectedErrorValues, errorValue => Assert.Contains(errorValue, errors.Select(prop => prop.Value[0].ToString())));
@@ -491,7 +537,7 @@ namespace IntegrationTests
             #endregion
         }
 
-        public static IEnumerable<object[]> UpdateInvalidRequestData()
+        public static IEnumerable<object[]> Data_Update_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors()
         {
             int id = 1;
             string characterName = "Some other name";
@@ -578,19 +624,6 @@ namespace IntegrationTests
                     "Must be above 0."
                 }
             };
-            // MovieID = 2
-            yield return new object[]
-            {
-                id, characterName, crewRoleActor, 2, personID,
-                new string[]
-                {
-                    "MovieID"
-                },
-                new string[]
-                {
-                    "Does not exist."
-                }
-            };
             // PersonID = 0
             yield return new object[]
             {
@@ -602,34 +635,6 @@ namespace IntegrationTests
                 new string[]
                 {
                     "Must be above 0."
-                }
-            };
-            // PersonID = 2
-            yield return new object[]
-            {
-                id, characterName, crewRoleActor, movieID, 2,
-                new string[]
-                {
-                    "PersonID"
-                },
-                new string[]
-                {
-                    "Does not exist."
-                }
-            };
-            // MovieID = 2 | PersonID = 2
-            yield return new object[]
-            {
-                id, characterName, crewRoleActor, 2, 2,
-                new string[]
-                {
-                    "MovieID",
-                    "PersonID"
-                },
-                new string[]
-                {
-                    "Does not exist.",
-                    "Does not exist."
                 }
             };
             // Everything is wrong
@@ -654,8 +659,8 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [MemberData(nameof(UpdateInvalidRequestData))]
-        public async Task Update_InvalidRequest_ReturnsJsonResponseAndBadRequest(int id, string characterName, CrewRoles crewRole, int movieID, int personID, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
+        [MemberData(nameof(Data_Update_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors))]
+        public async Task Update_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors(int id, string characterName, CrewRoles crewRole, int movieID, int personID, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -744,6 +749,111 @@ namespace IntegrationTests
 
             #region Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            #endregion
+        }
+
+        public static IEnumerable<object[]> Data_Update_InvalidRequest_ReturnsJsonResponseAndNotFoundWithErrors()
+        {
+            int id = 1;
+            string characterName = "Some other name";
+            CrewRoles crewRoleActor = CrewRoles.Actor;
+            int movieID = 1;
+            int personID = 1;
+
+            // MovieID = 2
+            yield return new object[]
+            {
+                id, characterName, crewRoleActor, 2, personID,
+                new string[]
+                {
+                    "MovieID"
+                },
+                new string[]
+                {
+                    "Does not exist."
+                }
+            };
+            // PersonID = 2
+            yield return new object[]
+            {
+                id, characterName, crewRoleActor, movieID, 2,
+                new string[]
+                {
+                    "PersonID"
+                },
+                new string[]
+                {
+                    "Does not exist."
+                }
+            };
+            // MovieID = 2 | PersonID = 2
+            yield return new object[]
+            {
+                id, characterName, crewRoleActor, 2, 2,
+                new string[]
+                {
+                    "MovieID",
+                    "PersonID"
+                },
+                new string[]
+                {
+                    "Does not exist.",
+                    "Does not exist."
+                }
+            };
+        }
+
+        [Theory]
+        [MemberData(nameof(Data_Update_InvalidRequest_ReturnsJsonResponseAndNotFoundWithErrors))]
+        public async Task Update_InvalidRequest_ReturnsJsonResponseAndNotFoundWithErrors(int id, string characterName, CrewRoles crewRole, int movieID, int personID, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
+        {
+            #region Arrange 
+            await DeleteDbContent();
+            var client = GetHttpClient();
+            var dbContext = GetDbContext();
+
+            var data = await CreatePersonAndMovie();
+            var movie = data[0] as Domain.Movie;
+            var person = data[1] as Domain.Person;
+
+            dbContext.CrewMembers.Add(new Domain.CrewMember
+            {
+                CharacterName = "Name",
+                Role = CrewRoles.Actor,
+                MovieID = movie.ID,
+                PersonID = person.ID
+            });
+            await dbContext.SaveChangesAsync();
+
+            var expectedCrewMember = new AdminCrewMemberModel
+            {
+                ID = id,
+                CharacterName = characterName,
+                Role = crewRole,
+                MovieID = movieID,
+                PersonID = personID
+            };
+            expectedCrewMember = expectedCrewMember.CharacterName == "null" ? null : expectedCrewMember;
+
+            var wrongModel = Array.Empty<object>();
+            #endregion
+
+            #region Act
+            var response = characterName == "wrongModel"
+                ? await client.PutAsJsonAsync($"/api/crewmember/{id}", wrongModel)
+                : await client.PutAsJsonAsync($"/api/crewmember/{id}", expectedCrewMember);
+            var responseBody = await response.Content.ReadAsStreamAsync();
+            var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
+
+            var errorProp = actualCompany.GetProperty("errors");
+            var errors = errorProp.EnumerateObject();
+            #endregion
+
+            #region Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal(expectedErrorNames.Count(), errors.Count());
+            Assert.All(expectedErrorNames, errorName => Assert.Contains(errorName, errors.Select(prop => prop.Name)));
+            Assert.All(expectedErrorValues, errorValue => Assert.Contains(errorValue, errors.Select(prop => prop.Value[0].ToString())));
             #endregion
         }
 
