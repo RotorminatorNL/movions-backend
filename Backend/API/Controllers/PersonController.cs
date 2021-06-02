@@ -50,7 +50,7 @@ namespace API.Controllers
                 return Ok(result);
             }
 
-            return NotFound();
+            return NoContent();
         }
 
         [HttpPut("{id}")]
