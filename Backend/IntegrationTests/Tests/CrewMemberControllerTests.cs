@@ -441,19 +441,19 @@ namespace IntegrationTests
             });
             await dbContext.SaveChangesAsync();
 
-            int expectedCompanyCount = 2;
+            int expectedCrewMemberCount = 2;
             #endregion
 
             #region Act
             var response = await client.GetAsync("/api/crewmember");
             var responseBody = await response.Content.ReadAsStreamAsync();
-            var actualCompanies = await JsonSerializer.DeserializeAsync<IEnumerable<CompanyModel>>(responseBody);
+            var actualCrewMembers = await JsonSerializer.DeserializeAsync<IEnumerable<CompanyModel>>(responseBody);
             #endregion
 
             #region Assert
-            Assert.NotNull(actualCompanies);
+            Assert.NotNull(actualCrewMembers);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedCompanyCount, actualCompanies.Count());
+            Assert.Equal(expectedCrewMemberCount, actualCrewMembers.Count());
             #endregion
         }
 
@@ -688,19 +688,14 @@ namespace IntegrationTests
                 MovieID = movieID,
                 PersonID = personID
             };
-            expectedCrewMember = expectedCrewMember.CharacterName == "null" ? null : expectedCrewMember;
-
-            var wrongModel = Array.Empty<object>();
             #endregion
 
             #region Act
-            var response = characterName == "wrongModel"
-                ? await client.PutAsJsonAsync($"/api/crewmember/{id}", wrongModel)
-                : await client.PutAsJsonAsync($"/api/crewmember/{id}", expectedCrewMember);
+            var response = await client.PutAsJsonAsync($"/api/crewmember/{id}", expectedCrewMember);
             var responseBody = await response.Content.ReadAsStreamAsync();
-            var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
+            var actualCrewMember = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
-            var errorProp = actualCompany.GetProperty("errors");
+            var errorProp = actualCrewMember.GetProperty("errors");
             var errors = errorProp.EnumerateObject();
             #endregion
 
@@ -843,9 +838,9 @@ namespace IntegrationTests
                 ? await client.PutAsJsonAsync($"/api/crewmember/{id}", wrongModel)
                 : await client.PutAsJsonAsync($"/api/crewmember/{id}", expectedCrewMember);
             var responseBody = await response.Content.ReadAsStreamAsync();
-            var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
+            var actualCrewMember = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
-            var errorProp = actualCompany.GetProperty("errors");
+            var errorProp = actualCrewMember.GetProperty("errors");
             var errors = errorProp.EnumerateObject();
             #endregion
 

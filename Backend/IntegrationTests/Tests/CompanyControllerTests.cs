@@ -55,7 +55,7 @@ namespace IntegrationTests
             #endregion
         }
 
-        public static IEnumerable<object[]> CreateInvalidRequestData()
+        public static IEnumerable<object[]> Data_Create_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors()
         {
             string newName = "Name";
             CompanyTypes newCompanyType = CompanyTypes.Producer;
@@ -117,7 +117,7 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [MemberData(nameof(CreateInvalidRequestData))]
+        [MemberData(nameof(Data_Create_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors))]
         public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors(string name, CompanyTypes companyType, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
         {
             #region Arrange 
@@ -312,7 +312,7 @@ namespace IntegrationTests
             #endregion
         }
 
-        public static IEnumerable<object[]> UpdateInvalidRequestData()
+        public static IEnumerable<object[]> Data_Update_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors()
         {
             int id = 1;
             string newName = "Some other name";
@@ -390,7 +390,7 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [MemberData(nameof(UpdateInvalidRequestData))]
+        [MemberData(nameof(Data_Update_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors))]
         public async Task Update_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors(int id, string name, CompanyTypes companyType, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorMessages)
         {
             #region Arrange 

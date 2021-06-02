@@ -61,7 +61,7 @@ namespace UnitTests
             #endregion
         }
 
-        public static IEnumerable<object[]> CreateInvalidInputData()
+        public static IEnumerable<object[]> Data_Create_InvalidInput_ReturnNull()
         {
             var birthDate = "04-10-1999";
             var birthPlace = "Rotterdam";
@@ -90,7 +90,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(CreateInvalidInputData))]
+        [MemberData(nameof(Data_Create_InvalidInput_ReturnNull))]
         public async Task Create_InvalidInput_ReturnNull(string birthDate, string birthPlace, string description, string firstName, string lastName)
         {
             #region Arrange
@@ -291,7 +291,7 @@ namespace UnitTests
             #endregion
         }
 
-        public static IEnumerable<object[]> UpdateInvalidInputData()
+        public static IEnumerable<object[]> Data_Update_InvalidInput_ReturnsNull()
         {
             int id = 1;
             var birthDate = "04-10-1999";
@@ -325,7 +325,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(UpdateInvalidInputData))]
+        [MemberData(nameof(Data_Update_InvalidInput_ReturnsNull))]
         public async Task Update_InvalidInput_ReturnsNull(int id, string birthDate, string birthPlace, string description, string firstName, string lastName)
         {
             #region Arrange

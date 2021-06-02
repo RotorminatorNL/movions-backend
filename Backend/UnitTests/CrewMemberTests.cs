@@ -100,7 +100,7 @@ namespace UnitTests
             #endregion
         }
 
-        public static IEnumerable<object[]> CreateInvalidInputData()
+        public static IEnumerable<object[]> Data_Create_InvalidInput_ReturnNull()
         {
             string characterName = "Name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
@@ -119,7 +119,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(CreateInvalidInputData))]
+        [MemberData(nameof(Data_Create_InvalidInput_ReturnNull))]
         public async Task Create_InvalidInput_ReturnNull(string characterName, CrewRoles crewRole, int movieID, int personID)
         {
             #region Arrange
@@ -149,7 +149,7 @@ namespace UnitTests
             #endregion
         }
 
-        public static IEnumerable<object[]> CreateInvalidInputData2()
+        public static IEnumerable<object[]> Data_Create_InvalidInput_ReturnsCrewMemberModelWithErrorID()
         {
             string characterName = "Name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
@@ -186,7 +186,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(CreateInvalidInputData2))]
+        [MemberData(nameof(Data_Create_InvalidInput_ReturnsCrewMemberModelWithErrorID))]
         public async Task Create_InvalidInput_ReturnsCrewMemberModelWithErrorID(string characterName, CrewRoles crewRole, int movieID, int personID, CrewMemberModel expectedCrewMember)
         {
             #region Arrange
@@ -425,7 +425,7 @@ namespace UnitTests
             #endregion
         }
 
-        public static IEnumerable<object[]> UpdateInvalidInputData()
+        public static IEnumerable<object[]> Data_Update_InvalidInput_ReturnsNull()
         {
             int id = 1;
             string characterName = "Name";
@@ -449,7 +449,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(UpdateInvalidInputData))]
+        [MemberData(nameof(Data_Update_InvalidInput_ReturnsNull))]
         public async Task Update_InvalidInput_ReturnsNull(int id, string characterName, CrewRoles crewRole, int movieID, int personID)
         {
             #region Arrange
@@ -493,7 +493,7 @@ namespace UnitTests
         }
 
 
-        public static IEnumerable<object[]> UpdateInvalidInputData2()
+        public static IEnumerable<object[]> Data_Update_InvalidInput_ReturnsCrewMemberModelWithErrorID()
         {
             int id = 1;
             string characterName = "Name";
@@ -531,7 +531,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(UpdateInvalidInputData2))]
+        [MemberData(nameof(Data_Update_InvalidInput_ReturnsCrewMemberModelWithErrorID))]
         public async Task Update_InvalidInput_ReturnsCrewMemberModelWithErrorID(int id, string characterName, CrewRoles crewRole, int movieID, int personID, CrewMemberModel expectedCrewMember)
         {
             #region Arrange

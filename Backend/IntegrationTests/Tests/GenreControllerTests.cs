@@ -89,7 +89,7 @@ namespace IntegrationTests
             await DeleteDbContent();
             var client = GetHttpClient();
 
-            var newCompany = new AdminGenreModel
+            var newGenre = new AdminGenreModel
             {
                 ID = 1,
                 Name = name
@@ -97,7 +97,7 @@ namespace IntegrationTests
             #endregion
 
             #region Act
-            var response = await client.PostAsJsonAsync("/api/genre", newCompany);
+            var response = await client.PostAsJsonAsync("/api/genre", newGenre);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualGenre = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
@@ -192,7 +192,7 @@ namespace IntegrationTests
             });
             await dbContext.SaveChangesAsync();
 
-            int expectedCompanyCount = 2;
+            int expectedGenreCount = 2;
             #endregion
 
             #region Act
@@ -204,7 +204,7 @@ namespace IntegrationTests
             #region Assert
             Assert.NotNull(actualGenres);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedCompanyCount, actualGenres.Count());
+            Assert.Equal(expectedGenreCount, actualGenres.Count());
             #endregion
         }
 

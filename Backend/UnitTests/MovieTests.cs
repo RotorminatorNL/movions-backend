@@ -71,7 +71,7 @@ namespace UnitTests
             #endregion
         }
 
-        public static IEnumerable<object[]> CreateInvalidInputData()
+        public static IEnumerable<object[]> Data_Create_InvalidInput_ReturnsNull()
         {
             string description = "Test description";
             int languageID = 1;
@@ -98,7 +98,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(CreateInvalidInputData))]
+        [MemberData(nameof(Data_Create_InvalidInput_ReturnsNull))]
         public async Task Create_InvalidInput_ReturnsNull(string description, int languageID, int length, string releaseDate, string title)
         {
             #region Arrange
@@ -348,7 +348,7 @@ namespace UnitTests
             #endregion
         }
 
-        public static IEnumerable<object[]> UpdateInvalidInputData()
+        public static IEnumerable<object[]> Data_Update_InvalidInput_ReturnsNull()
         {
             int id = 1;
             string description = "Description";
@@ -380,7 +380,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(UpdateInvalidInputData))]
+        [MemberData(nameof(Data_Update_InvalidInput_ReturnsNull))]
         public async Task Update_InvalidInput_ReturnsNull(int id, string description, int languageID, int length, string releaseDate, string title)
         {
             #region Arrange
