@@ -14,6 +14,30 @@ namespace Application
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly CompanyValidation _companyValidation;
 
+        private CompanyModel GetCompanyModelWithErrorID(object company, object movie)
+        {
+            if (company != null && movie == null)
+            {
+                return new CompanyModel
+                {
+                    ID = -1
+                };
+            }
+
+            if (company == null && movie != null)
+            {
+                return new CompanyModel
+                {
+                    ID = -2
+                };
+            }
+
+            return new CompanyModel
+            {
+                ID = -3
+            };
+        }
+
         public Company(IApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
@@ -100,7 +124,7 @@ namespace Application
                 return await Read(adminCompanyMovieModel.CompanyID);
             }
 
-            return null;
+            return GetCompanyModelWithErrorID(company, movie);
         }
 
         public async Task<bool> Delete(int id)
@@ -118,19 +142,24 @@ namespace Application
             return false;
         }
 
-        public async Task<bool> DisconnectMovie(int id, int movieID)
+        public async Task<CompanyModel> DisconnectMovie(AdminCompanyMovieModel adminCompanyMovieModel)
         {
-            var companyMovie = _applicationDbContext.CompanyMovies.FirstOrDefault(c => c.CompanyID == id && c.MovieID == movieID);
+            var company = await _applicationDbContext.Companies.FirstOrDefaultAsync(c => c.ID == adminCompanyMovieModel.CompanyID);
+            var movie = await _applicationDbContext.Movies.FirstOrDefaultAsync(c => c.ID == adminCompanyMovieModel.MovieID);
 
-            if (companyMovie != null)
+            if (company != null && movie != null)
             {
+                var companyMovie = _applicationDbContext
+                                    .CompanyMovies
+                                    .FirstOrDefault(c => c.CompanyID == company.ID && c.MovieID == movie.ID);
+
                 _applicationDbContext.CompanyMovies.Remove(companyMovie);
                 await _applicationDbContext.SaveChangesAsync();
 
-                return true;
+                return new CompanyModel();
             }
 
-            return false;
+            return GetCompanyModelWithErrorID(company, movie);
         }
     }
 }

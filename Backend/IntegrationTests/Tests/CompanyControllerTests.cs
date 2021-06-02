@@ -118,7 +118,7 @@ namespace IntegrationTests
 
         [Theory]
         [MemberData(nameof(CreateInvalidRequestData))]
-        public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequest(string name, CompanyTypes companyType, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
+        public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors(string name, CompanyTypes companyType, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -391,7 +391,7 @@ namespace IntegrationTests
 
         [Theory]
         [MemberData(nameof(UpdateInvalidRequestData))]
-        public async Task Update_InvalidRequest_ReturnsJsonResponseAndBadRequest(int id, string name, CompanyTypes companyType, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorMessages)
+        public async Task Update_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors(int id, string name, CompanyTypes companyType, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorMessages)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -465,7 +465,7 @@ namespace IntegrationTests
 
         [Theory]
         [InlineData(1, 1)]
-        public async Task ConnectMovie_ValidRequest_ReturnsJsonResponseAndCreated(int id, int movieID)
+        public async Task ConnectMovie_ValidRequest_ReturnsJsonResponseAndOk(int id, int movieID)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -485,12 +485,6 @@ namespace IntegrationTests
             };
             dbContext.Movies.Add(movie);
             await dbContext.SaveChangesAsync();
-
-            var newCompany = new AdminCompanyMovieModel
-            {
-                CompanyID = id,
-                MovieID = movieID
-            };
 
             var expectedCompany = new CompanyModel
             {
@@ -509,7 +503,7 @@ namespace IntegrationTests
             #endregion
 
             #region Act
-            var response = await client.PutAsJsonAsync($"/api/company/{newCompany.CompanyID}/connectmovie", newCompany);
+            var response = await client.PutAsJsonAsync($"/api/company/{id}/connectmovie", movieID);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCompany = await JsonSerializer.DeserializeAsync<CompanyModel>(responseBody);
             #endregion
@@ -517,19 +511,16 @@ namespace IntegrationTests
             #region Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(expectedCompany.ID, actualCompany.ID);
-            Assert.Equal(expectedCompany.Name, actualCompany.Name);
-            Assert.Equal(expectedCompany.Type, actualCompany.Type);
             Assert.Equal(expectedCompany.Movies.Count(), actualCompany.Movies.Count());
             Assert.Equal(expectedCompany.Movies.ToList()[0].ID, actualCompany.Movies.ToList()[0].ID);
-            Assert.Equal(expectedCompany.Movies.ToList()[0].Title, actualCompany.Movies.ToList()[0].Title);
             #endregion
         }
 
         [Theory]
-        [InlineData(0, 0, new string[] { "CompanyID","MovieID" })]
-        [InlineData(0, 1, new string[] { "CompanyID" })]
-        [InlineData(1, 0, new string[] { "MovieID" })]
-        public async Task ConnectMovie_InvalidRequest_ReturnsJsonResponseAndBadRequest(int id, int movieID, IEnumerable<string> expectedErrors)
+        [InlineData(0, 0, new string[] { "CompanyID", "MovieID" }, new string[] { "Does not exist.", "Does not exist." })]
+        [InlineData(0, 1, new string[] { "CompanyID" }, new string[] { "Does not exist." })]
+        [InlineData(1, 0, new string[] { "MovieID" }, new string[] { "Does not exist." })]
+        public async Task ConnectMovie_InvalidRequest_ReturnsJsonResponseAndNotFoundWithErrors(int id, int movieID, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorMessages)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -549,16 +540,10 @@ namespace IntegrationTests
             };
             dbContext.Movies.Add(movie);
             await dbContext.SaveChangesAsync();
-
-            var newCompany = new AdminCompanyMovieModel
-            {
-                CompanyID = id,
-                MovieID = movieID
-            };
             #endregion
 
             #region Act
-            var response = await client.PutAsJsonAsync($"/api/company/{newCompany.CompanyID}/connectmovie", newCompany);
+            var response = await client.PutAsJsonAsync($"/api/company/{id}/connectmovie", movieID);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
@@ -567,9 +552,10 @@ namespace IntegrationTests
             #endregion
 
             #region Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal(expectedErrors.Count(), errors.Count());
-            Assert.All(expectedErrors, error => Assert.Contains(error, errors.Select(prop => prop.Name)));
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal(expectedErrorNames.Count(), errors.Count());
+            Assert.All(expectedErrorNames, errorName => Assert.Contains(errorName, errors.Select(prop => prop.Name)));
+            Assert.All(expectedErrorMessages, errorMessage => Assert.Contains(errorMessage, errors.Select(prop => prop.Value[0].ToString())));
             #endregion
         }
 
@@ -619,6 +605,100 @@ namespace IntegrationTests
 
             #region Act
             var response = await client.DeleteAsync($"/api/company/{id}");
+            #endregion
+
+            #region Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(1, 1)]
+        public async Task DisconnectMovie_ValidRequest_ReturnsJsonResponseAndOk(int id, int movieID)
+        {
+            #region Arrange 
+            await DeleteDbContent();
+            var client = GetHttpClient();
+            var dbContext = GetDbContext();
+
+            var company = new Domain.Company
+            {
+                Name = "Epic Producer",
+                Type = CompanyTypes.Producer
+            };
+            dbContext.Companies.Add(company);
+
+            var movie = new Domain.Movie
+            {
+                Title = "Epic Title"
+            };
+            dbContext.Movies.Add(movie);
+            await dbContext.SaveChangesAsync();
+
+            dbContext.CompanyMovies.Add(new Domain.CompanyMovie
+            {
+                CompanyID = company.ID,
+                MovieID = movie.ID
+            });
+            await dbContext.SaveChangesAsync();
+
+            var newCompanyMovie = new AdminCompanyMovieModel
+            {
+                CompanyID = id,
+                MovieID = movieID
+            };
+            #endregion
+
+            #region Act
+            var response = await client.DeleteAsync($"/api/company/{id}/disconnectmovie/{movieID}");
+            #endregion
+
+            #region Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(0, 0)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public async Task DisconnectMovie_InvalidRequest_ReturnsJsonResponseAndNotFound(int id, int movieID)
+        {
+            #region Arrange 
+            await DeleteDbContent();
+            var client = GetHttpClient();
+            var dbContext = GetDbContext();
+
+            var company = new Domain.Company
+            {
+                Name = "Epic Producer",
+                Type = CompanyTypes.Producer
+            };
+            dbContext.Companies.Add(company);
+
+            var movie = new Domain.Movie
+            {
+                Title = "Epic Title"
+            };
+            dbContext.Movies.Add(movie);
+            await dbContext.SaveChangesAsync();
+
+            dbContext.CompanyMovies.Add(new Domain.CompanyMovie
+            {
+                CompanyID = company.ID,
+                MovieID = movie.ID
+            });
+            await dbContext.SaveChangesAsync();
+
+            var newCompanyMovie = new AdminCompanyMovieModel
+            {
+                CompanyID = id,
+                MovieID = movieID
+            };
+            #endregion
+
+            #region Act
+            var response = await client.DeleteAsync($"/api/company/{id}/disconnectmovie/{movieID}");
             #endregion
 
             #region Assert

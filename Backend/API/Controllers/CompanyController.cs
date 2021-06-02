@@ -15,6 +15,29 @@ namespace API.Controllers
     {
         private readonly Company company;
 
+        private NotFoundObjectResult GetCustomNotFound(int id)
+        {
+            switch (id)
+            {
+                case -1:
+                    {
+                        ModelState.AddModelError("MovieID", "Does not exist.");
+                        break;
+                    }
+                case -2:
+                    {
+                        ModelState.AddModelError("CompanyID", "Does not exist.");
+                        break;
+                    }
+                default:
+                    ModelState.AddModelError("CompanyID", "Does not exist.");
+                    ModelState.AddModelError("MovieID", "Does not exist.");
+                    break;
+            }
+
+            return NotFound(new ValidationProblemDetails(ModelState));
+        }
+
         public CompanyController(IApplicationDbContext applicationDbContext)
         {
             company = new Company(applicationDbContext);
@@ -65,14 +88,21 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}/[action]")]
-        public async Task<IActionResult> ConnectMovie([FromBody] AdminCompanyMovieModel adminCompanyMovieModel)
+        public async Task<IActionResult> ConnectMovie(int id, [FromBody] int movieID)
         {
-            if (await company.ConnectMovie(adminCompanyMovieModel) is CompanyModel result && result != null)
+            var result = await company.ConnectMovie(new AdminCompanyMovieModel { CompanyID = id, MovieID = movieID });
+
+            if (result != null)
             {
-                return Ok(result);
+                if (result.ID > 0)
+                {
+                    return Ok(result);
+                }
+
+                return GetCustomNotFound(result.ID);
             }
 
-            return NotFound();
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpDelete("{id}")]
@@ -86,15 +116,22 @@ namespace API.Controllers
             return NotFound();
         }
 
-        [HttpDelete("{id}/[action]")]
-        public async Task<IActionResult> DisconnectMovie(int id, [FromBody] AdminCompanyMovieModel adminCompanyMovieModel)
+        [HttpDelete("{id}/[action]/{movieID}")]
+        public async Task<IActionResult> DisconnectMovie(int id, int movieID)
         {
-            if (await company.DisconnectMovie(id, adminCompanyMovieModel.MovieID))
+            var result = await company.DisconnectMovie(new AdminCompanyMovieModel { CompanyID = id, MovieID = movieID });
+
+            if (result != null)
             {
-                return Ok();
+                if (result.ID == 0)
+                {
+                    return Ok(result);
+                }
+
+                return GetCustomNotFound(result.ID);
             }
 
-            return NotFound();
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
     }
 }

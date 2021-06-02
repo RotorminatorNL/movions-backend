@@ -4,6 +4,7 @@ using Application.ViewModels;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -374,13 +375,13 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(0, 0)]
-        [InlineData(0, 1)]
-        [InlineData(1, 0)]
-        [InlineData(1, 2)]
-        [InlineData(2, 1)]
-        [InlineData(2, 2)]
-        public async Task ConnectMovie_InvalidInput_ReturnsNull(int id, int movieID)
+        [InlineData(0, 0, -3)]
+        [InlineData(0, 1, -2)]
+        [InlineData(1, 0, -1)]
+        [InlineData(1, 2, -1)]
+        [InlineData(2, 1, -2)]
+        [InlineData(2, 2, -3)]
+        public async Task ConnectMovie_InvalidInput_ReturnsNull(int id, int movieID, int expectedID)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
@@ -415,7 +416,8 @@ namespace UnitTests
             #endregion
 
             #region Assert
-            Assert.Null(actualCompany);
+            Assert.NotNull(actualCompany);
+            Assert.Equal(expectedID, actualCompany.ID);
             #endregion
         }
 
@@ -471,8 +473,8 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, 1)]
-        public async Task DisconnectMovie_ValidInput_ReturnsTrue(int id, int movieID)
+        [InlineData(1, 1, 0)]
+        public async Task DisconnectMovie_ValidInput_ReturnsTrue(int id, int movieID, int expectedID)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
@@ -497,22 +499,23 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actual = await appCompany.DisconnectMovie(id, movieID);
+            var actual = await appCompany.DisconnectMovie(new AdminCompanyMovieModel { CompanyID = id, MovieID = movieID });
             #endregion
 
             #region Assert
-            Assert.True(actual);
+            Assert.NotNull(actual);
+            Assert.Equal(expectedID, actual.ID);
             #endregion
         }
 
         [Theory]
-        [InlineData(0, 0)]
-        [InlineData(0, 1)]
-        [InlineData(1, 0)]
-        [InlineData(1, 2)]
-        [InlineData(2, 1)]
-        [InlineData(2, 2)]
-        public async Task DisconnectMovie_InvalidInput_ReturnsFalse(int id, int movieID)
+        [InlineData(0, 0, -3)]
+        [InlineData(0, 1, -2)]
+        [InlineData(1, 0, -1)]
+        [InlineData(1, 2, -1)]
+        [InlineData(2, 1, -2)]
+        [InlineData(2, 2, -3)]
+        public async Task DisconnectMovie_InvalidInput_ReturnsCompanyModelWithErrorID(int id, int movieID, int exptectedID)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
@@ -521,7 +524,10 @@ namespace UnitTests
             var company = new Domain.Company();
             dbContext.Companies.Add(company);
 
-            var movie = new Domain.Movie();
+            var language = new Domain.Language();
+            dbContext.Languages.Add(language);
+
+            var movie = new Domain.Movie { LanguageID = language.ID };
             dbContext.Movies.Add(movie);
 
             var companyMovie = new Domain.CompanyMovie
@@ -530,18 +536,18 @@ namespace UnitTests
                 MovieID = movie.ID
             };
             dbContext.CompanyMovies.Add(companyMovie);
-
             await dbContext.SaveChangesAsync();
 
             var appCompany = new Company(dbContext);
             #endregion
 
             #region Act
-            var actual = await appCompany.DisconnectMovie(id, movieID);
+            var actual = await appCompany.DisconnectMovie(new AdminCompanyMovieModel { CompanyID = id, MovieID = movieID });
             #endregion
 
             #region Assert
-            Assert.False(actual);
+            Assert.NotNull(actual);
+            Assert.Equal(exptectedID, actual.ID);
             #endregion
         }
     }
