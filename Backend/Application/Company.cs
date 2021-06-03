@@ -63,6 +63,28 @@ namespace Application
             return null;
         }
 
+        public async Task<CompanyModel> ConnectMovie(AdminCompanyMovieModel adminCompanyMovieModel)
+        {
+            var company = await _applicationDbContext.Companies.FirstOrDefaultAsync(c => c.ID == adminCompanyMovieModel.CompanyID);
+            var movie = await _applicationDbContext.Movies.FirstOrDefaultAsync(c => c.ID == adminCompanyMovieModel.MovieID);
+
+            if (company != null && movie != null)
+            {
+                var companyMovie = new Domain.CompanyMovie
+                {
+                    CompanyID = adminCompanyMovieModel.CompanyID,
+                    MovieID = adminCompanyMovieModel.MovieID
+                };
+
+                _applicationDbContext.CompanyMovies.Add(companyMovie);
+                await _applicationDbContext.SaveChangesAsync();
+
+                return await Read(adminCompanyMovieModel.CompanyID);
+            }
+
+            return GetCompanyModelWithErrorID(company, movie);
+        }
+
         public async Task<CompanyModel> Read(int id)
         {
             return await _applicationDbContext.Companies.Select(c => new CompanyModel
@@ -103,28 +125,6 @@ namespace Application
             }
 
             return null;
-        }
-
-        public async Task<CompanyModel> ConnectMovie(AdminCompanyMovieModel adminCompanyMovieModel)
-        {
-            var company = await _applicationDbContext.Companies.FirstOrDefaultAsync(c => c.ID == adminCompanyMovieModel.CompanyID);
-            var movie = await _applicationDbContext.Movies.FirstOrDefaultAsync(c => c.ID == adminCompanyMovieModel.MovieID);
-
-            if (company != null && movie != null)
-            {
-                var companyMovie = new Domain.CompanyMovie
-                {
-                    CompanyID = adminCompanyMovieModel.CompanyID,
-                    MovieID = adminCompanyMovieModel.MovieID
-                };
-
-                _applicationDbContext.CompanyMovies.Add(companyMovie);
-                await _applicationDbContext.SaveChangesAsync();
-
-                return await Read(adminCompanyMovieModel.CompanyID);
-            }
-
-            return GetCompanyModelWithErrorID(company, movie);
         }
 
         public async Task<bool> Delete(int id)

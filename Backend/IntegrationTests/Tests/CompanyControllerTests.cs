@@ -150,6 +150,102 @@ namespace IntegrationTests
         }
 
         [Theory]
+        [InlineData(1, 1)]
+        public async Task ConnectMovie_ValidRequest_ReturnsJsonResponseAndOk(int id, int movieID)
+        {
+            #region Arrange 
+            await DeleteDbContent();
+            var client = GetHttpClient();
+            var dbContext = GetDbContext();
+
+            var company = new Domain.Company
+            {
+                Name = "Epic Producer",
+                Type = CompanyTypes.Producer
+            };
+            dbContext.Companies.Add(company);
+
+            var movie = new Domain.Movie
+            {
+                Title = "Epic Title"
+            };
+            dbContext.Movies.Add(movie);
+            await dbContext.SaveChangesAsync();
+
+            var expectedCompany = new CompanyModel
+            {
+                ID = company.ID,
+                Name = company.Name,
+                Type = company.Type.ToString(),
+                Movies = new List<MovieModel>
+                {
+                    new MovieModel
+                    {
+                        ID = movie.ID,
+                        Title = movie.Title
+                    }
+                }
+            };
+            #endregion
+
+            #region Act
+            var response = await client.PostAsJsonAsync($"/api/company/{id}/movies", movieID);
+            var responseBody = await response.Content.ReadAsStreamAsync();
+            var actualCompany = await JsonSerializer.DeserializeAsync<CompanyModel>(responseBody);
+            #endregion
+
+            #region Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(expectedCompany.ID, actualCompany.ID);
+            Assert.Equal(expectedCompany.Movies.Count(), actualCompany.Movies.Count());
+            Assert.Equal(expectedCompany.Movies.ToList()[0].ID, actualCompany.Movies.ToList()[0].ID);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(0, 0, new string[] { "CompanyID", "MovieID" }, new string[] { "Does not exist.", "Does not exist." })]
+        [InlineData(0, 1, new string[] { "CompanyID" }, new string[] { "Does not exist." })]
+        [InlineData(1, 0, new string[] { "MovieID" }, new string[] { "Does not exist." })]
+        public async Task ConnectMovie_InvalidRequest_ReturnsJsonResponseAndNotFoundWithErrors(int id, int movieID, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorMessages)
+        {
+            #region Arrange 
+            await DeleteDbContent();
+            var client = GetHttpClient();
+            var dbContext = GetDbContext();
+
+            var company = new Domain.Company
+            {
+                Name = "Epic Producer",
+                Type = CompanyTypes.Producer
+            };
+            dbContext.Companies.Add(company);
+
+            var movie = new Domain.Movie
+            {
+                Title = "Epic Title"
+            };
+            dbContext.Movies.Add(movie);
+            await dbContext.SaveChangesAsync();
+            #endregion
+
+            #region Act
+            var response = await client.PostAsJsonAsync($"/api/company/{id}/movies", movieID);
+            var responseBody = await response.Content.ReadAsStreamAsync();
+            var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
+
+            var errorProp = actualCompany.GetProperty("errors");
+            var errors = errorProp.EnumerateObject();
+            #endregion
+
+            #region Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal(expectedErrorNames.Count(), errors.Count());
+            Assert.All(expectedErrorNames, errorName => Assert.Contains(errorName, errors.Select(prop => prop.Name)));
+            Assert.All(expectedErrorMessages, errorMessage => Assert.Contains(errorMessage, errors.Select(prop => prop.Value[0].ToString())));
+            #endregion
+        }
+
+        [Theory]
         [InlineData(1)]
         public async Task Read_ValidRequest_ReturnsJsonResponseAndOk(int id)
         {
@@ -464,102 +560,6 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(1, 1)]
-        public async Task ConnectMovie_ValidRequest_ReturnsJsonResponseAndOk(int id, int movieID)
-        {
-            #region Arrange 
-            await DeleteDbContent();
-            var client = GetHttpClient();
-            var dbContext = GetDbContext();
-
-            var company = new Domain.Company
-            {
-                Name = "Epic Producer",
-                Type = CompanyTypes.Producer
-            };
-            dbContext.Companies.Add(company);
-
-            var movie = new Domain.Movie
-            {
-                Title = "Epic Title"
-            };
-            dbContext.Movies.Add(movie);
-            await dbContext.SaveChangesAsync();
-
-            var expectedCompany = new CompanyModel
-            {
-                ID = company.ID,
-                Name = company.Name,
-                Type = company.Type.ToString(),
-                Movies = new List<MovieModel>
-                {
-                    new MovieModel
-                    {
-                        ID = movie.ID,
-                        Title = movie.Title
-                    }
-                }
-            };
-            #endregion
-
-            #region Act
-            var response = await client.PutAsJsonAsync($"/api/company/{id}/connectmovie", movieID);
-            var responseBody = await response.Content.ReadAsStreamAsync();
-            var actualCompany = await JsonSerializer.DeserializeAsync<CompanyModel>(responseBody);
-            #endregion
-
-            #region Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedCompany.ID, actualCompany.ID);
-            Assert.Equal(expectedCompany.Movies.Count(), actualCompany.Movies.Count());
-            Assert.Equal(expectedCompany.Movies.ToList()[0].ID, actualCompany.Movies.ToList()[0].ID);
-            #endregion
-        }
-
-        [Theory]
-        [InlineData(0, 0, new string[] { "CompanyID", "MovieID" }, new string[] { "Does not exist.", "Does not exist." })]
-        [InlineData(0, 1, new string[] { "CompanyID" }, new string[] { "Does not exist." })]
-        [InlineData(1, 0, new string[] { "MovieID" }, new string[] { "Does not exist." })]
-        public async Task ConnectMovie_InvalidRequest_ReturnsJsonResponseAndNotFoundWithErrors(int id, int movieID, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorMessages)
-        {
-            #region Arrange 
-            await DeleteDbContent();
-            var client = GetHttpClient();
-            var dbContext = GetDbContext();
-
-            var company = new Domain.Company
-            {
-                Name = "Epic Producer",
-                Type = CompanyTypes.Producer
-            };
-            dbContext.Companies.Add(company);
-
-            var movie = new Domain.Movie
-            {
-                Title = "Epic Title"
-            };
-            dbContext.Movies.Add(movie);
-            await dbContext.SaveChangesAsync();
-            #endregion
-
-            #region Act
-            var response = await client.PutAsJsonAsync($"/api/company/{id}/connectmovie", movieID);
-            var responseBody = await response.Content.ReadAsStreamAsync();
-            var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
-
-            var errorProp = actualCompany.GetProperty("errors");
-            var errors = errorProp.EnumerateObject();
-            #endregion
-
-            #region Assert
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-            Assert.Equal(expectedErrorNames.Count(), errors.Count());
-            Assert.All(expectedErrorNames, errorName => Assert.Contains(errorName, errors.Select(prop => prop.Name)));
-            Assert.All(expectedErrorMessages, errorMessage => Assert.Contains(errorMessage, errors.Select(prop => prop.Value[0].ToString())));
-            #endregion
-        }
-
-        [Theory]
         [InlineData(1)]
         public async Task Delete_ValidRequest_ReturnsJsonResponseAndOk(int id)
         {
@@ -641,16 +641,10 @@ namespace IntegrationTests
                 MovieID = movie.ID
             });
             await dbContext.SaveChangesAsync();
-
-            var newCompanyMovie = new AdminCompanyMovieModel
-            {
-                CompanyID = id,
-                MovieID = movieID
-            };
             #endregion
 
             #region Act
-            var response = await client.DeleteAsync($"/api/company/{id}/disconnectmovie/{movieID}");
+            var response = await client.DeleteAsync($"/api/company/{id}/movies/{movieID}");
             #endregion
 
             #region Assert
@@ -698,7 +692,7 @@ namespace IntegrationTests
             #endregion
 
             #region Act
-            var response = await client.DeleteAsync($"/api/company/{id}/disconnectmovie/{movieID}");
+            var response = await client.DeleteAsync($"/api/company/{id}/movies/{movieID}");
             #endregion
 
             #region Assert

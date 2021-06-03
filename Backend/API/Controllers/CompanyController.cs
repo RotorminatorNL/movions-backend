@@ -54,6 +54,24 @@ namespace API.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
+        [HttpPost("{id}/movies")]
+        public async Task<IActionResult> ConnectMovie(int id, [FromBody] int movieId)
+        {
+            var result = await company.ConnectMovie(new AdminCompanyMovieModel { CompanyID = id, MovieID = movieId });
+
+            if (result != null)
+            {
+                if (result.ID > 0)
+                {
+                    return Ok(result);
+                }
+
+                return GetCustomNotFound(result.ID);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Read(int id)
         {
@@ -87,24 +105,6 @@ namespace API.Controllers
             return NotFound();
         }
 
-        [HttpPut("{id}/[action]")]
-        public async Task<IActionResult> ConnectMovie(int id, [FromBody] int movieID)
-        {
-            var result = await company.ConnectMovie(new AdminCompanyMovieModel { CompanyID = id, MovieID = movieID });
-
-            if (result != null)
-            {
-                if (result.ID > 0)
-                {
-                    return Ok(result);
-                }
-
-                return GetCustomNotFound(result.ID);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
-        }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -116,7 +116,7 @@ namespace API.Controllers
             return NotFound();
         }
 
-        [HttpDelete("{id}/[action]/{movieID}")]
+        [HttpDelete("{id}/movies/{movieID}")]
         public async Task<IActionResult> DisconnectMovie(int id, int movieID)
         {
             var result = await company.DisconnectMovie(new AdminCompanyMovieModel { CompanyID = id, MovieID = movieID });
