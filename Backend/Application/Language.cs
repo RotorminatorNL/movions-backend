@@ -20,7 +20,7 @@ namespace Application
             _languageValidation = new LanguageValidation();
         }
 
-        public async Task<AdminLanguageModel> Create(AdminLanguageModel adminLanguageModel)
+        public async Task<LanguageModel> Create(AdminLanguageModel adminLanguageModel)
         {
             if (_languageValidation.IsInputValid(adminLanguageModel))
             {
@@ -33,11 +33,7 @@ namespace Application
 
                 await _applicationDbContext.SaveChangesAsync();
 
-                return new AdminLanguageModel
-                {
-                    ID = language.ID,
-                    Name = language.Name
-                };
+                return await Read(language.ID);
             }
 
             return null;
@@ -61,7 +57,7 @@ namespace Application
             }).ToListAsync();
         }
 
-        public async Task<AdminLanguageModel> Update(AdminLanguageModel adminLanguageModel) 
+        public async Task<LanguageModel> Update(AdminLanguageModel adminLanguageModel) 
         {
             var language = _applicationDbContext.Languages.FirstOrDefault(x => x.ID == adminLanguageModel.ID);
 
@@ -71,10 +67,7 @@ namespace Application
 
                 await _applicationDbContext.SaveChangesAsync();
 
-                return new AdminLanguageModel { 
-                    ID = language.ID, 
-                    Name = language.Name 
-                };
+                return await Read(language.ID);
             }
 
             return null;

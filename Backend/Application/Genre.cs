@@ -20,7 +20,7 @@ namespace Application
             _genreValidation = new GenreValidation();
         }
 
-        public async Task<AdminGenreModel> Create(AdminGenreModel adminGenreModel)
+        public async Task<GenreModel> Create(AdminGenreModel adminGenreModel)
         {
             if (_genreValidation.IsInputValid(adminGenreModel))
             {
@@ -33,11 +33,7 @@ namespace Application
 
                 await _applicationDbContext.SaveChangesAsync();
 
-                return new AdminGenreModel
-                {
-                    ID = genre.ID,
-                    Name = genre.Name
-                };
+                return await Read(genre.ID);
             }
 
             return null;
@@ -61,7 +57,7 @@ namespace Application
             }).ToListAsync();
         }
 
-        public async Task<AdminGenreModel> Update(AdminGenreModel adminGenreModel)
+        public async Task<GenreModel> Update(AdminGenreModel adminGenreModel)
         {
             var genre = _applicationDbContext.Genres.FirstOrDefault(x => x.ID == adminGenreModel.ID);
             
@@ -71,11 +67,7 @@ namespace Application
 
                 await _applicationDbContext.SaveChangesAsync();
 
-                return new AdminGenreModel
-                {
-                    ID = genre.ID,
-                    Name = genre.Name
-                };
+                return await Read(genre.ID);
             }
 
             return null;

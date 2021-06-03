@@ -23,7 +23,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminGenreModel adminGenreModel)
         {
-            if (await genre.Create(adminGenreModel) is AdminGenreModel result && result != null)
+            if (await genre.Create(adminGenreModel) is GenreModel result && result != null)
             {
                 return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
             }
@@ -56,7 +56,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] AdminGenreModel adminGenreModel)
         {
-            if (await genre.Update(adminGenreModel) is AdminGenreModel result && result != null)
+            if (await genre.Update(adminGenreModel) is GenreModel result && result != null)
             {
                 return Ok(result);
             }

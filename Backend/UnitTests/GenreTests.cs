@@ -29,7 +29,12 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedGenre = new AdminGenreModel
+            var newGenre = new AdminGenreModel
+            {
+                Name = name
+            };
+
+            var expectedGenre = new GenreModel
             {
                 ID = 1,
                 Name = name
@@ -39,7 +44,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualGenre = await appGenre.Create(expectedGenre);
+            var actualGenre = await appGenre.Create(newGenre);
             #endregion
 
             #region Assert
@@ -66,7 +71,12 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var expectedGenre = new AdminGenreModel
+            var newGenre = new AdminGenreModel
+            {
+                Name = name
+            };
+
+            var expectedGenre = new GenreModel
             {
                 ID = 1,
                 Name = name
@@ -76,7 +86,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualGenre = await appGenre.Create(expectedGenre);
+            var actualGenre = await appGenre.Create(newGenre);
             #endregion
 
             #region Assert
@@ -92,15 +102,16 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedGenre = new AdminGenreModel
+            dbContext.Genres.Add(new Domain.Genre { Name = "Name" });
+            await dbContext.SaveChangesAsync();
+
+            var expectedGenre = new GenreModel
             {
                 ID = id,
                 Name = "Name"
             };
 
             var appGenre = new Genre(dbContext);
-
-            await appGenre.Create(expectedGenre);
             #endregion
 
             #region Act
@@ -121,15 +132,16 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedGenre = new AdminGenreModel
+            dbContext.Genres.Add(new Domain.Genre { Name = "Name" });
+            await dbContext.SaveChangesAsync();
+
+            var expectedGenre = new GenreModel
             {
                 ID = id,
                 Name = "Name"
             };
 
             var appGenre = new Genre(dbContext);
-
-            await appGenre.Create(expectedGenre);
             #endregion
 
             #region Act
@@ -211,7 +223,13 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var expectedGenre = new AdminGenreModel
+            var newGenre = new AdminGenreModel
+            {
+                ID = id,
+                Name = name
+            };
+
+            var expectedGenre = new GenreModel
             {
                 ID = id,
                 Name = name
@@ -221,7 +239,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualGenre = await appGenre.Update(expectedGenre);
+            var actualGenre = await appGenre.Update(newGenre);
             #endregion
 
             #region Assert
@@ -261,7 +279,7 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var expectedGenre = new AdminGenreModel
+            var newGenre = new AdminGenreModel
             {
                 ID = id,
                 Name = name
@@ -271,7 +289,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualGenre = await appGenre.Update(expectedGenre);
+            var actualGenre = await appGenre.Update(newGenre);
             #endregion
 
             #region Assert

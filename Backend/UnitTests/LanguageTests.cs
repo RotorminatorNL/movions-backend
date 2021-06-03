@@ -29,7 +29,12 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedLanguage = new AdminLanguageModel
+            var newLanguage = new AdminLanguageModel
+            {
+                Name = name
+            };
+
+            var expectedLanguage = new LanguageModel
             {
                 ID = 1,
                 Name = name
@@ -39,7 +44,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualLanguage = await appLanguage.Create(expectedLanguage);
+            var actualLanguage = await appLanguage.Create(newLanguage);
             #endregion
 
             #region Assert
@@ -66,7 +71,12 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var expectedLanguage = new AdminLanguageModel
+            var newLanguage = new AdminLanguageModel
+            {
+                Name = name
+            };
+
+            var expectedLanguage = new LanguageModel
             {
                 ID = 1,
                 Name = name
@@ -76,7 +86,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualLanguage = await appLanguage.Create(expectedLanguage);
+            var actualLanguage = await appLanguage.Create(newLanguage);
             #endregion
 
             #region Assert
@@ -92,15 +102,19 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedLanguage = new AdminLanguageModel
+            dbContext.Languages.Add(new Domain.Language
+            {
+                Name = "Name"
+            });
+            await dbContext.SaveChangesAsync();
+
+            var expectedLanguage = new LanguageModel
             {
                 ID = id,
                 Name = "Name"
             };
 
             var appLanguage = new Language(dbContext);
-
-            await appLanguage.Create(expectedLanguage);
             #endregion
 
             #region Act
@@ -121,15 +135,13 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedLanguage = new AdminLanguageModel
+            dbContext.Genres.Add(new Domain.Genre
             {
-                ID = id,
                 Name = "Name"
-            };
+            });
+            await dbContext.SaveChangesAsync();
 
             var appLanguage = new Language(dbContext);
-
-            await appLanguage.Create(expectedLanguage);
             #endregion
 
             #region Act
@@ -211,7 +223,13 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var expectedLanguage = new AdminLanguageModel
+            var newLanguage = new AdminLanguageModel
+            {
+                ID = id,
+                Name = name
+            };
+
+            var expectedLanguage = new LanguageModel
             {
                 ID = id,
                 Name = name
@@ -221,7 +239,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualLanguage = await appLanguage.Update(expectedLanguage);
+            var actualLanguage = await appLanguage.Update(newLanguage);
             #endregion
 
             #region Assert
@@ -261,7 +279,7 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var expectedLanguage = new AdminLanguageModel
+            var newLanguage = new AdminLanguageModel
             {
                 ID = id,
                 Name = name
@@ -271,7 +289,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualLanguage = await appLanguage.Update(expectedLanguage);
+            var actualLanguage = await appLanguage.Update(newLanguage);
             #endregion
 
             #region Assert

@@ -23,7 +23,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminLanguageModel adminLanguageModel)
         {
-            if (await language.Create(adminLanguageModel) is AdminLanguageModel result && result != null)
+            if (await language.Create(adminLanguageModel) is LanguageModel result && result != null)
             {
                 return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
             }
@@ -56,7 +56,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] AdminLanguageModel adminLanguageModel)
         {
-            if (await language.Update(adminLanguageModel) is AdminLanguageModel result && result != null)
+            if (await language.Update(adminLanguageModel) is LanguageModel result && result != null)
             {
                 return Ok(result);
             }
