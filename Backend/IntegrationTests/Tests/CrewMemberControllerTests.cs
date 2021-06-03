@@ -415,7 +415,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public async Task ReadAll_CompaniesExist_ReturnsJsonResponseAndOk()
+        public async Task ReadAll_CrewMembersExist_ReturnsJsonResponseAndOk()
         {
             #region Arrange 
             await DeleteDbContent();
@@ -458,7 +458,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public async Task ReadAll_NoCompaniesExist_ReturnsJsonResponseAndNoContent()
+        public async Task ReadAll_NoCrewMembersExist_ReturnsJsonResponseAndNoContent()
         {
             #region Arrange 
             await DeleteDbContent();
