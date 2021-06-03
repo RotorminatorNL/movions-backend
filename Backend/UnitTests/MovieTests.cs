@@ -42,11 +42,24 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var expectedMovie = new AdminMovieModel
+            var newMovie = new AdminMovieModel
             {
                 ID = 1,
                 Description = description,
-                Language = new AdminLanguageModel { 
+                Language = new AdminLanguageModel
+                {
+                    ID = languageID
+                },
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
+            };
+
+            var expectedMovie = new MovieModel
+            {
+                ID = 1,
+                Description = description,
+                Language = new LanguageModel { 
                     ID = languageID
                 },
                 Length = length,
@@ -58,7 +71,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualMovie = await appMovie.Create(expectedMovie);
+            var actualMovie = await appMovie.Create(newMovie);
             #endregion
 
             #region Assert
@@ -113,7 +126,7 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var expectedMovie = new AdminMovieModel
+            var newMovie = new AdminMovieModel
             {
                 Description = description,
                 Language = languageID != 0 ? new AdminLanguageModel
@@ -130,7 +143,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualMovie = await appMovie.Create(expectedMovie);
+            var actualMovie = await appMovie.Create(newMovie);
             #endregion
 
             #region Assert
@@ -151,14 +164,23 @@ namespace UnitTests
                 Name = "English"
             };
             dbContext.Languages.Add(language);
-
             await dbContext.SaveChangesAsync();
 
-            var expectedMovie = new AdminMovieModel
+            dbContext.Movies.Add(new Domain.Movie
+            {
+                Description = "Test description",
+                LanguageID = language.ID,
+                Length = 104,
+                ReleaseDate = "04-10-2010",
+                Title = "Test title"
+            });
+            await dbContext.SaveChangesAsync();
+
+            var expectedMovie = new MovieModel
             {
                 ID = id,
                 Description = "Test description",
-                Language = new AdminLanguageModel
+                Language = new LanguageModel
                 {
                     ID = language.ID,
                     Name = language.Name
@@ -169,8 +191,6 @@ namespace UnitTests
             };
 
             var appMovie = new Movie(dbContext);
-
-            await appMovie.Create(expectedMovie);
             #endregion
 
             #region Act
@@ -197,26 +217,19 @@ namespace UnitTests
                 Name = "English"
             };
             dbContext.Languages.Add(language);
-
             await dbContext.SaveChangesAsync();
 
-            var expectedMovie = new AdminMovieModel
+            dbContext.Movies.Add(new Domain.Movie
             {
-                ID = id,
                 Description = "Test description",
-                Language = new AdminLanguageModel
-                {
-                    ID = language.ID,
-                    Name = language.Name
-                },
+                LanguageID = language.ID,
                 Length = 104,
-                ReleaseDate = DateTime.Parse("04-10-2010"),
+                ReleaseDate = "04-10-2010",
                 Title = "Test title"
-            };
+            });
+            await dbContext.SaveChangesAsync();
 
             var appMovie = new Movie(dbContext);
-
-            await appMovie.Create(expectedMovie);
             #endregion
 
             #region Act
@@ -304,6 +317,7 @@ namespace UnitTests
             };
             dbContext.Languages.Add(language);
             dbContext.Languages.Add(language2);
+            await dbContext.SaveChangesAsync();
 
             var movie = new Domain.Movie
             {
@@ -314,17 +328,28 @@ namespace UnitTests
                 Title = "Title"
             };
             dbContext.Movies.Add(movie);
-
             await dbContext.SaveChangesAsync();
 
-            var expectedMovie = new AdminMovieModel
+            var newMovie = new AdminMovieModel
             {
                 ID = id,
                 Description = description,
                 Language = new AdminLanguageModel
                 {
-                    ID = languageID,
-                    Name = language.Name
+                    ID = languageID
+                },
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
+            };
+
+            var expectedMovie = new MovieModel
+            {
+                ID = id,
+                Description = description,
+                Language = new LanguageModel
+                {
+                    ID = languageID
                 },
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
@@ -335,7 +360,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualMovie = await appMovie.Update(expectedMovie);
+            var actualMovie = await appMovie.Update(newMovie);
             #endregion
 
             #region Assert
@@ -410,7 +435,7 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var expectedMovie = new AdminMovieModel
+            var newMovie = new AdminMovieModel
             {
                 ID = id,
                 Description = description,
@@ -428,7 +453,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualMovie = await appMovie.Update(expectedMovie);
+            var actualMovie = await appMovie.Update(newMovie);
             #endregion
 
             #region Assert

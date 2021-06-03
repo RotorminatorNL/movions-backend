@@ -23,7 +23,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AdminMovieModel adminMovieModel)
         {
-            if (await movie.Create(adminMovieModel) is AdminMovieModel result && result != null)
+            if (await movie.Create(adminMovieModel) is MovieModel result && result != null)
             {
                 return CreatedAtAction(nameof(Read), new { id = result.ID }, result);
             }
@@ -56,7 +56,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] AdminMovieModel adminMovieModel)
         {
-            if (await movie.Update(adminMovieModel) is AdminMovieModel result && result != null)
+            if (await movie.Update(adminMovieModel) is MovieModel result && result != null)
             {
                 return Ok(result);
             }

@@ -21,7 +21,7 @@ namespace Application
             _personValidation = new PersonValidation();
         }
 
-        public async Task<AdminPersonModel> Create(AdminPersonModel adminPersonModel)
+        public async Task<PersonModel> Create(AdminPersonModel adminPersonModel)
         {
             if (_personValidation.IsInputValid(adminPersonModel))
             {
@@ -37,15 +37,7 @@ namespace Application
                 _applicationDbContext.Persons.Add(person);
                 await _applicationDbContext.SaveChangesAsync();
 
-                return new AdminPersonModel
-                {
-                    ID = person.ID,
-                    BirthDate = DateTime.Parse(person.BirthDate),
-                    BirthPlace = person.BirthPlace,
-                    Description = person.Description,
-                    FirstName = person.FirstName,
-                    LastName = person.LastName
-                };
+                return await Read(person.ID);
             }
 
             return null;
@@ -77,7 +69,7 @@ namespace Application
             }).ToListAsync();
         }
 
-        public async Task<AdminPersonModel> Update(AdminPersonModel adminPersonModel)
+        public async Task<PersonModel> Update(AdminPersonModel adminPersonModel)
         {
             var person = _applicationDbContext.Persons.FirstOrDefault(x => x.ID == adminPersonModel.ID);
 
@@ -91,16 +83,7 @@ namespace Application
 
                 await _applicationDbContext.SaveChangesAsync();
 
-                return new AdminPersonModel
-                {
-                    ID = person.ID,
-                    BirthDate = DateTime.Parse(person.BirthDate),
-                    BirthPlace = person.BirthPlace,
-                    Description = person.Description,
-                    FirstName = person.FirstName,
-                    LastName = person.LastName
-                };
-
+                return await Read(person.ID);
             }
 
             return null;

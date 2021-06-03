@@ -21,7 +21,7 @@ namespace Application
             _movieValidation = new MovieValidation();
         }
 
-        public async Task<AdminMovieModel> Create(AdminMovieModel adminMovieModel)
+        public async Task<MovieModel> Create(AdminMovieModel adminMovieModel)
         {
             if (_movieValidation.IsInputValid(adminMovieModel))
             {
@@ -37,21 +37,7 @@ namespace Application
                 _applicationDbContext.Movies.Add(movie);
                 await _applicationDbContext.SaveChangesAsync();
 
-                var returnData = new AdminMovieModel
-                {
-                    ID = movie.ID,
-                    Description = movie.Description,
-                    Language = new AdminLanguageModel
-                    {
-                        ID = movie.Language.ID,
-                        Name = movie.Language.Name
-                    },
-                    Length = movie.Length,
-                    ReleaseDate = DateTime.Parse(movie.ReleaseDate),
-                    Title = movie.Title
-                };
-
-                return returnData;
+                return await Read(movie.ID);
             }
 
             return null;
@@ -86,7 +72,7 @@ namespace Application
             }).ToListAsync();
         }
 
-        public async Task<AdminMovieModel> Update(AdminMovieModel adminMovieModel)
+        public async Task<MovieModel> Update(AdminMovieModel adminMovieModel)
         {
             var movie = _applicationDbContext.Movies.FirstOrDefault(x => x.ID == adminMovieModel.ID);
 
@@ -100,19 +86,7 @@ namespace Application
 
                 await _applicationDbContext.SaveChangesAsync();
 
-                return new AdminMovieModel
-                {
-                    ID = movie.ID,
-                    Description = movie.Description,
-                    Language = new AdminLanguageModel
-                    {
-                        ID = movie.Language.ID,
-                        Name = movie.Language.Name
-                    },
-                    Length = movie.Length,
-                    ReleaseDate = DateTime.Parse(movie.ReleaseDate),
-                    Title = movie.Title
-                };
+                return await Read(movie.ID);
             }
 
             return null;

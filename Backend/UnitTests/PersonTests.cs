@@ -34,7 +34,16 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedPerson = new AdminPersonModel
+            var newPerson = new AdminPersonModel
+            {
+                BirthDate = DateTime.Parse(birthDate),
+                BirthPlace = birthPlace,
+                Description = description,
+                FirstName = firstName,
+                LastName = lastName
+            };
+
+            var expectedPerson = new PersonModel
             {
                 ID = 1,
                 BirthDate = DateTime.Parse(birthDate),
@@ -48,7 +57,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualPerson = await appPerson.Create(expectedPerson);
+            var actualPerson = await appPerson.Create(newPerson);
             #endregion
 
             #region Assert
@@ -97,9 +106,7 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            await dbContext.SaveChangesAsync();
-
-            var expectedPerson = new AdminPersonModel
+            var newPerson = new AdminPersonModel
             {
                 ID = 1,
                 BirthDate = DateTime.Parse(birthDate),
@@ -113,7 +120,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualPerson = await appPerson.Create(expectedPerson);
+            var actualPerson = await appPerson.Create(newPerson);
             #endregion
 
             #region Assert
@@ -129,7 +136,17 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedPerson = new AdminPersonModel
+            dbContext.Persons.Add(new Domain.Person
+            {
+                BirthDate = "04-10-2010",
+                BirthPlace = "Rotterdam",
+                Description = "Beautiful description",
+                FirstName = "Robbert",
+                LastName = "Lengton"
+            });
+            await dbContext.SaveChangesAsync();
+
+            var expectedPerson = new PersonModel
             {
                 ID = id,
                 BirthDate = DateTime.Parse("04-10-2010"),
@@ -140,8 +157,6 @@ namespace UnitTests
             };
 
             var appPerson = new Person(dbContext);
-
-            await appPerson.Create(expectedPerson);
             #endregion
 
             #region Act
@@ -162,19 +177,17 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedPerson = new AdminPersonModel
+            dbContext.Persons.Add(new Domain.Person
             {
-                ID = id,
-                BirthDate = DateTime.Parse("04-10-2010"),
+                BirthDate = "04-10-2010",
                 BirthPlace = "Rotterdam",
                 Description = "Beautiful description",
                 FirstName = "Robbert",
                 LastName = "Lengton"
-            };
+            });
+            await dbContext.SaveChangesAsync();
 
             var appPerson = new Person(dbContext);
-
-            await appPerson.Create(expectedPerson);
             #endregion
 
             #region Act
@@ -255,16 +268,26 @@ namespace UnitTests
             var person = new Domain.Person
             {
                 BirthDate = "04-10-2010",
-                BirthPlace = "Rotterdam",
-                Description = "Beautiful description",
-                FirstName = "Robbert",
-                LastName = "Lengton"
+                BirthPlace = "Amsterdam",
+                Description = "Ugly description",
+                FirstName = "Roberto",
+                LastName = "Lengtonius"
             };
             dbContext.Persons.Add(person);
 
             await dbContext.SaveChangesAsync();
 
-            var expectedPerson = new AdminPersonModel
+            var newPerson = new AdminPersonModel
+            {
+                ID = id,
+                BirthDate = DateTime.Parse(birthDate),
+                BirthPlace = birthPlace,
+                Description = description,
+                FirstName = firstName,
+                LastName = lastName
+            };
+
+            var expectedPerson = new PersonModel
             {
                 ID = id,
                 BirthDate = DateTime.Parse(birthDate),
@@ -278,7 +301,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualPerson = await appPerson.Update(expectedPerson);
+            var actualPerson = await appPerson.Update(newPerson);
             #endregion
 
             #region Assert
@@ -344,9 +367,8 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var expectedPerson = new AdminPersonModel
+            var newPerson = new AdminPersonModel
             {
-                ID = id,
                 BirthDate = DateTime.Parse(birthDate),
                 BirthPlace = birthPlace,
                 Description = description,
@@ -358,7 +380,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualPerson = await appPerson.Update(expectedPerson);
+            var actualPerson = await appPerson.Update(newPerson);
             #endregion
 
             #region Assert
