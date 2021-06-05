@@ -74,20 +74,27 @@ namespace Application
         public async Task<CompanyModel> ConnectMovie(AdminCompanyMovieModel adminCompanyMovieModel)
         {
             var company = await _applicationDbContext.Companies.FirstOrDefaultAsync(c => c.ID == adminCompanyMovieModel.CompanyID);
-            var movie = await _applicationDbContext.Movies.FirstOrDefaultAsync(c => c.ID == adminCompanyMovieModel.MovieID);
+            var movie = await _applicationDbContext.Movies.FirstOrDefaultAsync(m => m.ID == adminCompanyMovieModel.MovieID);
 
             if (company != null && movie != null)
             {
-                var companyMovie = new Domain.CompanyMovie
+                var doesConnectionExist = await _applicationDbContext.CompanyMovies.FirstOrDefaultAsync(c => c.CompanyID == company.ID && c.MovieID == movie.ID);
+
+                if (doesConnectionExist == null)
                 {
-                    CompanyID = adminCompanyMovieModel.CompanyID,
-                    MovieID = adminCompanyMovieModel.MovieID
-                };
+                    var companyMovie = new Domain.CompanyMovie
+                    {
+                        CompanyID = company.ID,
+                        MovieID = movie.ID
+                    };
 
-                _applicationDbContext.CompanyMovies.Add(companyMovie);
-                await _applicationDbContext.SaveChangesAsync();
+                    _applicationDbContext.CompanyMovies.Add(companyMovie);
+                    await _applicationDbContext.SaveChangesAsync();
 
-                return await Read(adminCompanyMovieModel.CompanyID);
+                    return await Read(company.ID);
+                }
+
+                return GetCompanyModelWithErrorID(company, movie);
             }
 
             return GetCompanyModelWithErrorID(company, movie);

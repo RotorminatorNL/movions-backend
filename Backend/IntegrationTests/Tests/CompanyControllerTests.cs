@@ -206,6 +206,7 @@ namespace IntegrationTests
         [InlineData(0, 0, new string[] { "CompanyID", "MovieID" }, new string[] { "Does not exist.", "Does not exist." })]
         [InlineData(0, 1, new string[] { "CompanyID" }, new string[] { "Does not exist." })]
         [InlineData(1, 0, new string[] { "MovieID" }, new string[] { "Does not exist." })]
+        [InlineData(1, 1, new string[] { "CompanyMovieID" }, new string[] { "Does already exist." })]
         public async Task ConnectMovie_InvalidRequest_ReturnsJsonResponseAndNotFoundWithErrors(int id, int movieID, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorMessages)
         {
             #region Arrange 
@@ -213,18 +214,18 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            var company = new Domain.Company
-            {
-                Name = "Epic Producer",
-                Type = CompanyTypes.Producer
-            };
-            dbContext.Companies.Add(company);
+            dbContext.Companies.Add(new Domain.Company());
+            dbContext.Movies.Add(new Domain.Movie());
 
-            var movie = new Domain.Movie
+            if (id == 1 && movieID == 1)
             {
-                Title = "Epic Title"
-            };
-            dbContext.Movies.Add(movie);
+                dbContext.CompanyMovies.Add(new Domain.CompanyMovie
+                {
+                    CompanyID = id,
+                    MovieID = movieID
+                });
+            }
+
             await dbContext.SaveChangesAsync();
             #endregion
 

@@ -165,6 +165,7 @@ namespace UnitTests
         [InlineData(0, 0, -3)]
         [InlineData(0, 1, -2)]
         [InlineData(1, 0, -1)]
+        [InlineData(1, 1, -4)]
         [InlineData(1, 2, -1)]
         [InlineData(2, 1, -2)]
         [InlineData(2, 2, -3)]
@@ -176,6 +177,16 @@ namespace UnitTests
 
             dbContext.Companies.Add(new Domain.Company());
             dbContext.Movies.Add(new Domain.Movie());
+
+            if (expectedID == -4)
+            {
+                dbContext.CompanyMovies.Add(new Domain.CompanyMovie
+                {
+                    CompanyID = id,
+                    MovieID = movieID
+                });
+            }
+
             await dbContext.SaveChangesAsync();
 
             var companyMovie = new AdminCompanyMovieModel

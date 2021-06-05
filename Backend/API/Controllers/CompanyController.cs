@@ -15,7 +15,7 @@ namespace API.Controllers
     {
         private readonly Company company;
 
-        private NotFoundObjectResult GetCustomNotFound(int id)
+        private NotFoundObjectResult GetCustomNotFound(int id, string function)
         {
             switch (id)
             {
@@ -36,7 +36,14 @@ namespace API.Controllers
                         break;
                     }
                 default:
-                    ModelState.AddModelError("CompanyMovieID", "Does not exist.");
+                    if (function == "create")
+                    {
+                        ModelState.AddModelError("CompanyMovieID", "Does already exist.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("CompanyMovieID", "Does not exist.");
+                    }
                     break;
             }
 
@@ -71,7 +78,7 @@ namespace API.Controllers
                     return Ok(result);
                 }
 
-                return GetCustomNotFound(result.ID);
+                return GetCustomNotFound(result.ID, "create");
             }
 
             return StatusCode((int)HttpStatusCode.InternalServerError);
@@ -133,7 +140,7 @@ namespace API.Controllers
                     return Ok(result);
                 }
 
-                return GetCustomNotFound(result.ID);
+                return GetCustomNotFound(result.ID, "");
             }
 
             return StatusCode((int)HttpStatusCode.InternalServerError);
