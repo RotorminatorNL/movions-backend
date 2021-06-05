@@ -36,7 +36,7 @@ namespace API.Controllers
                         break;
                     }
                 default:
-                    if (function == "create")
+                    if (function == "connect")
                     {
                         ModelState.AddModelError("CompanyMovieID", "Does already exist.");
                     }
@@ -78,7 +78,7 @@ namespace API.Controllers
                     return Ok(result);
                 }
 
-                return GetCustomNotFound(result.ID, "create");
+                return GetCustomNotFound(result.ID, "connect");
             }
 
             return StatusCode((int)HttpStatusCode.InternalServerError);
@@ -140,7 +140,7 @@ namespace API.Controllers
                     return Ok(result);
                 }
 
-                return GetCustomNotFound(result.ID, "");
+                return GetCustomNotFound(result.ID, "disconnect");
             }
 
             return StatusCode((int)HttpStatusCode.InternalServerError);
