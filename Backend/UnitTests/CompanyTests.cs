@@ -512,6 +512,7 @@ namespace UnitTests
         [InlineData(0, 0, -3)]
         [InlineData(0, 1, -2)]
         [InlineData(1, 0, -1)]
+        [InlineData(1, 1, -4)]
         [InlineData(1, 2, -1)]
         [InlineData(2, 1, -2)]
         [InlineData(2, 2, -3)]
@@ -524,18 +525,18 @@ namespace UnitTests
             var company = new Domain.Company();
             dbContext.Companies.Add(company);
 
-            var language = new Domain.Language();
-            dbContext.Languages.Add(language);
-
-            var movie = new Domain.Movie { LanguageID = language.ID };
+            var movie = new Domain.Movie();
             dbContext.Movies.Add(movie);
 
-            var companyMovie = new Domain.CompanyMovie
+            if (exptectedID != -4)
             {
-                CompanyID = company.ID,
-                MovieID = movie.ID
-            };
-            dbContext.CompanyMovies.Add(companyMovie);
+                var companyMovie = new Domain.CompanyMovie
+                {
+                    CompanyID = company.ID,
+                    MovieID = movie.ID
+                };
+                dbContext.CompanyMovies.Add(companyMovie);
+            }
             await dbContext.SaveChangesAsync();
 
             var appCompany = new Company(dbContext);

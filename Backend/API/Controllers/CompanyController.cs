@@ -29,9 +29,14 @@ namespace API.Controllers
                         ModelState.AddModelError("CompanyID", "Does not exist.");
                         break;
                     }
+                case -3:
+                    {
+                        ModelState.AddModelError("CompanyID", "Does not exist.");
+                        ModelState.AddModelError("MovieID", "Does not exist.");
+                        break;
+                    }
                 default:
-                    ModelState.AddModelError("CompanyID", "Does not exist.");
-                    ModelState.AddModelError("MovieID", "Does not exist.");
+                    ModelState.AddModelError("CompanyMovieID", "Does not exist.");
                     break;
             }
 
@@ -117,9 +122,9 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}/movies/{movieID}")]
-        public async Task<IActionResult> DisconnectMovie(int id, int movieID)
+        public async Task<IActionResult> DisconnectMovie(int id, int MovieID)
         {
-            var result = await company.DisconnectMovie(new AdminCompanyMovieModel { CompanyID = id, MovieID = movieID });
+            var result = await company.DisconnectMovie(new AdminCompanyMovieModel { CompanyID = id, MovieID = MovieID });
 
             if (result != null)
             {

@@ -32,9 +32,17 @@ namespace Application
                 };
             }
 
+            if (company == null && movie == null)
+            {
+                return new CompanyModel
+                {
+                    ID = -3
+                };
+            }
+
             return new CompanyModel
             {
-                ID = -3
+                ID = -4
             };
         }
 
@@ -153,10 +161,13 @@ namespace Application
                                     .CompanyMovies
                                     .FirstOrDefault(c => c.CompanyID == company.ID && c.MovieID == movie.ID);
 
-                _applicationDbContext.CompanyMovies.Remove(companyMovie);
-                await _applicationDbContext.SaveChangesAsync();
+                if (companyMovie != null)
+                {
+                    _applicationDbContext.CompanyMovies.Remove(companyMovie);
+                    await _applicationDbContext.SaveChangesAsync();
 
-                return new CompanyModel();
+                    return new CompanyModel();
+                }
             }
 
             return GetCompanyModelWithErrorID(company, movie);

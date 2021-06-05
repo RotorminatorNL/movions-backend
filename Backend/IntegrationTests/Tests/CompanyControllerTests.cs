@@ -653,50 +653,48 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(0, 0)]
-        [InlineData(0, 1)]
-        [InlineData(1, 0)]
-        public async Task DisconnectMovie_InvalidRequest_ReturnsJsonResponseAndNotFound(int id, int movieID)
+        [InlineData(0, 0, new string[] { "CompanyID", "MovieID" }, new string[] { "Does not exist.", "Does not exist." })]
+        [InlineData(0, 1, new string[] { "CompanyID" }, new string[] { "Does not exist." })]
+        [InlineData(1, 0, new string[] { "MovieID" }, new string[] { "Does not exist." })]
+        [InlineData(1, 1, new string[] { "CompanyMovieID" }, new string[] { "Does not exist." })]
+        public async Task DisconnectMovie_InvalidRequest_ReturnsJsonResponseAndNotFoundWithErrors(int id, int movieID, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorMessages)
         {
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            var company = new Domain.Company
-            {
-                Name = "Epic Producer",
-                Type = CompanyTypes.Producer
-            };
+            var company = new Domain.Company();
             dbContext.Companies.Add(company);
 
-            var movie = new Domain.Movie
-            {
-                Title = "Epic Title"
-            };
+            var movie = new Domain.Movie();
             dbContext.Movies.Add(movie);
-            await dbContext.SaveChangesAsync();
 
-            dbContext.CompanyMovies.Add(new Domain.CompanyMovie
+            if (id != 1 && movieID != 1)
             {
-                CompanyID = company.ID,
-                MovieID = movie.ID
-            });
+                dbContext.CompanyMovies.Add(new Domain.CompanyMovie
+                {
+                    CompanyID = company.ID,
+                    MovieID = movie.ID
+                });
+            }
             await dbContext.SaveChangesAsync();
-
-            var newCompanyMovie = new AdminCompanyMovieModel
-            {
-                CompanyID = id,
-                MovieID = movieID
-            };
             #endregion
 
             #region Act
             var response = await client.DeleteAsync($"/api/company/{id}/movies/{movieID}");
+            var responseBody = await response.Content.ReadAsStreamAsync();
+            var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
+
+            var errorProp = actualCompany.GetProperty("errors");
+            var errors = errorProp.EnumerateObject();
             #endregion
 
             #region Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal(expectedErrorNames.Count(), errors.Count());
+            Assert.All(expectedErrorNames, errorName => Assert.Contains(errorName, errors.Select(prop => prop.Name)));
+            Assert.All(expectedErrorMessages, errorMessage => Assert.Contains(errorMessage, errors.Select(prop => prop.Value[0].ToString())));
             #endregion
         }
     }
