@@ -128,14 +128,14 @@ namespace API.Controllers
             return NotFound();
         }
 
-        [HttpPost("{id}/genres/{genreID}")]
-        public async Task<IActionResult> DisconnectGenre(int id, int genreID)
+        [HttpDelete("{id}/genres/{genreID}")]
+        public async Task<IActionResult> DisconnectGenre(int id, int GenreID)
         {
-            var result = await movie.DisconnectGenre(new AdminGenreMovieModel { GenreID = genreID, MovieID = id });
+            var result = await movie.DisconnectGenre(new AdminGenreMovieModel { GenreID = GenreID, MovieID = id });
 
             if (result != null)
             {
-                if (result.ID > 0)
+                if (result.ID == 0)
                 {
                     return Ok(result);
                 }
