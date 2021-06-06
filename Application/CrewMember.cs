@@ -130,6 +130,8 @@ namespace Application
                 {
                     crewMember.CharacterName = adminCrewMemberModel.CharacterName;
                     crewMember.Role = adminCrewMemberModel.Role;
+                    crewMember.MovieID = adminCrewMemberModel.MovieID;
+                    crewMember.PersonID = adminCrewMemberModel.PersonID;
 
                     await _applicationDbContext.SaveChangesAsync();
 
