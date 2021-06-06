@@ -27,6 +27,8 @@ namespace IntegrationTests
         [InlineData("Description", 1, 104, "04-10-2010", "Title")]
         public async Task Create_ValidRequest_ReturnsJsonResponseAndCreated(string description, int languageID, int length, string releaseDate, string title)
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
+
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();

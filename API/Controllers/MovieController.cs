@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -53,6 +55,8 @@ namespace API.Controllers
 
         public MovieController(IApplicationDbContext applicationDbContext)
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
+
             movie = new Movie(applicationDbContext);
         }
 
