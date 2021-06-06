@@ -33,7 +33,7 @@ namespace IntegrationTests
             var expectedLanguage = new LanguageModel
             {
                 ID = 1,
-                Name = "Name"
+                Name = name
             };
             #endregion
 
@@ -120,16 +120,17 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Languages.Add(new Domain.Language
+            var language = new Domain.Language
             {
                 Name = "Name"
-            });
+            };
+            dbContext.Languages.Add(language);
             await dbContext.SaveChangesAsync();
 
             var expectedLanguage = new LanguageModel
             {
-                ID = 1,
-                Name = "Name"
+                ID = language.ID,
+                Name = language.Name
             };
             #endregion
 
@@ -147,20 +148,12 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Read_InvalidRequest_ReturnsJsonResponseAndNotFound(int id)
         {
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
-            var dbContext = GetDbContext();
-
-            dbContext.Languages.Add(new Domain.Language
-            {
-                Name = "Name"
-            });
-            await dbContext.SaveChangesAsync();
             #endregion
 
             #region Act
@@ -246,8 +239,8 @@ namespace IntegrationTests
 
             var expectedLanguage = new LanguageModel
             {
-                ID = 1,
-                Name = "Some other name"
+                ID = id,
+                Name = name
             };
             #endregion
 
@@ -285,19 +278,6 @@ namespace IntegrationTests
             yield return new object[]
             {
                 id, "",
-                new string[]
-                {
-                    "Name"
-                },
-                new string[]
-                {
-                    "Cannot be null or empty."
-                }
-            };
-            // Both wrong
-            yield return new object[]
-            {
-                0, null,
                 new string[]
                 {
                     "Name"
@@ -349,24 +329,17 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Update_InvalidRequest_ReturnsJsonResponseAndNotFound(int id)
         {
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
-            var dbContext = GetDbContext();
-
-            dbContext.Languages.Add(new Domain.Language
-            {
-                Name = "Name"
-            });
-            await dbContext.SaveChangesAsync();
 
             var newLanguage = new AdminLanguageModel
             {
                 ID = id,
-                Name = "Some other name"
+                Name = "New Name"
             };
             #endregion
 
@@ -388,10 +361,7 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Languages.Add(new Domain.Language
-            {
-                Name = "Name"
-            });
+            dbContext.Languages.Add(new Domain.Language());
             await dbContext.SaveChangesAsync();
             #endregion
 
@@ -405,20 +375,12 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Delete_InvalidRequest_ReturnsJsonResponseAndNotFound(int id)
         {
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
-            var dbContext = GetDbContext();
-
-            dbContext.Languages.Add(new Domain.Language
-            {
-                Name = "Name"
-            });
-            await dbContext.SaveChangesAsync();
             #endregion
 
             #region Act

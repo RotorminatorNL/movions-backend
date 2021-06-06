@@ -120,16 +120,17 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Genres.Add(new Domain.Genre
+            var genre = new Domain.Genre
             {
                 Name = "Name"
-            });
+            };
+            dbContext.Genres.Add(genre);
             await dbContext.SaveChangesAsync();
 
             var expectedGenre = new GenreModel
             {
-                ID = 1,
-                Name = "Name"
+                ID = genre.ID,
+                Name = genre.Name
             };
             #endregion
 
@@ -147,20 +148,12 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Read_InvalidRequest_ReturnsJsonResponseAndNotFound(int id)
         {
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
-            var dbContext = GetDbContext();
-
-            dbContext.Genres.Add(new Domain.Genre
-            {
-                Name = "Name"
-            });
-            await dbContext.SaveChangesAsync();
             #endregion
 
             #region Act
@@ -224,7 +217,7 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(1, "Some other name")]
+        [InlineData(1, "New Name")]
         public async Task Update_ValidRequest_ReturnsJsonResponseAndOk(int id, string name)
         {
             #region Arrange 
@@ -294,19 +287,6 @@ namespace IntegrationTests
                     "Cannot be null or empty."
                 }
             };
-            // Both wrong
-            yield return new object[]
-            {
-                0, null,
-                new string[]
-                {
-                    "Name"
-                },
-                new string[]
-                {
-                    "Cannot be null or empty."
-                }
-            };
         }
 
         [Theory]
@@ -355,18 +335,11 @@ namespace IntegrationTests
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
-            var dbContext = GetDbContext();
-
-            dbContext.Genres.Add(new Domain.Genre
-            {
-                Name = "Name"
-            });
-            await dbContext.SaveChangesAsync();
 
             var newGenre = new AdminGenreModel
             {
                 ID = id,
-                Name = "Some other name"
+                Name = "New Name"
             };
             #endregion
 
@@ -388,10 +361,7 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Genres.Add(new Domain.Genre
-            {
-                Name = "Name"
-            });
+            dbContext.Genres.Add(new Domain.Genre());
             await dbContext.SaveChangesAsync();
             #endregion
 
@@ -405,20 +375,12 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Delete_InvalidRequest_ReturnsJsonResponseAndNotFound(int id)
         {
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
-            var dbContext = GetDbContext();
-
-            dbContext.Genres.Add(new Domain.Genre
-            {
-                Name = "Name"
-            });
-            await dbContext.SaveChangesAsync();
             #endregion
 
             #region Act

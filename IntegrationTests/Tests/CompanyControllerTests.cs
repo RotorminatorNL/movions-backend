@@ -35,8 +35,8 @@ namespace IntegrationTests
             var expectedCompany = new CompanyModel
             {
                 ID = 1,
-                Name = "Name",
-                Type = CompanyTypes.Producer.ToString()
+                Name = name,
+                Type = companyType.ToString()
             };
             #endregion
 
@@ -56,14 +56,14 @@ namespace IntegrationTests
 
         public static IEnumerable<object[]> Data_Create_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors()
         {
-            string newName = "Name";
-            CompanyTypes newCompanyType = CompanyTypes.Producer;
+            string name = "Name";
+            CompanyTypes companyType = CompanyTypes.Producer;
 
             // Name = null
             yield return new object[]
             {
-                null, newCompanyType,
-                new string[]
+                null, companyType,
+                new string[] 
                 {
                     "Name"
                 },
@@ -75,7 +75,7 @@ namespace IntegrationTests
             // Name = empty
             yield return new object[]
             {
-                "", newCompanyType,
+                "", companyType,
                 new string[]
                 {
                     "Name"
@@ -88,7 +88,7 @@ namespace IntegrationTests
             // CompanyType = 100
             yield return new object[]
             {
-                newName, 100,
+                name, 100,
                 new string[]
                 {
                     "Type"
@@ -243,18 +243,19 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Companies.Add(new Domain.Company
+            var company = new Domain.Company
             {
                 Name = "Name",
                 Type = CompanyTypes.Producer
-            });
+            };
+            dbContext.Companies.Add(company);
             await dbContext.SaveChangesAsync();
 
             var expectedCompany = new CompanyModel
             {
-                ID = 1,
-                Name = "Name",
-                Type = CompanyTypes.Producer.ToString()
+                ID = company.ID,
+                Name = company.Name,
+                Type = company.Type.ToString()
             };
             #endregion
 
@@ -273,21 +274,12 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Read_InvalidRequest_ReturnsJsonResponseAndNotFound(int id)
         {
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
-            var dbContext = GetDbContext();
-
-            dbContext.Companies.Add(new Domain.Company
-            {
-                Name = "Name",
-                Type = CompanyTypes.Producer
-            });
-            await dbContext.SaveChangesAsync();
             #endregion
 
             #region Act
@@ -353,7 +345,7 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(1, "Some other name", CompanyTypes.Producer)]
+        [InlineData(1, "New Name", CompanyTypes.Producer)]
         public async Task Update_ValidRequest_ReturnsJsonResponseAndOk(int id, string name, CompanyTypes companyType)
         {
             #region Arrange 
@@ -377,9 +369,9 @@ namespace IntegrationTests
 
             var expectedCompany = new CompanyModel
             {
-                ID = 1,
-                Name = "Some other name",
-                Type = CompanyTypes.Producer.ToString()
+                ID = id,
+                Name = name,
+                Type = companyType.ToString()
             };
             #endregion
 
@@ -400,13 +392,13 @@ namespace IntegrationTests
         public static IEnumerable<object[]> Data_Update_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors()
         {
             int id = 1;
-            string newName = "Some other name";
-            CompanyTypes newCompanyType = CompanyTypes.Producer;
+            string name = "New Name";
+            CompanyTypes companyType = CompanyTypes.Producer;
 
             // Name = null
             yield return new object[] 
             {
-                id, null, newCompanyType, 
+                id, null, companyType, 
                 new string[] 
                 {
                     "Name" 
@@ -419,7 +411,7 @@ namespace IntegrationTests
             // Name = empty
             yield return new object[] 
             { 
-                id, "", newCompanyType, 
+                id, "", companyType, 
                 new string[] 
                 { 
                     "Name" 
@@ -432,7 +424,7 @@ namespace IntegrationTests
             // CompanyType = 100
             yield return new object[] 
             { 
-                id, newName, 100, 
+                id, name, 100, 
                 new string[]
                 { 
                     "Type" 
@@ -501,25 +493,17 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Update_InvalidRequest_ReturnsJsonResponseAndNotFound(int id)
         {
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
-            var dbContext = GetDbContext();
-
-            dbContext.Companies.Add(new Domain.Company
-            {
-                Name = "Name",
-                Type = CompanyTypes.Distributor
-            });
-            await dbContext.SaveChangesAsync();
 
             var newCompany = new AdminCompanyModel
             {
                 ID = id,
-                Name = "Some other name",
+                Name = "New Name",
                 Type = CompanyTypes.Producer
             };
             #endregion
@@ -542,11 +526,7 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.Companies.Add(new Domain.Company
-            {
-                Name = "Name",
-                Type = CompanyTypes.Distributor
-            });
+            dbContext.Companies.Add(new Domain.Company());
             await dbContext.SaveChangesAsync();
             #endregion
 
@@ -560,21 +540,12 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Delete_InvalidRequest_ReturnsJsonResponseAndNotFound(int id)
         {
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
-            var dbContext = GetDbContext();
-
-            dbContext.Companies.Add(new Domain.Company
-            {
-                Name = "Name",
-                Type = CompanyTypes.Distributor
-            });
-            await dbContext.SaveChangesAsync();
             #endregion
 
             #region Act
@@ -595,17 +566,10 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            var company = new Domain.Company
-            {
-                Name = "Epic Producer",
-                Type = CompanyTypes.Producer
-            };
+            var company = new Domain.Company();
             dbContext.Companies.Add(company);
 
-            var movie = new Domain.Movie
-            {
-                Title = "Epic Title"
-            };
+            var movie = new Domain.Movie();
             dbContext.Movies.Add(movie);
             await dbContext.SaveChangesAsync();
 

@@ -27,8 +27,6 @@ namespace IntegrationTests
         [InlineData("Description", 1, 104, "04-10-2010", "Title")]
         public async Task Create_ValidRequest_ReturnsJsonResponseAndCreated(string description, int languageID, int length, string releaseDate, string title)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
-
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
@@ -36,7 +34,7 @@ namespace IntegrationTests
 
             var language = new Domain.Language
             {
-                Name = "English"
+                Name = "Name"
             };
             dbContext.Languages.Add(language);
             await dbContext.SaveChangesAsync();
@@ -53,15 +51,15 @@ namespace IntegrationTests
             var expectedMovie = new MovieModel
             {
                 ID = 1,
-                Description = "Description",
+                Description = description,
                 Language = new LanguageModel
                 {
-                    ID = 1,
-                    Name = "English"
+                    ID = language.ID,
+                    Name = language.Name
                 },
-                Length = 104,
-                ReleaseDate = DateTime.Parse("04-10-2010"),
-                Title = "Title"
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
             };
             #endregion
 
@@ -76,6 +74,7 @@ namespace IntegrationTests
             Assert.Equal(expectedMovie.ID, actualMovie.ID);
             Assert.Equal(expectedMovie.Description, actualMovie.Description);
             Assert.Equal(expectedMovie.Language.ID, actualMovie.Language.ID);
+            Assert.Equal(expectedMovie.Language.Name, actualMovie.Language.Name);
             Assert.Equal(expectedMovie.Length, actualMovie.Length);
             Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
             Assert.Equal(expectedMovie.Title, actualMovie.Title);
@@ -214,7 +213,7 @@ namespace IntegrationTests
 
             var language = new Domain.Language
             {
-                Name = "English"
+                Name = "Name"
             };
             dbContext.Languages.Add(language);
             await dbContext.SaveChangesAsync();

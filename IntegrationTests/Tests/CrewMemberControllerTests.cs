@@ -52,7 +52,9 @@ namespace IntegrationTests
             await DeleteDbContent();
             var client = GetHttpClient();
 
-            await CreatePersonAndMovie();
+            var data = await CreatePersonAndMovie();
+            var movie = data[0] as Domain.Movie;
+            var person = data[1] as Domain.Person;
 
             var newCrewMember = new AdminCrewMemberModel
             {
@@ -69,11 +71,14 @@ namespace IntegrationTests
                 Role = crewRole.ToString(),
                 Movie = new MovieModel
                 {
-                    ID = 1
+                    ID = movie.ID,
+                    Title = movie.Title
                 },
                 Person = new PersonModel
                 {
-                    ID = 1
+                    ID = person.ID,
+                    FirstName = person.FirstName,
+                    LastName = person.LastName
                 }
             };
             #endregion
@@ -90,7 +95,10 @@ namespace IntegrationTests
             Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
             Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
             Assert.Equal(expectedCrewMember.Movie.ID, actualCrewMember.Movie.ID);
+            Assert.Equal(expectedCrewMember.Movie.Title, actualCrewMember.Movie.Title);
             Assert.Equal(expectedCrewMember.Person.ID, actualCrewMember.Person.ID);
+            Assert.Equal(expectedCrewMember.Person.FirstName, actualCrewMember.Person.FirstName);
+            Assert.Equal(expectedCrewMember.Person.LastName, actualCrewMember.Person.LastName);
             #endregion
         }
 
@@ -297,7 +305,6 @@ namespace IntegrationTests
 
             var newCrewMember = new AdminCrewMemberModel
             {
-                ID = 1,
                 CharacterName = characterName,
                 Role = crewRole,
                 MovieID = movieID,
@@ -331,29 +338,35 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            await CreatePersonAndMovie();
+            var data = await CreatePersonAndMovie();
+            var movie = data[0] as Domain.Movie;
+            var person = data[1] as Domain.Person;
 
-            dbContext.CrewMembers.Add(new Domain.CrewMember
+            var crewMember = new Domain.CrewMember
             {
                 CharacterName = "Character Name",
                 Role = CrewRoles.Actor,
-                MovieID = 1,
-                PersonID = 1
-            });
+                MovieID = movie.ID,
+                PersonID = person.ID
+            };
+            dbContext.CrewMembers.Add(crewMember);
             await dbContext.SaveChangesAsync();
 
             var expectedCrewMember = new CrewMemberModel
             {
-                ID = 1,
-                CharacterName = "Character Name",
-                Role = CrewRoles.Actor.ToString(),
+                ID = crewMember.ID,
+                CharacterName = crewMember.CharacterName,
+                Role = crewMember.Role.ToString(),
                 Movie = new MovieModel
                 {
-                    ID = 1
+                    ID = movie.ID,
+                    Title = movie.Title
                 },
                 Person = new PersonModel
                 {
-                    ID = 1
+                    ID = person.ID,
+                    FirstName = person.FirstName,
+                    LastName = person.LastName
                 }
             };
             #endregion
@@ -370,29 +383,20 @@ namespace IntegrationTests
             Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
             Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
             Assert.Equal(expectedCrewMember.Movie.ID, actualCrewMember.Movie.ID);
+            Assert.Equal(expectedCrewMember.Movie.Title, actualCrewMember.Movie.Title);
             Assert.Equal(expectedCrewMember.Person.ID, actualCrewMember.Person.ID);
+            Assert.Equal(expectedCrewMember.Person.FirstName, actualCrewMember.Person.FirstName);
+            Assert.Equal(expectedCrewMember.Person.LastName, actualCrewMember.Person.LastName);
             #endregion
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Read_InvalidRequest_ReturnsJsonResponseAndBadRequest(int id)
         {
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
-            var dbContext = GetDbContext();
-
-            await CreatePersonAndMovie();
-
-            dbContext.CrewMembers.Add(new Domain.CrewMember
-            {
-                Role = CrewRoles.Writer,
-                MovieID = 1,
-                PersonID = 1
-            });
-            await dbContext.SaveChangesAsync();
             #endregion
 
             #region Act
@@ -463,7 +467,7 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(1, "Some other name", CrewRoles.Actor, 1, 1)]
+        [InlineData(1, "New Character Name", CrewRoles.Actor, 2, 2)]
         public async Task Update_ValidRequest_ReturnsJsonResponseAndOk(int id, string characterName, CrewRoles crewRole, int movieID, int personID)
         {
             #region Arrange 
@@ -471,13 +475,19 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            await CreatePersonAndMovie();
+            var data = await CreatePersonAndMovie();
+            var movie = data[0] as Domain.Movie;
+            var person = data[1] as Domain.Person;
+
+            var data2 = await CreatePersonAndMovie();
+            var movie2 = data2[0] as Domain.Movie;
+            var person2 = data2[1] as Domain.Person;
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
             {
                 Role = CrewRoles.Writer,
-                MovieID = 1,
-                PersonID = 1
+                MovieID = movie.ID,
+                PersonID = person.ID
             });
             await dbContext.SaveChangesAsync();
 
@@ -493,15 +503,18 @@ namespace IntegrationTests
             var expectedCrewMember = new CrewMemberModel
             {
                 ID = 1,
-                CharacterName = "Some other name",
-                Role = CrewRoles.Actor.ToString(),
+                CharacterName = characterName,
+                Role = crewRole.ToString(),
                 Movie = new MovieModel
                 {
-                    ID = 1
+                    ID = movie2.ID,
+                    Title = movie2.Title 
                 },
                 Person = new PersonModel
                 {
-                    ID = 1
+                    ID = person2.ID,
+                    FirstName = person2.FirstName,
+                    LastName = person2.LastName
                 }
             };
             #endregion
@@ -518,18 +531,21 @@ namespace IntegrationTests
             Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
             Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
             Assert.Equal(expectedCrewMember.Movie.ID, actualCrewMember.Movie.ID);
+            Assert.Equal(expectedCrewMember.Movie.Title, actualCrewMember.Movie.Title);
             Assert.Equal(expectedCrewMember.Person.ID, actualCrewMember.Person.ID);
+            Assert.Equal(expectedCrewMember.Person.FirstName, actualCrewMember.Person.FirstName);
+            Assert.Equal(expectedCrewMember.Person.LastName, actualCrewMember.Person.LastName);
             #endregion
         }
 
         public static IEnumerable<object[]> Data_Update_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors()
         {
             int id = 1;
-            string characterName = "Some other name";
+            string characterName = "New Character Name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
             CrewRoles crewRoleDirector = CrewRoles.Director;
-            int movieID = 1;
-            int personID = 1;
+            int movieID = 2;
+            int personID = 2;
 
             // CharacterName = null
             yield return new object[]
@@ -637,14 +653,19 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            await CreatePersonAndMovie();
+            var data = await CreatePersonAndMovie();
+            var movie = data[0] as Domain.Movie;
+            var person = data[1] as Domain.Person;
+
+            var data2 = await CreatePersonAndMovie();
+            var movie2 = data2[0] as Domain.Movie;
+            var person2 = data2[1] as Domain.Person;
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                CharacterName = "Character Name",
-                Role = CrewRoles.Actor,
-                MovieID = 1,
-                PersonID = 1
+                Role = CrewRoles.Writer,
+                MovieID = movie.ID,
+                PersonID = person.ID
             });
             await dbContext.SaveChangesAsync();
 
@@ -676,28 +697,17 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Update_InvalidRequest_ReturnsJsonResponseAndNotFound(int id)
         {
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
-            var dbContext = GetDbContext();
 
-            await CreatePersonAndMovie();
-
-            dbContext.CrewMembers.Add(new Domain.CrewMember
-            {
-                CharacterName = "Character Name",
-                Role = CrewRoles.Actor,
-                MovieID = 1,
-                PersonID = 1
-            });
-            await dbContext.SaveChangesAsync();
-
-            var newCrewMemeber = new AdminCrewMemberModel
+            var newCrewMember = new AdminCrewMemberModel
             {
                 ID = id,
+                CharacterName = null,
                 Role = CrewRoles.Writer,
                 MovieID = 1,
                 PersonID = 1
@@ -705,7 +715,7 @@ namespace IntegrationTests
             #endregion
 
             #region Act
-            var response = await client.PutAsJsonAsync($"/api/crewmember/{newCrewMemeber.ID}", newCrewMemeber);
+            var response = await client.PutAsJsonAsync($"/api/crewmember/{id}", newCrewMember);
             #endregion
 
             #region Assert
@@ -716,12 +726,12 @@ namespace IntegrationTests
         public static IEnumerable<object[]> Data_Update_InvalidRequest_ReturnsJsonResponseAndNotFoundWithErrors()
         {
             int id = 1;
-            string characterName = "Some other name";
+            string characterName = "New Character Name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
             int movieID = 1;
             int personID = 1;
 
-            // MovieID = 2
+            // MovieID = 2 (does not exist)
             yield return new object[]
             {
                 id, characterName, crewRoleActor, 2, personID,
@@ -734,7 +744,7 @@ namespace IntegrationTests
                     "Does not exist."
                 }
             };
-            // PersonID = 2
+            // PersonID = 2 (does not exist)
             yield return new object[]
             {
                 id, characterName, crewRoleActor, movieID, 2,
@@ -747,7 +757,8 @@ namespace IntegrationTests
                     "Does not exist."
                 }
             };
-            // MovieID = 2 | PersonID = 2
+            // MovieID = 2 (does not exist)
+            // PersonID = 2 (does not exist)
             yield return new object[]
             {
                 id, characterName, crewRoleActor, 2, 2,
@@ -773,18 +784,19 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            await CreatePersonAndMovie();
+            var data = await CreatePersonAndMovie();
+            var movie = data[0] as Domain.Movie;
+            var person = data[1] as Domain.Person;
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                CharacterName = "Name",
-                Role = CrewRoles.Actor,
-                MovieID = 1,
-                PersonID = 1
+                Role = CrewRoles.Writer,
+                MovieID = movie.ID,
+                PersonID = person.ID
             });
             await dbContext.SaveChangesAsync();
 
-            var expectedCrewMember = new AdminCrewMemberModel
+            var newCrewMember = new AdminCrewMemberModel
             {
                 ID = id,
                 CharacterName = characterName,
@@ -795,7 +807,7 @@ namespace IntegrationTests
             #endregion
 
             #region Act
-            var response = await client.PutAsJsonAsync($"/api/crewmember/{id}", expectedCrewMember);
+            var response = await client.PutAsJsonAsync($"/api/crewmember/{id}", newCrewMember);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCrewMember = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
@@ -820,11 +832,7 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            dbContext.CrewMembers.Add(new Domain.CrewMember
-            {
-                CharacterName = "Character Name",
-                Role = CrewRoles.Actor
-            });
+            dbContext.CrewMembers.Add(new Domain.CrewMember());
             await dbContext.SaveChangesAsync();
             #endregion
 
@@ -838,21 +846,12 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Delete_InvalidRequest_ReturnsJsonResponseAndNotFound(int id)
         {
             #region Arrange 
             await DeleteDbContent();
             var client = GetHttpClient();
-            var dbContext = GetDbContext();
-
-            dbContext.CrewMembers.Add(new Domain.CrewMember
-            {
-                CharacterName = "Character Name",
-                Role = CrewRoles.Actor
-            });
-            await dbContext.SaveChangesAsync();
             #endregion
 
             #region Act
