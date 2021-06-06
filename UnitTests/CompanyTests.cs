@@ -148,9 +148,6 @@ namespace UnitTests
         [InlineData(0, 1, -2)]
         [InlineData(1, 0, -1)]
         [InlineData(1, 1, -4)]
-        [InlineData(1, 2, -1)]
-        [InlineData(2, 1, -2)]
-        [InlineData(2, 2, -3)]
         public async Task ConnectMovie_InvalidInput_ReturnsNull(int id, int movieID, int expectedID)
         {
             #region Arrange
@@ -487,9 +484,6 @@ namespace UnitTests
         [InlineData(0, 1, -2)]
         [InlineData(1, 0, -1)]
         [InlineData(1, 1, -4)]
-        [InlineData(1, 2, -1)]
-        [InlineData(2, 1, -2)]
-        [InlineData(2, 2, -3)]
         public async Task DisconnectMovie_InvalidInput_ReturnsCompanyModelWithErrorID(int id, int movieID, int exptectedID)
         {
             #region Arrange
