@@ -65,7 +65,7 @@ namespace Application
                     _applicationDbContext.CrewMembers.Add(crewMember);
                     await _applicationDbContext.SaveChangesAsync();
 
-                    return await Read(crewMember.CrewMemberID);
+                    return await Read(crewMember.ID);
                 }
 
                 return GetCrewMemberModelWithErrorID(movie, person);
@@ -79,7 +79,7 @@ namespace Application
         {
             return await _applicationDbContext.CrewMembers.Select(c => new CrewMemberModel
             {
-                ID = c.CrewMemberID,
+                ID = c.ID,
                 CharacterName = c.CharacterName,
                 Role = c.Role.ToString(),
                 Movie = new MovieModel 
@@ -100,7 +100,7 @@ namespace Application
         {
             return await _applicationDbContext.CrewMembers.Select(c => new CrewMemberModel
             {
-                ID = c.CrewMemberID,
+                ID = c.ID,
                 CharacterName = c.CharacterName,
                 Role = c.Role.ToString(),
                 Movie = new MovieModel
@@ -119,7 +119,7 @@ namespace Application
 
         public async Task<CrewMemberModel> Update(AdminCrewMemberModel adminCrewMemberModel)
         {
-            var crewMember = _applicationDbContext.CrewMembers.FirstOrDefault(x => x.CrewMemberID == adminCrewMemberModel.ID);
+            var crewMember = _applicationDbContext.CrewMembers.FirstOrDefault(x => x.ID == adminCrewMemberModel.ID);
 
             if (crewMember != null && _crewMemberValidation.IsInputValid(adminCrewMemberModel))
             {
@@ -135,7 +135,7 @@ namespace Application
 
                     await _applicationDbContext.SaveChangesAsync();
 
-                    return await Read(crewMember.CrewMemberID);
+                    return await Read(crewMember.ID);
                 }
 
                 return GetCrewMemberModelWithErrorID(movie, person);
@@ -146,7 +146,7 @@ namespace Application
 
         public async Task<bool> Delete(int id)
         {
-            var crewMember = _applicationDbContext.CrewMembers.FirstOrDefault(x => x.CrewMemberID == id);
+            var crewMember = _applicationDbContext.CrewMembers.FirstOrDefault(x => x.ID == id);
 
             if (crewMember != null)
             {

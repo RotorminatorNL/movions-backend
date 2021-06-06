@@ -4,7 +4,7 @@ namespace Domain
 {
     public class CrewMember
     {
-        public int CrewMemberID { get; set; }
+        public int ID { get; set; }
         public string CharacterName { get; set; }
         public CrewRoles Role { get; set; }
         public int MovieID { get; set; }
