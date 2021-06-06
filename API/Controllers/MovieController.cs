@@ -55,8 +55,6 @@ namespace API.Controllers
 
         public MovieController(IApplicationDbContext applicationDbContext)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
-
             movie = new Movie(applicationDbContext);
         }
 
