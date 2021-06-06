@@ -20,13 +20,13 @@ jobs:
         dotnet-version: 5.0.x
         
     - name: Restore dependencies
-      run: dotnet restore ./Backend/API/API.csproj
+      run: dotnet restore ./API/API.csproj
       
     - name: Build with DotNet
-      run: dotnet build --no-restore ./Backend/API/API.csproj
+      run: dotnet build --no-restore ./API/API.csproj
       
     - name: Run UnitTest
-      run: dotnet test ./Backend/UnitTests/UnitTests.csproj
+      run: dotnet test ./UnitTests/UnitTests.csproj
       
     - name: Run IntegrationTest
-      run: dotnet test ./Backend/IntegrationTests/IntegrationTests.csproj
+      run: dotnet test ./IntegrationTests/IntegrationTests.csproj
