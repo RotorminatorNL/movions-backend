@@ -156,11 +156,8 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            var company = new Domain.Company();
-            dbContext.Companies.Add(company);
-
-            var movie = new Domain.Movie();
-            dbContext.Movies.Add(movie);
+            dbContext.Companies.Add(new Domain.Company());
+            dbContext.Movies.Add(new Domain.Movie());
             await dbContext.SaveChangesAsync();
 
             var expectedCompany = new CompanyModel
@@ -376,7 +373,7 @@ namespace IntegrationTests
             #endregion
 
             #region Act
-            var response = await client.PutAsJsonAsync($"/api/company/{newCompany.ID}", newCompany);
+            var response = await client.PutAsJsonAsync($"/api/company/{id}", newCompany);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCompany = await JsonSerializer.DeserializeAsync<CompanyModel>(responseBody);
             #endregion

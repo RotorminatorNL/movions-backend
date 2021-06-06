@@ -245,7 +245,7 @@ namespace IntegrationTests
             #endregion
 
             #region Act
-            var response = await client.PutAsJsonAsync($"/api/genre/{newGenre.ID}", newGenre);
+            var response = await client.PutAsJsonAsync($"/api/genre/{id}", newGenre);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualGenre = await JsonSerializer.DeserializeAsync<GenreModel>(responseBody);
             #endregion

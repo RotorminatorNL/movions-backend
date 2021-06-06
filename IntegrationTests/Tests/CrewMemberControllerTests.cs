@@ -520,7 +520,7 @@ namespace IntegrationTests
             #endregion
 
             #region Act
-            var response = await client.PutAsJsonAsync($"/api/crewmember/{newCrewMember.ID}", newCrewMember);
+            var response = await client.PutAsJsonAsync($"/api/crewmember/{id}", newCrewMember);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCrewMember = await JsonSerializer.DeserializeAsync<CrewMemberModel>(responseBody);
             #endregion

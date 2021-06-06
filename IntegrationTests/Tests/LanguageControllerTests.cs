@@ -245,7 +245,7 @@ namespace IntegrationTests
             #endregion
 
             #region Act
-            var response = await client.PutAsJsonAsync($"/api/language/{newLanguage.ID}", newLanguage);
+            var response = await client.PutAsJsonAsync($"/api/language/{id}", newLanguage);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualLanguage = await JsonSerializer.DeserializeAsync<LanguageModel>(responseBody);
             #endregion
