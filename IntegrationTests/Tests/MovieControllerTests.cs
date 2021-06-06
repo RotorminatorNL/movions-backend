@@ -3,11 +3,12 @@ using Application.AdminModels;
 using Application.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -17,7 +18,10 @@ namespace IntegrationTests
     public class MovieControllerTests : IntegrationTestSetup
     {
         public MovieControllerTests(ApiFactory<Startup> factory)
-            : base(factory) { }
+            : base(factory)
+        {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
+        }
 
         [Theory]
         [InlineData("Description", 1, 104, "04-10-2010", "Title")]
