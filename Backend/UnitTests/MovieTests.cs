@@ -152,6 +152,131 @@ namespace UnitTests
         }
 
         [Theory]
+        [InlineData(1, 1)]
+        public async Task ConnectGenre_ValidInput_ReturnsCorrectData(int id, int genreID)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var language = new Domain.Language
+            {
+                Name = "English"
+            };
+            dbContext.Languages.Add(language);
+            await dbContext.SaveChangesAsync();
+
+            var genre = new Domain.Genre
+            {
+                Name = "Action"
+            };
+
+            var movie = new Domain.Movie
+            {
+                Description = "Cool story bro",
+                LanguageID = language.ID,
+                Length = 104,
+                ReleaseDate = "04-10-2010", 
+                Title = "Epic Title"
+            };
+
+            dbContext.Genres.Add(genre);
+            dbContext.Movies.Add(movie);
+            await dbContext.SaveChangesAsync();
+
+            var newGenreMovie = new AdminGenreMovieModel
+            {
+                GenreID = genreID,
+                MovieID = id
+            };
+
+            var expectedMovie = new MovieModel
+            {
+                ID = 1,
+                Description = "Cool story bro", 
+                Genres = new List<GenreModel> 
+                {
+                    new GenreModel
+                    {
+                        ID = 1,
+                        Name = "Action"
+                    }
+                },
+                Title = "Epic Title",
+                Length = 104,
+                ReleaseDate = DateTime.Parse("04-10-2010")
+            };
+
+            var appMovie = new Movie(dbContext);
+            #endregion
+
+            #region Act
+            var actualMovie = await appMovie.ConnectGenre(newGenreMovie);
+            #endregion
+
+            #region Assert
+            Assert.Equal(expectedMovie.ID, actualMovie.ID);
+            Assert.Equal(expectedMovie.Description, actualMovie.Description);
+            Assert.Equal(expectedMovie.Title, actualMovie.Title);
+            Assert.Equal(expectedMovie.Length, actualMovie.Length);
+            Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
+            Assert.Equal(expectedMovie.Genres.Count(), actualMovie.Genres.Count());
+            Assert.Equal(expectedMovie.Genres.ToList()[0].ID, actualMovie.Genres.ToList()[0].ID);
+            Assert.Equal(expectedMovie.Genres.ToList()[0].Name, actualMovie.Genres.ToList()[0].Name);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(0, 0, -3)]
+        [InlineData(0, 1, -2)]
+        [InlineData(1, 0, -1)]
+        [InlineData(1, 1, -4)]
+        [InlineData(1, 2, -1)]
+        [InlineData(2, 1, -2)]
+        [InlineData(2, 2, -3)]
+        public async Task ConnectGenre_InvalidInput_ReturnsNull(int id, int genreID, int expectedID)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var genre = new Domain.Genre();
+            dbContext.Genres.Add(genre);
+
+            var movie = new Domain.Movie();
+            dbContext.Movies.Add(movie);
+
+            if (expectedID == -4)
+            {
+                dbContext.GenreMovies.Add(new Domain.GenreMovie
+                {
+                    GenreID = genre.ID,
+                    MovieID = movie.ID
+                });
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            var newGenreMovie = new AdminGenreMovieModel
+            {
+                GenreID = genreID,
+                MovieID = id
+            };
+
+            var appMovie = new Movie(dbContext);
+            #endregion
+
+            #region Act
+            var actualMovie = await appMovie.ConnectGenre(newGenreMovie);
+            #endregion
+
+            #region Assert
+            Assert.NotNull(actualMovie);
+            Assert.Equal(expectedID, actualMovie.ID);
+            #endregion
+        }
+
+        [Theory]
         [InlineData(1)]
         public async Task Read_ValidInput_ReturnsCorrectData(int id)
         {
@@ -509,6 +634,86 @@ namespace UnitTests
 
             #region Assert
             Assert.False(actual);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(1, 1, 0)]
+        public async Task DisconnectGenre_ValidInput_ReturnsTrue(int id, int genreID, int expectedID)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var genre = new Domain.Genre();
+            dbContext.Genres.Add(genre);
+
+            var movie = new Domain.Movie();
+            dbContext.Movies.Add(movie);
+
+            var genreMovie = new Domain.GenreMovie
+            {
+                GenreID = genre.ID,
+                MovieID = movie.ID
+            };
+            dbContext.GenreMovies.Add(genreMovie);
+
+            await dbContext.SaveChangesAsync();
+
+            var appMovie = new Movie(dbContext);
+            #endregion
+
+            #region Act
+            var actual = await appMovie.DisconnectGenre(new AdminGenreMovieModel { GenreID = genreID, MovieID = id });
+            #endregion
+
+            #region Assert
+            Assert.NotNull(actual);
+            Assert.Equal(expectedID, actual.ID);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(0, 0, -3)]
+        [InlineData(0, 1, -2)]
+        [InlineData(1, 0, -1)]
+        [InlineData(1, 1, -4)]
+        [InlineData(1, 2, -1)]
+        [InlineData(2, 1, -2)]
+        [InlineData(2, 2, -3)]
+        public async Task DisconnectGenre_InvalidInput_ReturnsCompanyModelWithErrorID(int id, int genreID, int exptectedID)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var genre = new Domain.Genre();
+            dbContext.Genres.Add(genre);
+
+            var movie = new Domain.Movie();
+            dbContext.Movies.Add(movie);
+
+            if (exptectedID != -4)
+            {
+                var genreMovie = new Domain.GenreMovie
+                {
+                    GenreID = genre.ID,
+                    MovieID = movie.ID
+                };
+                dbContext.GenreMovies.Add(genreMovie);
+            }
+            await dbContext.SaveChangesAsync();
+
+            var appMovie = new Movie(dbContext);
+            #endregion
+
+            #region Act
+            var actual = await appMovie.DisconnectGenre(new AdminGenreMovieModel { GenreID = genreID, MovieID = id });
+            #endregion
+
+            #region Assert
+            Assert.NotNull(actual);
+            Assert.Equal(exptectedID, actual.ID);
             #endregion
         }
     }
