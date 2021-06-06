@@ -19,13 +19,13 @@ namespace UnitTests
         {
             var movie = new Domain.Movie
             {
-                Title = "Epic Movie"
+                Title = "Title"
             };
 
             var person = new Domain.Person
             {
-                FirstName = "Don",
-                LastName = "Diablo"
+                FirstName = "First Name",
+                LastName = "Last Name"
             };
 
             dbContext.Movies.Add(movie);
@@ -102,7 +102,7 @@ namespace UnitTests
 
         public static IEnumerable<object[]> Data_Create_InvalidInput_ReturnNull()
         {
-            string characterName = "Name";
+            string characterName = "Character Name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
             CrewRoles crewRoleDirector = CrewRoles.Director;
             int movieID = 1;
@@ -113,7 +113,7 @@ namespace UnitTests
             // Actor's character name cannot be empty
             yield return new object[] { "", crewRoleActor, movieID, personID };
             // Director's character name must be null
-            yield return new object[] { "Epic Name", crewRoleDirector, movieID, personID };
+            yield return new object[] { characterName, crewRoleDirector, movieID, personID };
             // Crew role must exist
             yield return new object[] { characterName, 100, movieID, personID };
         }
@@ -128,7 +128,7 @@ namespace UnitTests
 
             await CreateMovieAndPerson(dbContext);
 
-            var expectedCrewMember = new AdminCrewMemberModel
+            var newCrewMember = new AdminCrewMemberModel
             {
                 ID = 1,
                 CharacterName = characterName,
@@ -141,7 +141,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualCrewMember = await appCrewMember.Create(expectedCrewMember);
+            var actualCrewMember = await appCrewMember.Create(newCrewMember);
             #endregion
 
             #region Assert
@@ -151,43 +151,23 @@ namespace UnitTests
 
         public static IEnumerable<object[]> Data_Create_InvalidInput_ReturnsCrewMemberModelWithErrorID()
         {
-            string characterName = "Name";
+            string characterName = "Character Name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
             int movieID = 1;
             int personID = 1;
 
-            // MovieID = 0
-            yield return new object[] 
-            { 
-                characterName, crewRoleActor, 0, personID,
-                new CrewMemberModel 
-                {
-                    ID = -1
-                }
-            };
-            // PersonID = 0
-            yield return new object[] 
-            { 
-                characterName, crewRoleActor, movieID, 0,
-                new CrewMemberModel
-                {
-                    ID = -2
-                }
-            };
-            // MovieID = 0 | PersonID = 0
-            yield return new object[] 
-            { 
-                characterName, crewRoleActor, 0, 0,
-                new CrewMemberModel
-                {
-                    ID = -3
-                }
-            };
+            // MovieID = 2 (does not exist)
+            yield return new object[] { characterName, crewRoleActor, 2, personID, -1 };
+            // PersonID = 2 (does not exist)
+            yield return new object[] { characterName, crewRoleActor, movieID, 2, -2 };
+            // MovieID = 2 (does not exist)
+            // PersonID = 2 (does not exist)
+            yield return new object[] { characterName, crewRoleActor, 2, 2, -3 };
         }
 
         [Theory]
         [MemberData(nameof(Data_Create_InvalidInput_ReturnsCrewMemberModelWithErrorID))]
-        public async Task Create_InvalidInput_ReturnsCrewMemberModelWithErrorID(string characterName, CrewRoles crewRole, int movieID, int personID, CrewMemberModel expectedCrewMember)
+        public async Task Create_InvalidInput_ReturnsCrewMemberModelWithErrorID(string characterName, CrewRoles crewRole, int movieID, int personID, int expectedCrewMemberID)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
@@ -211,7 +191,7 @@ namespace UnitTests
             #endregion
 
             #region Assert
-            Assert.Equal(actualCrewMember.ID, expectedCrewMember.ID);
+            Assert.Equal(actualCrewMember.ID, expectedCrewMemberID);
             #endregion
         }
 
@@ -229,7 +209,7 @@ namespace UnitTests
 
             var crewMember = new Domain.CrewMember
             {
-                CharacterName = "Diego Lopez",
+                CharacterName = "Character Name",
                 Role = CrewRoles.Actor,
                 MovieID = movie.ID,
                 PersonID = person.ID
@@ -241,8 +221,8 @@ namespace UnitTests
             var expectedCrewMember = new CrewMemberModel
             {
                 ID = id,
-                CharacterName = "Diego Lopez",
-                Role = CrewRoles.Actor.ToString(),
+                CharacterName = crewMember.CharacterName,
+                Role = crewMember.Role.ToString(),
                 Movie = new MovieModel
                 {
                     ID = movie.ID,
@@ -276,18 +256,12 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Read_InvalidInput_ReturnsNull(int id)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
-
-            await CreateMovieAndPerson(dbContext);
-
-            dbContext.CrewMembers.Add(new Domain.CrewMember());
-            await dbContext.SaveChangesAsync();
 
             var appCrewMember = new CrewMember(dbContext);
             #endregion
@@ -312,12 +286,12 @@ namespace UnitTests
             var movie = data[0] as Domain.Movie;
             var person = data[1] as Domain.Person;
 
-            int expectedAmount = 5;
+            int expectedAmount = 2;
 
             dbContext.CrewMembers.AddRange(
-                Enumerable.Range(1, expectedAmount).Select(c => new Domain.CrewMember 
+                Enumerable.Range(1, expectedAmount).Select(x => new Domain.CrewMember 
                 { 
-                    CharacterName = "Diego Lopez",
+                    CharacterName = $"Character Name {x}",
                     Role = CrewRoles.Actor,
                     MovieID = movie.ID,
                     PersonID = person.ID
@@ -362,7 +336,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, null, CrewRoles.Writer, 1, 1)]
+        [InlineData(1, null, CrewRoles.Writer, 2, 2)]
         public async Task Update_ValidInput_ReturnsCorrectData(int id, string characterName, CrewRoles crewRole, int movieID, int personID)
         {
             #region Arrange
@@ -373,9 +347,13 @@ namespace UnitTests
             var movie = data[0] as Domain.Movie;
             var person = data[1] as Domain.Person;
 
+            var data2 = await CreateMovieAndPerson(dbContext);
+            var movie2 = data2[0] as Domain.Movie;
+            var person2 = data2[1] as Domain.Person;
+
             var crewMember = new Domain.CrewMember
             {
-                CharacterName = "Name",
+                CharacterName = "Character Name",
                 Role = CrewRoles.Actor,
                 MovieID = movie.ID,
                 PersonID = person.ID
@@ -400,14 +378,14 @@ namespace UnitTests
                 Role = crewRole.ToString(),
                 Movie = new MovieModel
                 {
-                    ID = movie.ID,
-                    Title = movie.Title
+                    ID = movie2.ID,
+                    Title = movie2.Title
                 },
                 Person = new PersonModel
                 {
-                    ID = person.ID,
-                    FirstName = person.FirstName,
-                    LastName = person.LastName
+                    ID = person2.ID,
+                    FirstName = person2.FirstName,
+                    LastName = person2.LastName
                 }
             };
 
@@ -422,20 +400,23 @@ namespace UnitTests
             Assert.Equal(expectedCrewMember.ID, actualCrewMember.ID);
             Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
             Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
+            Assert.Equal(expectedCrewMember.Movie.ID, actualCrewMember.Movie.ID);
+            Assert.Equal(expectedCrewMember.Movie.Title, actualCrewMember.Movie.Title);
+            Assert.Equal(expectedCrewMember.Person.ID, actualCrewMember.Person.ID);
+            Assert.Equal(expectedCrewMember.Person.FirstName, actualCrewMember.Person.FirstName);
+            Assert.Equal(expectedCrewMember.Person.LastName, actualCrewMember.Person.LastName);
             #endregion
         }
 
         public static IEnumerable<object[]> Data_Update_InvalidInput_ReturnsNull()
         {
             int id = 1;
-            string characterName = "Name";
+            string characterName = "New Character Name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
             CrewRoles crewRoleWriter = CrewRoles.Writer;
             int movieID = 1;
             int personID = 1;
 
-            // id = 0
-            yield return new object[] { 0, characterName, crewRoleWriter, movieID, personID };
             // id = 2 (does not exist)
             yield return new object[] { 2, characterName, crewRoleWriter, movieID, personID };
             // Writer's character name must be null
@@ -496,43 +477,23 @@ namespace UnitTests
         public static IEnumerable<object[]> Data_Update_InvalidInput_ReturnsCrewMemberModelWithErrorID()
         {
             int id = 1;
-            string characterName = "Name";
+            string characterName = "New Character Name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
             int movieID = 1;
             int personID = 1;
 
-            // MovieID = 0
-            yield return new object[]
-            {
-                id, characterName, crewRoleActor, 0, personID,
-                new CrewMemberModel
-                {
-                    ID = -1
-                }
-            };
-            // PersonID = 0
-            yield return new object[]
-            {
-                id, characterName, crewRoleActor, movieID, 0,
-                new CrewMemberModel
-                {
-                    ID = -2
-                }
-            };
-            // MovieID = 0 | PersonID = 0
-            yield return new object[]
-            {
-                id, characterName, crewRoleActor, 0, 0,
-                new CrewMemberModel
-                {
-                    ID = -3
-                }
-            };
+            // MovieID = 2 (does not exist)
+            yield return new object[] { id, characterName, crewRoleActor, 2, personID, -1 };
+            // PersonID = 2 (does not exist)
+            yield return new object[] { id, characterName, crewRoleActor, movieID, 2, -2 };
+            // MovieID = 2 (does not exist)
+            // PersonID = 2 (does not exist)
+            yield return new object[] { id, characterName, crewRoleActor, 2, 2, -3 };
         }
 
         [Theory]
         [MemberData(nameof(Data_Update_InvalidInput_ReturnsCrewMemberModelWithErrorID))]
-        public async Task Update_InvalidInput_ReturnsCrewMemberModelWithErrorID(int id, string characterName, CrewRoles crewRole, int movieID, int personID, CrewMemberModel expectedCrewMember)
+        public async Task Update_InvalidInput_ReturnsCrewMemberModelWithErrorID(int id, string characterName, CrewRoles crewRole, int movieID, int personID, int expectedCrewMemberID)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
@@ -570,7 +531,7 @@ namespace UnitTests
             #endregion
 
             #region Assert
-            Assert.Equal(actualCrewMember.ID, expectedCrewMember.ID);
+            Assert.Equal(actualCrewMember.ID, expectedCrewMemberID);
             #endregion
         }
 
@@ -582,9 +543,7 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var crewMember = new Domain.CrewMember();
-            dbContext.CrewMembers.Add(crewMember);
-
+            dbContext.CrewMembers.Add(new Domain.CrewMember());
             await dbContext.SaveChangesAsync();
 
             var appCrewMember = new CrewMember(dbContext);
@@ -600,18 +559,12 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Delete_InvalidInput_ReturnsFalse(int id)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
-
-            var crewMember = new Domain.CrewMember();
-            dbContext.CrewMembers.Add(crewMember);
-
-            await dbContext.SaveChangesAsync();
 
             var appCrewMember = new CrewMember(dbContext);
             #endregion

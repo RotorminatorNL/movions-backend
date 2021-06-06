@@ -76,12 +76,6 @@ namespace UnitTests
                 Name = name
             };
 
-            var expectedGenre = new GenreModel
-            {
-                ID = 1,
-                Name = name
-            };
-
             var appGenre = new Genre(dbContext);
             #endregion
 
@@ -102,13 +96,17 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            dbContext.Genres.Add(new Domain.Genre { Name = "Name" });
+            var genre = new Domain.Genre
+            {
+                Name = "Name"
+            };
+            dbContext.Genres.Add(genre);
             await dbContext.SaveChangesAsync();
 
             var expectedGenre = new GenreModel
             {
                 ID = id,
-                Name = "Name"
+                Name = genre.Name
             };
 
             var appGenre = new Genre(dbContext);
@@ -120,26 +118,17 @@ namespace UnitTests
 
             #region Assert
             Assert.Equal(expectedGenre.ID, actualGenre.ID);
+            Assert.Equal(expectedGenre.Name, actualGenre.Name);
             #endregion
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Read_InvalidInput_ReturnsNull(int id)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
-
-            dbContext.Genres.Add(new Domain.Genre { Name = "Name" });
-            await dbContext.SaveChangesAsync();
-
-            var expectedGenre = new GenreModel
-            {
-                ID = id,
-                Name = "Name"
-            };
 
             var appGenre = new Genre(dbContext);
             #endregion
@@ -160,13 +149,13 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            int expectedAmount = 5;
+            int expectedAmount = 2;
 
             dbContext.Genres.AddRange(
-                Enumerable.Range(1, expectedAmount).Select(c => new Domain.Genre
+                Enumerable.Range(1, expectedAmount).Select(x => new Domain.Genre
                 {
-                    ID = c,
-                    Name = $"Name {c}"
+                    ID = x,
+                    Name = $"Name {x}"
                 })
             );
 
@@ -208,7 +197,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "Name")]
+        [InlineData(1, "New Name")]
         public async Task Update_ValidInput_ReturnsCorrectData(int id, string name)
         {
             #region Arrange
@@ -217,7 +206,7 @@ namespace UnitTests
 
             var genre = new Domain.Genre
             {
-                Name = "Test"
+                Name = "Name"
             };
             dbContext.Genres.Add(genre);
 
@@ -251,7 +240,7 @@ namespace UnitTests
         public static IEnumerable<object[]> Data_Update_InvalidInput_ReturnsNull()
         {
             int id = 1;
-            string name = "Name";
+            string name = "New Name";
 
             // id = 0
             yield return new object[] { 0, name };
@@ -273,7 +262,7 @@ namespace UnitTests
 
             var genre = new Domain.Genre
             {
-                Name = "Test"
+                Name = "Name"
             };
             dbContext.Genres.Add(genre);
 
@@ -305,9 +294,7 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var genre = new Domain.Genre();
-            dbContext.Genres.Add(genre);
-
+            dbContext.Genres.Add(new Domain.Genre());
             await dbContext.SaveChangesAsync();
 
             var appGenre = new Genre(dbContext);
@@ -323,18 +310,12 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Delete_InvalidInput_ReturnsFalse(int id)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
-
-            var genre = new Domain.Genre();
-            dbContext.Genres.Add(genre);
-
-            await dbContext.SaveChangesAsync();
 
             var appGenre = new Genre(dbContext);
             #endregion

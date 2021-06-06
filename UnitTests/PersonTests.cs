@@ -27,7 +27,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData("04-10-1999", "Rotterdam", "Beautiful description", "Robbert", "Lengton")]
+        [InlineData("04-10-2010", "Birth Place", "Description", "First Name", "Last Name")]
         public async Task Create_ValidInput_ReturnsCorrectData(string birthDate, string birthPlace, string description, string firstName, string lastName)
         {
             #region Arrange
@@ -72,11 +72,11 @@ namespace UnitTests
 
         public static IEnumerable<object[]> Data_Create_InvalidInput_ReturnNull()
         {
-            var birthDate = "04-10-1999";
-            var birthPlace = "Rotterdam";
-            var descripton = "Beautiful description";
-            var firstName = "Robbert";
-            var lastName = "Lengton";
+            var birthDate = "04-10-2010";
+            var birthPlace = "Birth Place";
+            var descripton = "Description";
+            var firstName = "First Name";
+            var lastName = "Last Name";
 
             // birthDate = null (i.e. "1-1-0001 00:00:00")
             yield return new object[] { "1-1-0001 00:00:00", birthPlace, descripton, firstName, lastName };
@@ -136,24 +136,25 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            dbContext.Persons.Add(new Domain.Person
+            var person = new Domain.Person
             {
                 BirthDate = "04-10-2010",
-                BirthPlace = "Rotterdam",
-                Description = "Beautiful description",
-                FirstName = "Robbert",
-                LastName = "Lengton"
-            });
+                BirthPlace = "Birth Place",
+                Description = "Description",
+                FirstName = "First Name",
+                LastName = "Last Name"
+            };
+            dbContext.Persons.Add(person);
             await dbContext.SaveChangesAsync();
 
             var expectedPerson = new PersonModel
             {
                 ID = id,
-                BirthDate = DateTime.Parse("04-10-2010"),
-                BirthPlace = "Rotterdam",
-                Description = "Beautiful description",
-                FirstName = "Robbert",
-                LastName = "Lengton"
+                BirthDate = DateTime.Parse(person.BirthDate),
+                BirthPlace = person.BirthPlace,
+                Description = person.Description,
+                FirstName = person.FirstName,
+                LastName = person.LastName
             };
 
             var appPerson = new Person(dbContext);
@@ -165,27 +166,21 @@ namespace UnitTests
 
             #region Assert
             Assert.Equal(expectedPerson.ID, actualPerson.ID);
+            Assert.Equal(expectedPerson.BirthDate, actualPerson.BirthDate);
+            Assert.Equal(expectedPerson.BirthPlace, actualPerson.BirthPlace);
+            Assert.Equal(expectedPerson.Description, actualPerson.Description);
+            Assert.Equal(expectedPerson.FirstName, actualPerson.FirstName);
+            Assert.Equal(expectedPerson.LastName, actualPerson.LastName);
             #endregion
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Read_InvalidInput_ReturnsNull(int id)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
-
-            dbContext.Persons.Add(new Domain.Person
-            {
-                BirthDate = "04-10-2010",
-                BirthPlace = "Rotterdam",
-                Description = "Beautiful description",
-                FirstName = "Robbert",
-                LastName = "Lengton"
-            });
-            await dbContext.SaveChangesAsync();
 
             var appPerson = new Person(dbContext);
             #endregion
@@ -206,17 +201,17 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            int expectedAmount = 5;
+            int expectedAmount = 2;
 
             dbContext.Persons.AddRange(
-                Enumerable.Range(1, expectedAmount).Select(c => new Domain.Person
+                Enumerable.Range(1, expectedAmount).Select(x => new Domain.Person
                 {
-                    ID = c,
+                    ID = x,
                     BirthDate = "04-10-2010",
-                    BirthPlace = "Rotterdam",
-                    Description = "Beautiful description",
-                    FirstName = "Robbert",
-                    LastName = "Lengton"
+                    BirthPlace = $"Birth Place {x}",
+                    Description = $"Description {x}",
+                    FirstName = $"First Name {x}",
+                    LastName = $"Last Name {x}"
                 })
             );
 
@@ -258,7 +253,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "04-10-1999", "Rotterdam", "Beautiful description", "Robbert", "Lengton")]
+        [InlineData(1, "10-10-2010", "New Birth Place", "New Description", "New First Name", "New Last Name")]
         public async Task Update_ValidInput_ReturnsCorrectData(int id, string birthDate, string birthPlace, string description, string firstName, string lastName)
         {
             #region Arrange
@@ -268,13 +263,12 @@ namespace UnitTests
             var person = new Domain.Person
             {
                 BirthDate = "04-10-2010",
-                BirthPlace = "Amsterdam",
-                Description = "Ugly description",
-                FirstName = "Roberto",
-                LastName = "Lengtonius"
+                BirthPlace = "Birth Place",
+                Description = "Description",
+                FirstName = "Firt Name",
+                LastName = "Last Name"
             };
             dbContext.Persons.Add(person);
-
             await dbContext.SaveChangesAsync();
 
             var newPerson = new AdminPersonModel
@@ -317,14 +311,12 @@ namespace UnitTests
         public static IEnumerable<object[]> Data_Update_InvalidInput_ReturnsNull()
         {
             int id = 1;
-            var birthDate = "04-10-1999";
-            var birthPlace = "Rotterdam";
-            var descripton = "Beautiful description";
-            var firstName = "Robbert";
-            var lastName = "Lengton";
+            var birthDate = "10-10-2010";
+            var birthPlace = "New Birth Place";
+            var descripton = "New Description";
+            var firstName = "New First Name";
+            var lastName = "New Last Name";
 
-            // id = 0
-            yield return new object[] { 0, birthDate, birthPlace, descripton, firstName, lastName };
             // id = 2 (does not exist)
             yield return new object[] { 2, birthDate, birthPlace, descripton, firstName, lastName };
             // birthDate = null (i.e. "1-1-0001 00:00:00")
@@ -358,17 +350,17 @@ namespace UnitTests
             var person = new Domain.Person
             {
                 BirthDate = "04-10-2010",
-                BirthPlace = "Amsterdam",
-                Description = "Ugly description",
-                FirstName = "Roberto",
-                LastName = "Lengtonius"
+                BirthPlace = "Description",
+                Description = "Description",
+                FirstName = "First Name",
+                LastName = "Last Name"
             };
             dbContext.Persons.Add(person);
-
             await dbContext.SaveChangesAsync();
 
             var newPerson = new AdminPersonModel
             {
+                ID = id,
                 BirthDate = DateTime.Parse(birthDate),
                 BirthPlace = birthPlace,
                 Description = description,
@@ -396,9 +388,7 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var person = new Domain.Person();
-            dbContext.Persons.Add(person);
-
+            dbContext.Persons.Add(new Domain.Person());
             await dbContext.SaveChangesAsync();
 
             var appPerson = new Person(dbContext);
@@ -421,11 +411,6 @@ namespace UnitTests
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
-
-            var person = new Domain.Person();
-            dbContext.Persons.Add(person);
-
-            await dbContext.SaveChangesAsync();
 
             var appPerson = new Person(dbContext);
             #endregion

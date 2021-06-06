@@ -31,7 +31,7 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var adminCompanyModel = new AdminCompanyModel
+            var newCompany = new AdminCompanyModel
             {
                 Name = name,
                 Type = companyType
@@ -48,7 +48,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualCompany = await appCompany.Create(adminCompanyModel);
+            var actualCompany = await appCompany.Create(newCompany);
             #endregion
 
             #region Assert
@@ -81,9 +81,8 @@ namespace UnitTests
 
             await dbContext.SaveChangesAsync();
 
-            var adminCompanyModel = new AdminCompanyModel
+            var newCompany = new AdminCompanyModel
             {
-                ID = 1,
                 Name = name,
                 Type = companyType
             };
@@ -92,7 +91,7 @@ namespace UnitTests
             #endregion
             
             #region Act
-            var actualCompany = await appCompany.Create(adminCompanyModel);
+            var actualCompany = await appCompany.Create(newCompany);
             #endregion
 
             #region Assert
@@ -108,19 +107,8 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var newCompany = new Domain.Company
-            {
-                Name = "Epic Producer",
-                Type = CompanyTypes.Producer
-            };
-
-            var newMovie = new Domain.Movie
-            {
-                Title = "Epic Title"
-            };
-
-            dbContext.Companies.Add(newCompany);
-            dbContext.Movies.Add(newMovie);
+            dbContext.Companies.Add(new Domain.Company());
+            dbContext.Movies.Add(new Domain.Movie());
             await dbContext.SaveChangesAsync();
 
             var newCompanyMovie = new AdminCompanyMovieModel
@@ -132,14 +120,11 @@ namespace UnitTests
             var expectedCompany = new CompanyModel
             {
                 ID = 1,
-                Name = "Epic Producer",
-                Type = CompanyTypes.Producer.ToString(),
                 Movies = new List<MovieModel>
                 {
                     new MovieModel
                     {
                         ID = 1,
-                        Title = "Epic Title"
                     }
                 }
             };
@@ -153,11 +138,8 @@ namespace UnitTests
 
             #region Assert
             Assert.Equal(expectedCompany.ID, actualCompany.ID);
-            Assert.Equal(expectedCompany.Name, actualCompany.Name);
-            Assert.Equal(expectedCompany.Type, actualCompany.Type);
             Assert.Equal(expectedCompany.Movies.Count(), actualCompany.Movies.Count());
             Assert.Equal(expectedCompany.Movies.ToList()[0].ID, actualCompany.Movies.ToList()[0].ID);
-            Assert.Equal(expectedCompany.Movies.ToList()[0].Title, actualCompany.Movies.ToList()[0].Title);
             #endregion
         }
 
@@ -219,16 +201,23 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedCompany = new AdminCompanyModel
+            var company = new Domain.Company
             {
                 ID = id,
                 Name = "Name",
                 Type = CompanyTypes.Distributor
             };
+            dbContext.Companies.Add(company);
+            await dbContext.SaveChangesAsync();
+
+            var expectedCompany = new CompanyModel
+            {
+                ID = id,
+                Name = company.Name,
+                Type = company.Type.ToString()
+            };
 
             var appCompany = new Company(dbContext);
-
-            await appCompany.Create(expectedCompany);
             #endregion
 
             #region Act
@@ -237,28 +226,20 @@ namespace UnitTests
 
             #region Assert
             Assert.Equal(expectedCompany.ID, actualCompany.ID);
+            Assert.Equal(expectedCompany.Name, actualCompany.Name);
+            Assert.Equal(expectedCompany.Type, actualCompany.Type);
             #endregion
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Read_InvalidInput_ReturnsNull(int id)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var expectedCompany = new AdminCompanyModel
-            {
-                ID = id,
-                Name = "Name",
-                Type = CompanyTypes.Distributor
-            };
-
             var appCompany = new Company(dbContext);
-
-            await appCompany.Create(expectedCompany);
             #endregion
 
             #region Act
@@ -277,13 +258,13 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            int expectedAmount = 5;
+            int expectedAmount = 2;
 
             dbContext.Companies.AddRange(
-                Enumerable.Range(1, expectedAmount).Select(c => new Domain.Company
+                Enumerable.Range(1, expectedAmount).Select(x => new Domain.Company
                 {
-                    ID = c,
-                    Name = $"Name {c}",
+                    ID = x,
+                    Name = $"Name {x}",
                     Type = CompanyTypes.Producer
                 })
             );
@@ -326,7 +307,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "Name", CompanyTypes.Distributor)]
+        [InlineData(1, "New Name", CompanyTypes.Distributor)]
         public async Task Update_ValidInput_ReturnsCorrectData(int id, string name, CompanyTypes companyType)
         {
             #region Arrange
@@ -335,7 +316,7 @@ namespace UnitTests
 
             var company = new Domain.Company
             {
-                Name = "Test",
+                Name = "Name",
                 Type = CompanyTypes.Producer
             };
             dbContext.Companies.Add(company);
@@ -373,11 +354,9 @@ namespace UnitTests
         public static IEnumerable<object[]> Data_Update_InvalidInput_ReturnsNull()
         {
             int id = 1;
-            string name = "Name";
+            string name = "New Name";
             CompanyTypes companyType = CompanyTypes.Distributor;
 
-            // id = 0
-            yield return new object[] { 0, name, companyType };
             // id = 2 (does not exist)
             yield return new object[] { 2, name, companyType };
             // name = null
@@ -398,7 +377,7 @@ namespace UnitTests
 
             var company = new Domain.Company
             {
-                Name = "Test",
+                Name = "Name",
                 Type = CompanyTypes.Producer
             };
             dbContext.Companies.Add(company);
@@ -432,9 +411,7 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var company = new Domain.Company();
-            dbContext.Companies.Add(company);
-
+            dbContext.Companies.Add(new Domain.Company());
             await dbContext.SaveChangesAsync();
 
             var appCompany = new Company(dbContext);
@@ -450,18 +427,12 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Delete_InvalidInput_ReturnsFalse(int id)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
-
-            var company = new Domain.Company();
-            dbContext.Companies.Add(company);
-
-            await dbContext.SaveChangesAsync();
 
             var appCompany = new Company(dbContext);
             #endregion
@@ -540,6 +511,7 @@ namespace UnitTests
                 };
                 dbContext.CompanyMovies.Add(companyMovie);
             }
+
             await dbContext.SaveChangesAsync();
 
             var appCompany = new Company(dbContext);

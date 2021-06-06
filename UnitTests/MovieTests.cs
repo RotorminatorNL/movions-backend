@@ -36,10 +36,9 @@ namespace UnitTests
 
             var language = new Domain.Language
             {
-                Name = "English"
+                Name = "Name"
             };
             dbContext.Languages.Add(language);
-
             await dbContext.SaveChangesAsync();
 
             var newMovie = new AdminMovieModel
@@ -55,13 +54,14 @@ namespace UnitTests
             var expectedMovie = new MovieModel
             {
                 ID = 1,
-                Description = "Description",
+                Description = description,
                 Language = new LanguageModel { 
-                    ID = 1
+                    ID = languageID,
+                    Name = language.Name
                 },
-                Length = 104,
-                ReleaseDate = DateTime.Parse("04-10-2010"),
-                Title = "Title"
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
             };
 
             var appMovie = new Movie(dbContext);
@@ -75,6 +75,7 @@ namespace UnitTests
             Assert.Equal(expectedMovie.ID, actualMovie.ID);
             Assert.Equal(expectedMovie.Description, actualMovie.Description);
             Assert.Equal(expectedMovie.Language.ID, actualMovie.Language.ID);
+            Assert.Equal(expectedMovie.Language.Name, actualMovie.Language.Name);
             Assert.Equal(expectedMovie.Length, actualMovie.Length);
             Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
             Assert.Equal(expectedMovie.Title, actualMovie.Title);
@@ -115,7 +116,7 @@ namespace UnitTests
 
             var language = new Domain.Language
             {
-                Name = "English"
+                Name = "Name"
             };
             dbContext.Languages.Add(language);
 
@@ -213,13 +214,14 @@ namespace UnitTests
             #region Assert
             Assert.Equal(expectedMovie.ID, actualMovie.ID);
             Assert.Equal(expectedMovie.Description, actualMovie.Description);
-            Assert.Equal(expectedMovie.Language.ID, actualMovie.Language.ID);
-            Assert.Equal(expectedMovie.Length, actualMovie.Length);
-            Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
-            Assert.Equal(expectedMovie.Title, actualMovie.Title);
             Assert.Equal(expectedMovie.Genres.Count(), actualMovie.Genres.Count());
             Assert.Equal(expectedMovie.Genres.ToList()[0].ID, actualMovie.Genres.ToList()[0].ID);
             Assert.Equal(expectedMovie.Genres.ToList()[0].Name, actualMovie.Genres.ToList()[0].Name);
+            Assert.Equal(expectedMovie.Language.ID, actualMovie.Language.ID);
+            Assert.Equal(expectedMovie.Language.Name, actualMovie.Language.Name);
+            Assert.Equal(expectedMovie.Length, actualMovie.Length);
+            Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
+            Assert.Equal(expectedMovie.Title, actualMovie.Title);
             #endregion
         }
 
@@ -293,7 +295,7 @@ namespace UnitTests
             dbContext.Languages.Add(language);
             await dbContext.SaveChangesAsync();
 
-            dbContext.Movies.Add(new Domain.Movie
+            var movie = new Domain.Movie
             {
                 Description = "Description",
                 Genres = new List<Domain.GenreMovie>
@@ -307,27 +309,30 @@ namespace UnitTests
                 Length = 104,
                 ReleaseDate = "04-10-2010",
                 Title = "Title"
-            });
+            };
+            dbContext.Movies.Add(movie);
             await dbContext.SaveChangesAsync();
 
             var expectedMovie = new MovieModel
             {
                 ID = id,
-                Description = "Description",
+                Description = movie.Description,
                 Genres = new List<GenreModel> 
                 {
                     new GenreModel
                     {
-                        ID = 1
+                        ID = genre.ID,
+                        Name = genre.Name
                     }
                 },
                 Language = new LanguageModel
                 {
-                    ID = 1
+                    ID = language.ID,
+                    Name = language.Name
                 },
-                Length = 104,
-                ReleaseDate = DateTime.Parse("04-10-2010"),
-                Title = "Title"
+                Length = movie.Length,
+                ReleaseDate = DateTime.Parse(movie.ReleaseDate),
+                Title = movie.Title
             };
 
             var appMovie = new Movie(dbContext);
@@ -341,7 +346,9 @@ namespace UnitTests
             Assert.Equal(expectedMovie.ID, actualMovie.ID);
             Assert.Equal(expectedMovie.Description, actualMovie.Description);
             Assert.Equal(expectedMovie.Genres.ToList()[0].ID, actualMovie.Genres.ToList()[0].ID);
+            Assert.Equal(expectedMovie.Genres.ToList()[0].Name, actualMovie.Genres.ToList()[0].Name);
             Assert.Equal(expectedMovie.Language.ID, actualMovie.Language.ID);
+            Assert.Equal(expectedMovie.Language.Name, actualMovie.Language.Name);
             Assert.Equal(expectedMovie.Length, actualMovie.Length);
             Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
             Assert.Equal(expectedMovie.Title, actualMovie.Title);
@@ -349,30 +356,12 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Read_InvalidInput_ReturnsNull(int id)
         {
             #region Arrange 
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
-
-            var language = new Domain.Language
-            {
-                Name = "English"
-            };
-            dbContext.Languages.Add(language);
-            await dbContext.SaveChangesAsync();
-
-            dbContext.Movies.Add(new Domain.Movie
-            {
-                Description = "Test description",
-                LanguageID = language.ID,
-                Length = 104,
-                ReleaseDate = "04-10-2010",
-                Title = "Test title"
-            });
-            await dbContext.SaveChangesAsync();
 
             var appMovie = new Movie(dbContext);
             #endregion
@@ -393,15 +382,15 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            int expectedAmount = 5;
+            int expectedAmount = 2;
 
             dbContext.Movies.AddRange(
-                Enumerable.Range(1, expectedAmount).Select(m => new Domain.Movie { 
-                    ID = m, 
-                    Description = $"Description {m}", 
+                Enumerable.Range(1, expectedAmount).Select(x => new Domain.Movie { 
+                    ID = x, 
+                    Description = $"Description {x}", 
                     Length = 114,
-                    ReleaseDate = DateTime.Parse("4-10-2010").ToShortDateString(),
-                    Title = $"Title {m}"
+                    ReleaseDate = DateTime.Parse("4-10-2010").ToString("dd-MM-yyyy"),
+                    Title = $"Title {x}"
                 })
             );
 
@@ -429,8 +418,6 @@ namespace UnitTests
 
             int expectedAmount = 0;
 
-            await dbContext.SaveChangesAsync();
-
             var appMovie = new Movie(dbContext);
             #endregion
 
@@ -454,11 +441,11 @@ namespace UnitTests
 
             var language = new Domain.Language
             {
-                Name = "English"
+                Name = "Name"
             }; 
             var language2 = new Domain.Language
             {
-                Name = "Dutch"
+                Name = "New Name"
             };
             dbContext.Languages.Add(language);
             dbContext.Languages.Add(language2);
@@ -488,14 +475,15 @@ namespace UnitTests
             var expectedMovie = new MovieModel
             {
                 ID = 1,
-                Description = "New Description",
+                Description = description,
                 Language = new LanguageModel
                 {
-                    ID = 2
+                    ID = languageID,
+                    Name = language2.Name
                 },
-                Length = 110,
-                ReleaseDate = DateTime.Parse("10-10-2010"),
-                Title = "New Title"
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
             };
 
             var appMovie = new Movie(dbContext);
@@ -509,6 +497,7 @@ namespace UnitTests
             Assert.Equal(expectedMovie.ID, actualMovie.ID);
             Assert.Equal(expectedMovie.Description, actualMovie.Description);
             Assert.Equal(expectedMovie.Language.ID, actualMovie.Language.ID);
+            Assert.Equal(expectedMovie.Language.Name, actualMovie.Language.Name);
             Assert.Equal(expectedMovie.Length, actualMovie.Length);
             Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
             Assert.Equal(expectedMovie.Title, actualMovie.Title);
@@ -518,11 +507,11 @@ namespace UnitTests
         public static IEnumerable<object[]> Data_Update_InvalidInput_ReturnsNull()
         {
             int id = 1;
-            string description = "Description";
-            int languageID = 1;
-            int length = 10;
-            string releaseDate = "04-10-2010";
-            string title = "Title";
+            string description = "New Description";
+            int languageID = 2;
+            int length = 110;
+            string releaseDate = "10-10-2010";
+            string title = "New Title";
 
             // ID = 0
             yield return new object[] { 0, description, languageID, length, releaseDate, title };
@@ -554,11 +543,11 @@ namespace UnitTests
 
             var language = new Domain.Language
             {
-                Name = "English"
+                Name = "Name"
             };
             var language2 = new Domain.Language
             {
-                Name = "Dutch"
+                Name = "New Name"
             };
             dbContext.Languages.Add(language);
             dbContext.Languages.Add(language2);
@@ -567,8 +556,8 @@ namespace UnitTests
             {
                 Description = "Description",
                 LanguageID = 1,
-                Length = 10,
-                ReleaseDate = "10-10-2010",
+                Length = 104,
+                ReleaseDate = "04-10-2010",
                 Title = "Title"
             };
             dbContext.Movies.Add(movie);
@@ -605,9 +594,7 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var movie = new Domain.Movie();
-            dbContext.Movies.Add(movie);
-
+            dbContext.Movies.Add(new Domain.Movie());
             await dbContext.SaveChangesAsync();
 
             var appMovie = new Movie(dbContext);
@@ -623,18 +610,12 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Delete_InvalidInput_ReturnsFalse(int id)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
-
-            var movie = new Domain.Movie();
-            dbContext.Movies.Add(movie);
-
-            await dbContext.SaveChangesAsync();
 
             var appMovie = new Movie(dbContext);
             #endregion

@@ -76,12 +76,6 @@ namespace UnitTests
                 Name = name
             };
 
-            var expectedLanguage = new LanguageModel
-            {
-                ID = 1,
-                Name = name
-            };
-
             var appLanguage = new Language(dbContext);
             #endregion
 
@@ -102,16 +96,17 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            dbContext.Languages.Add(new Domain.Language
+            var language = new Domain.Language
             {
                 Name = "Name"
-            });
+            };
+            dbContext.Languages.Add(language);
             await dbContext.SaveChangesAsync();
 
             var expectedLanguage = new LanguageModel
             {
                 ID = id,
-                Name = "Name"
+                Name = language.Name
             };
 
             var appLanguage = new Language(dbContext);
@@ -123,23 +118,17 @@ namespace UnitTests
 
             #region Assert
             Assert.Equal(expectedLanguage.ID, actualLanguage.ID);
+            Assert.Equal(expectedLanguage.Name, actualLanguage.Name);
             #endregion
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Read_InvalidInput_ReturnsNull(int id)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
-
-            dbContext.Genres.Add(new Domain.Genre
-            {
-                Name = "Name"
-            });
-            await dbContext.SaveChangesAsync();
 
             var appLanguage = new Language(dbContext);
             #endregion
@@ -160,13 +149,13 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            int expectedAmount = 5;
+            int expectedAmount = 2;
 
             dbContext.Languages.AddRange(
-                Enumerable.Range(1, expectedAmount).Select(c => new Domain.Language
+                Enumerable.Range(1, expectedAmount).Select(x => new Domain.Language
                 {
-                    ID = c,
-                    Name = $"Name {c}"
+                    ID = x,
+                    Name = $"Name {x}"
                 })
             );
 
@@ -208,7 +197,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "Name")]
+        [InlineData(1, "New Name")]
         public async Task Update_ValidInput_ReturnsCorrectData(int id, string name)
         {
             #region Arrange
@@ -217,7 +206,7 @@ namespace UnitTests
 
             var language = new Domain.Language
             {
-                Name = "Test"
+                Name = "Name"
             };
             dbContext.Languages.Add(language);
 
@@ -251,7 +240,7 @@ namespace UnitTests
         public static IEnumerable<object[]> Data_Update_InvalidInput_ReturnsNull()
         {
             int id = 1;
-            string name = "Name";
+            string name = "New Name";
 
             // id = 0
             yield return new object[] { 0, name };
@@ -273,7 +262,7 @@ namespace UnitTests
 
             var language = new Domain.Language
             {
-                Name = "Test"
+                Name = "Name"
             };
             dbContext.Languages.Add(language);
 
@@ -305,9 +294,7 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            var language = new Domain.Language();
-            dbContext.Languages.Add(language);
-
+            dbContext.Languages.Add(new Domain.Language());
             await dbContext.SaveChangesAsync();
 
             var appLanguage = new Language(dbContext);
@@ -323,18 +310,12 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(2)]
+        [InlineData(1)]
         public async Task Delete_InvalidInput_ReturnsFalse(int id)
         {
             #region Arrange
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
-
-            var language = new Domain.Language();
-            dbContext.Languages.Add(language);
-
-            await dbContext.SaveChangesAsync();
 
             var appLanguage = new Language(dbContext);
             #endregion
