@@ -9,7 +9,6 @@ namespace Application.AdminModels
     public class AdminLanguageModel
     {
         [JsonPropertyName("id")]
-        [Range(1, int.MaxValue, ErrorMessage = "Must be above 0.")]
         public int ID { get; set; }
 
         [JsonPropertyName("name")]

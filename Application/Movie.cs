@@ -60,7 +60,7 @@ namespace Application
                 var movie = new Domain.Movie
                 {
                     Description = adminMovieModel.Description,
-                    LanguageID = adminMovieModel.Language.ID,
+                    LanguageID = adminMovieModel.LanguageID,
                     Length = adminMovieModel.Length,
                     ReleaseDate = adminMovieModel.ReleaseDate.ToString("dd-MM-yyyy"),
                     Title = adminMovieModel.Title
@@ -146,7 +146,7 @@ namespace Application
             {
                 movie.Description = adminMovieModel.Description;
                 movie.Length = adminMovieModel.Length;
-                movie.LanguageID = adminMovieModel.Language.ID;
+                movie.LanguageID = adminMovieModel.LanguageID;
                 movie.ReleaseDate = adminMovieModel.ReleaseDate.ToString("dd-MM-yyyy");
                 movie.Title = adminMovieModel.Title;
 

@@ -27,14 +27,13 @@ namespace IntegrationTests
 
             var newLanguage = new AdminLanguageModel
             {
-                ID = 1,
                 Name = name
             };
 
             var expectedLanguage = new LanguageModel
             {
                 ID = 1,
-                Name = name
+                Name = "Name"
             };
             #endregion
 
@@ -91,7 +90,6 @@ namespace IntegrationTests
 
             var newLanguage = new AdminLanguageModel
             {
-                ID = 1,
                 Name = name
             };
             #endregion
@@ -248,8 +246,8 @@ namespace IntegrationTests
 
             var expectedLanguage = new LanguageModel
             {
-                ID = id,
-                Name = name
+                ID = 1,
+                Name = "Some other name"
             };
             #endregion
 
@@ -269,21 +267,7 @@ namespace IntegrationTests
         public static IEnumerable<object[]> Data_Update_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors()
         {
             int id = 1;
-            string newName = "Some other name";
 
-            // ID = 0
-            yield return new object[]
-            {
-                0, newName,
-                new string[]
-                {
-                    "ID"
-                },
-                new string[]
-                {
-                    "Must be above 0."
-                }
-            };
             // Name = null
             yield return new object[]
             {
@@ -316,12 +300,10 @@ namespace IntegrationTests
                 0, null,
                 new string[]
                 {
-                    "ID",
                     "Name"
                 },
                 new string[]
                 {
-                    "Must be above 0.",
                     "Cannot be null or empty."
                 }
             };

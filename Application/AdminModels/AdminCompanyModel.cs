@@ -8,7 +8,6 @@ namespace Application.AdminModels
     public class AdminCompanyModel
     {
         [JsonPropertyName("id")]
-        [Range(1, int.MaxValue, ErrorMessage = "Must be above 0.")]
         public int ID { get; set; }
 
         [JsonPropertyName("name")]

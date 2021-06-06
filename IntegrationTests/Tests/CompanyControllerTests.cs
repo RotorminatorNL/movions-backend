@@ -28,7 +28,6 @@ namespace IntegrationTests
 
             var newCompany = new AdminCompanyModel
             {
-                ID = 1,
                 Name = name,
                 Type = companyType
             };
@@ -36,8 +35,8 @@ namespace IntegrationTests
             var expectedCompany = new CompanyModel
             {
                 ID = 1,
-                Name = name,
-                Type = companyType.ToString()
+                Name = "Name",
+                Type = CompanyTypes.Producer.ToString()
             };
             #endregion
 
@@ -126,7 +125,6 @@ namespace IntegrationTests
 
             var newCompany = new AdminCompanyModel
             {
-                ID = 1,
                 Name = name,
                 Type = companyType
             };
@@ -158,31 +156,21 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            var company = new Domain.Company
-            {
-                Name = "Epic Producer",
-                Type = CompanyTypes.Producer
-            };
+            var company = new Domain.Company();
             dbContext.Companies.Add(company);
 
-            var movie = new Domain.Movie
-            {
-                Title = "Epic Title"
-            };
+            var movie = new Domain.Movie();
             dbContext.Movies.Add(movie);
             await dbContext.SaveChangesAsync();
 
             var expectedCompany = new CompanyModel
             {
-                ID = company.ID,
-                Name = company.Name,
-                Type = company.Type.ToString(),
+                ID = 1,
                 Movies = new List<MovieModel>
                 {
                     new MovieModel
                     {
-                        ID = movie.ID,
-                        Title = movie.Title
+                        ID = 1
                     }
                 }
             };
@@ -221,8 +209,8 @@ namespace IntegrationTests
             {
                 dbContext.CompanyMovies.Add(new Domain.CompanyMovie
                 {
-                    CompanyID = id,
-                    MovieID = movieID
+                    CompanyID = 1,
+                    MovieID = 1
                 });
             }
 
@@ -389,9 +377,9 @@ namespace IntegrationTests
 
             var expectedCompany = new CompanyModel
             {
-                ID = id,
-                Name = name,
-                Type = companyType.ToString()
+                ID = 1,
+                Name = "Some other name",
+                Type = CompanyTypes.Producer.ToString()
             };
             #endregion
 
@@ -415,19 +403,6 @@ namespace IntegrationTests
             string newName = "Some other name";
             CompanyTypes newCompanyType = CompanyTypes.Producer;
 
-            // ID = 0
-            yield return new object[] 
-            { 
-                0, newName, newCompanyType, 
-                new string[] 
-                { 
-                    "ID" 
-                },  
-                new string[]
-                {
-                    "Must be above 0."
-                }
-            };
             // Name = null
             yield return new object[] 
             {
@@ -472,14 +447,12 @@ namespace IntegrationTests
             { 
                 0, null, 100, 
                 new string[] 
-                { 
-                    "ID", 
+                {
                     "Name", 
                     "Type" 
                 }, 
                 new string[]
                 {
-                    "Must be above 0.",
                     "Cannot be null or empty.",
                     "Does not exist."
                 }

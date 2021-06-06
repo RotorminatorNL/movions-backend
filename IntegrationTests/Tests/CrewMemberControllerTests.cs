@@ -24,13 +24,13 @@ namespace IntegrationTests
 
             var movie = new Domain.Movie
             {
-                Title = "Epic Movie"
+                Title = "Title"
             };
 
             var person = new Domain.Person
             {
-                FirstName = "Don",
-                LastName = "Diablo"
+                FirstName = "First Name",
+                LastName = "Last Name"
             };
 
             dbContent.Movies.Add(movie);
@@ -52,13 +52,10 @@ namespace IntegrationTests
             await DeleteDbContent();
             var client = GetHttpClient();
 
-            var data = await CreatePersonAndMovie();
-            var movie = data[0] as Domain.Movie;
-            var person = data[1] as Domain.Person;
+            await CreatePersonAndMovie();
 
             var newCrewMember = new AdminCrewMemberModel
             {
-                ID = 1,
                 CharacterName = characterName,
                 Role = crewRole,
                 MovieID = movieID,
@@ -72,14 +69,11 @@ namespace IntegrationTests
                 Role = crewRole.ToString(),
                 Movie = new MovieModel
                 {
-                    ID = movie.ID,
-                    Title = movie.Title
+                    ID = 1
                 },
                 Person = new PersonModel
                 {
-                    ID = person.ID,
-                    FirstName = person.FirstName,
-                    LastName = person.LastName
+                    ID = 1
                 }
             };
             #endregion
@@ -93,6 +87,8 @@ namespace IntegrationTests
             #region Assert
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             Assert.Equal(expectedCrewMember.ID, actualCrewMember.ID);
+            Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
+            Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
             Assert.Equal(expectedCrewMember.Movie.ID, actualCrewMember.Movie.ID);
             Assert.Equal(expectedCrewMember.Person.ID, actualCrewMember.Person.ID);
             #endregion
@@ -100,7 +96,7 @@ namespace IntegrationTests
 
         public static IEnumerable<object[]> Data_Create_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors()
         {
-            string characterName = "Name";
+            string characterName = "Character Name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
             CrewRoles crewRoleDirector = CrewRoles.Director;
             int movieID = 1;
@@ -211,11 +207,10 @@ namespace IntegrationTests
             await DeleteDbContent();
             var client = GetHttpClient();
 
-            var data = await CreatePersonAndMovie();
+            await CreatePersonAndMovie();
 
             var newCrewMember = new AdminCrewMemberModel
             {
-                ID = 1,
                 CharacterName = characterName,
                 Role = crewRole,
                 MovieID = movieID,
@@ -242,7 +237,7 @@ namespace IntegrationTests
 
         public static IEnumerable<object[]> Data_Create_InvalidRequest_ReturnsJsonResponseAndNotFoundWithErrors()
         {
-            string characterName = "Name";
+            string characterName = "Character Name";
             CrewRoles crewRoleActor = CrewRoles.Actor;
             int movieID = 1;
             int personID = 1;
@@ -298,7 +293,7 @@ namespace IntegrationTests
             await DeleteDbContent();
             var client = GetHttpClient();
 
-            var data = await CreatePersonAndMovie();
+            await CreatePersonAndMovie();
 
             var newCrewMember = new AdminCrewMemberModel
             {
@@ -336,34 +331,29 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            var data = await CreatePersonAndMovie();
-            var movie = data[0] as Domain.Movie;
-            var person = data[1] as Domain.Person;
+            await CreatePersonAndMovie();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                CharacterName = "Name",
+                CharacterName = "Character Name",
                 Role = CrewRoles.Actor,
-                MovieID = movie.ID,
-                PersonID = person.ID
+                MovieID = 1,
+                PersonID = 1
             });
             await dbContext.SaveChangesAsync();
 
             var expectedCrewMember = new CrewMemberModel
             {
                 ID = 1,
-                CharacterName = "Name",
+                CharacterName = "Character Name",
                 Role = CrewRoles.Actor.ToString(),
                 Movie = new MovieModel
                 {
-                    ID = movie.ID,
-                    Title = movie.Title
+                    ID = 1
                 },
                 Person = new PersonModel
                 {
-                    ID = person.ID,
-                    FirstName = person.FirstName,
-                    LastName = person.LastName
+                    ID = 1
                 }
             };
             #endregion
@@ -377,6 +367,8 @@ namespace IntegrationTests
             #region Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(expectedCrewMember.ID, actualCrewMember.ID);
+            Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
+            Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
             Assert.Equal(expectedCrewMember.Movie.ID, actualCrewMember.Movie.ID);
             Assert.Equal(expectedCrewMember.Person.ID, actualCrewMember.Person.ID);
             #endregion
@@ -392,15 +384,13 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            var data = await CreatePersonAndMovie();
-            var movie = data[0] as Domain.Movie;
-            var person = data[1] as Domain.Person;
+            await CreatePersonAndMovie();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
             {
                 Role = CrewRoles.Writer,
-                MovieID = movie.ID,
-                PersonID = person.ID
+                MovieID = 1,
+                PersonID = 1
             });
             await dbContext.SaveChangesAsync();
             #endregion
@@ -422,22 +412,20 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            var data = await CreatePersonAndMovie();
-            var movie = data[0] as Domain.Movie;
-            var person = data[1] as Domain.Person;
+            await CreatePersonAndMovie();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
             {
                 CharacterName = "Name",
                 Role = CrewRoles.Actor,
-                MovieID = movie.ID,
-                PersonID = person.ID
+                MovieID = 1,
+                PersonID = 1
             });
             dbContext.CrewMembers.Add(new Domain.CrewMember
             {
                 Role = CrewRoles.Writer,
-                MovieID = movie.ID,
-                PersonID = person.ID
+                MovieID = 1,
+                PersonID = 1
             });
             await dbContext.SaveChangesAsync();
 
@@ -483,15 +471,13 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            var data = await CreatePersonAndMovie();
-            var movie = data[0] as Domain.Movie;
-            var person = data[1] as Domain.Person;
+            await CreatePersonAndMovie();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
             {
                 Role = CrewRoles.Writer,
-                MovieID = movie.ID,
-                PersonID = person.ID
+                MovieID = 1,
+                PersonID = 1
             });
             await dbContext.SaveChangesAsync();
 
@@ -506,19 +492,16 @@ namespace IntegrationTests
 
             var expectedCrewMember = new CrewMemberModel
             {
-                ID = id,
-                CharacterName = characterName,
-                Role = crewRole.ToString(),
+                ID = 1,
+                CharacterName = "Some other name",
+                Role = CrewRoles.Actor.ToString(),
                 Movie = new MovieModel
                 {
-                    ID = movie.ID,
-                    Title = movie.Title
+                    ID = 1
                 },
                 Person = new PersonModel
                 {
-                    ID = person.ID,
-                    FirstName = person.FirstName,
-                    LastName = person.LastName
+                    ID = 1
                 }
             };
             #endregion
@@ -534,6 +517,8 @@ namespace IntegrationTests
             Assert.Equal(expectedCrewMember.ID, actualCrewMember.ID);
             Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
             Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
+            Assert.Equal(expectedCrewMember.Movie.ID, actualCrewMember.Movie.ID);
+            Assert.Equal(expectedCrewMember.Person.ID, actualCrewMember.Person.ID);
             #endregion
         }
 
@@ -546,19 +531,6 @@ namespace IntegrationTests
             int movieID = 1;
             int personID = 1;
 
-            // ID = 0
-            yield return new object[]
-            {
-                0, characterName, crewRoleActor, movieID, personID,
-                new string[]
-                {
-                    "ID"
-                },
-                new string[]
-                {
-                    "Must be above 0."
-                }
-            };
             // CharacterName = null
             yield return new object[]
             {
@@ -643,14 +615,12 @@ namespace IntegrationTests
                 0, null, 100, 0, 0,
                 new string[]
                 {
-                    "ID",
                     "Role",
                     "MovieID",
                     "PersonID"
                 },
                 new string[]
                 {
-                    "Must be above 0.",
                     "Does not exist.",
                     "Must be above 0.",
                     "Must be above 0."
@@ -667,20 +637,18 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            var data = await CreatePersonAndMovie();
-            var movie = data[0] as Domain.Movie;
-            var person = data[1] as Domain.Person;
+            await CreatePersonAndMovie();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                CharacterName = "Name",
+                CharacterName = "Character Name",
                 Role = CrewRoles.Actor,
-                MovieID = movie.ID,
-                PersonID = person.ID
+                MovieID = 1,
+                PersonID = 1
             });
             await dbContext.SaveChangesAsync();
 
-            var expectedCrewMember = new AdminCrewMemberModel
+            var newCrewMember = new AdminCrewMemberModel
             {
                 ID = id,
                 CharacterName = characterName,
@@ -691,7 +659,7 @@ namespace IntegrationTests
             #endregion
 
             #region Act
-            var response = await client.PutAsJsonAsync($"/api/crewmember/{id}", expectedCrewMember);
+            var response = await client.PutAsJsonAsync($"/api/crewmember/{id}", newCrewMember);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCrewMember = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
@@ -716,16 +684,14 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            var data = await CreatePersonAndMovie();
-            var movie = data[0] as Domain.Movie;
-            var person = data[1] as Domain.Person;
+            await CreatePersonAndMovie();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                CharacterName = "Diego Lopez",
+                CharacterName = "Character Name",
                 Role = CrewRoles.Actor,
-                MovieID = movie.ID,
-                PersonID = person.ID
+                MovieID = 1,
+                PersonID = 1
             });
             await dbContext.SaveChangesAsync();
 
@@ -733,8 +699,8 @@ namespace IntegrationTests
             {
                 ID = id,
                 Role = CrewRoles.Writer,
-                MovieID = movie.ID,
-                PersonID = person.ID
+                MovieID = 1,
+                PersonID = 1
             };
             #endregion
 
@@ -807,16 +773,14 @@ namespace IntegrationTests
             var client = GetHttpClient();
             var dbContext = GetDbContext();
 
-            var data = await CreatePersonAndMovie();
-            var movie = data[0] as Domain.Movie;
-            var person = data[1] as Domain.Person;
+            await CreatePersonAndMovie();
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
             {
                 CharacterName = "Name",
                 Role = CrewRoles.Actor,
-                MovieID = movie.ID,
-                PersonID = person.ID
+                MovieID = 1,
+                PersonID = 1
             });
             await dbContext.SaveChangesAsync();
 
@@ -828,15 +792,10 @@ namespace IntegrationTests
                 MovieID = movieID,
                 PersonID = personID
             };
-            expectedCrewMember = expectedCrewMember.CharacterName == "null" ? null : expectedCrewMember;
-
-            var wrongModel = Array.Empty<object>();
             #endregion
 
             #region Act
-            var response = characterName == "wrongModel"
-                ? await client.PutAsJsonAsync($"/api/crewmember/{id}", wrongModel)
-                : await client.PutAsJsonAsync($"/api/crewmember/{id}", expectedCrewMember);
+            var response = await client.PutAsJsonAsync($"/api/crewmember/{id}", expectedCrewMember);
             var responseBody = await response.Content.ReadAsStreamAsync();
             var actualCrewMember = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
@@ -863,7 +822,7 @@ namespace IntegrationTests
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                CharacterName = "Name",
+                CharacterName = "Character Name",
                 Role = CrewRoles.Actor
             });
             await dbContext.SaveChangesAsync();
@@ -890,7 +849,7 @@ namespace IntegrationTests
 
             dbContext.CrewMembers.Add(new Domain.CrewMember
             {
-                CharacterName = "Name",
+                CharacterName = "Character Name",
                 Role = CrewRoles.Actor
             });
             await dbContext.SaveChangesAsync();

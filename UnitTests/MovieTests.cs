@@ -27,7 +27,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData("Test description", 1, 104, "04-10-2010", "Test title")]
+        [InlineData("Description", 1, 104, "04-10-2010", "Title")]
         public async Task Create_ValidInput_ReturnsCorrectData(string description, int languageID, int length, string releaseDate, string title)
         {
             #region Arrange
@@ -46,10 +46,7 @@ namespace UnitTests
             {
                 ID = 1,
                 Description = description,
-                Language = new AdminLanguageModel
-                {
-                    ID = languageID
-                },
+                LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
                 Title = title
@@ -58,13 +55,13 @@ namespace UnitTests
             var expectedMovie = new MovieModel
             {
                 ID = 1,
-                Description = description,
+                Description = "Description",
                 Language = new LanguageModel { 
-                    ID = languageID
+                    ID = 1
                 },
-                Length = length,
-                ReleaseDate = DateTime.Parse(releaseDate),
-                Title = title
+                Length = 104,
+                ReleaseDate = DateTime.Parse("04-10-2010"),
+                Title = "Title"
             };
 
             var appMovie = new Movie(dbContext);
@@ -86,27 +83,25 @@ namespace UnitTests
 
         public static IEnumerable<object[]> Data_Create_InvalidInput_ReturnsNull()
         {
-            string description = "Test description";
+            string description = "Description";
             int languageID = 1;
             int length = 104;
             string releaseDate = "04-10-2010";
-            string title = "Test title";
+            string title = "Title";
 
-            // description = null
+            // Description = null
             yield return new object[] { null, languageID, length, releaseDate, title };
-            // description = empty
+            // Description = empty
             yield return new object[] { "", languageID, length, releaseDate, title };
-            // language = null
-            yield return new object[] { description, null, length, releaseDate, title };
-            // language = empty
+            // LanguageID = 0
             yield return new object[] { description, 0, length, releaseDate, title };
-            // length = null (i.e. 0)
+            // Length = null (i.e. 0)
             yield return new object[] { description, languageID, 0, releaseDate, title };
-            // releaseDate = null (i.e. "1-1-0001 00:00:00")
+            // ReleaseDate = 1-1-0001 00:00:00
             yield return new object[] { description, languageID, length, "1-1-0001 00:00:00", title };
-            // title = null
+            // Title = null
             yield return new object[] { description, languageID, length, releaseDate, null };
-            // title = empty
+            // Title = empty
             yield return new object[] { description, languageID, length, releaseDate, "" };
         }
 
@@ -129,11 +124,7 @@ namespace UnitTests
             var newMovie = new AdminMovieModel
             {
                 Description = description,
-                Language = languageID != 0 ? new AdminLanguageModel
-                {
-                    ID = languageID,
-                    Name = language.Name
-                } : null,
+                LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
                 Title = title
@@ -161,23 +152,23 @@ namespace UnitTests
 
             var language = new Domain.Language
             {
-                Name = "English"
+                Name = "Name"
             };
             dbContext.Languages.Add(language);
             await dbContext.SaveChangesAsync();
 
             var genre = new Domain.Genre
             {
-                Name = "Action"
+                Name = "Name"
             };
 
             var movie = new Domain.Movie
             {
-                Description = "Cool story bro",
-                LanguageID = language.ID,
+                Description = "Description",
+                LanguageID = 1,
                 Length = 104,
                 ReleaseDate = "04-10-2010", 
-                Title = "Epic Title"
+                Title = "Title"
             };
 
             dbContext.Genres.Add(genre);
@@ -193,16 +184,21 @@ namespace UnitTests
             var expectedMovie = new MovieModel
             {
                 ID = 1,
-                Description = "Cool story bro", 
+                Description = "Description", 
                 Genres = new List<GenreModel> 
                 {
                     new GenreModel
                     {
                         ID = 1,
-                        Name = "Action"
+                        Name = "Name"
                     }
                 },
-                Title = "Epic Title",
+                Language = new LanguageModel
+                {
+                    ID = 1,
+                    Name = "Name"
+                },
+                Title = "Title",
                 Length = 104,
                 ReleaseDate = DateTime.Parse("04-10-2010")
             };
@@ -217,9 +213,10 @@ namespace UnitTests
             #region Assert
             Assert.Equal(expectedMovie.ID, actualMovie.ID);
             Assert.Equal(expectedMovie.Description, actualMovie.Description);
-            Assert.Equal(expectedMovie.Title, actualMovie.Title);
+            Assert.Equal(expectedMovie.Language.ID, actualMovie.Language.ID);
             Assert.Equal(expectedMovie.Length, actualMovie.Length);
             Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
+            Assert.Equal(expectedMovie.Title, actualMovie.Title);
             Assert.Equal(expectedMovie.Genres.Count(), actualMovie.Genres.Count());
             Assert.Equal(expectedMovie.Genres.ToList()[0].ID, actualMovie.Genres.ToList()[0].ID);
             Assert.Equal(expectedMovie.Genres.ToList()[0].Name, actualMovie.Genres.ToList()[0].Name);
@@ -284,35 +281,53 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
+            var genre = new Domain.Genre
+            {
+                Name = "Name"
+            };
+            dbContext.Genres.Add(genre);
             var language = new Domain.Language
             {
-                Name = "English"
+                Name = "Name"
             };
             dbContext.Languages.Add(language);
             await dbContext.SaveChangesAsync();
 
             dbContext.Movies.Add(new Domain.Movie
             {
-                Description = "Test description",
+                Description = "Description",
+                Genres = new List<Domain.GenreMovie>
+                {
+                    new Domain.GenreMovie
+                    {
+                        GenreID = genre.ID
+                    }
+                },
                 LanguageID = language.ID,
                 Length = 104,
                 ReleaseDate = "04-10-2010",
-                Title = "Test title"
+                Title = "Title"
             });
             await dbContext.SaveChangesAsync();
 
             var expectedMovie = new MovieModel
             {
                 ID = id,
-                Description = "Test description",
+                Description = "Description",
+                Genres = new List<GenreModel> 
+                {
+                    new GenreModel
+                    {
+                        ID = 1
+                    }
+                },
                 Language = new LanguageModel
                 {
-                    ID = language.ID,
-                    Name = language.Name
+                    ID = 1
                 },
                 Length = 104,
                 ReleaseDate = DateTime.Parse("04-10-2010"),
-                Title = "Test title"
+                Title = "Title"
             };
 
             var appMovie = new Movie(dbContext);
@@ -324,7 +339,12 @@ namespace UnitTests
 
             #region Assert
             Assert.Equal(expectedMovie.ID, actualMovie.ID);
+            Assert.Equal(expectedMovie.Description, actualMovie.Description);
+            Assert.Equal(expectedMovie.Genres.ToList()[0].ID, actualMovie.Genres.ToList()[0].ID);
             Assert.Equal(expectedMovie.Language.ID, actualMovie.Language.ID);
+            Assert.Equal(expectedMovie.Length, actualMovie.Length);
+            Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
+            Assert.Equal(expectedMovie.Title, actualMovie.Title);
             #endregion
         }
 
@@ -425,7 +445,7 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(1, "Test description", 2, 104, "04-10-2010", "Test title")]
+        [InlineData(1, "New Description", 2, 110, "10-10-2010", "New Title")]
         public async Task Update_ValidInput_ReturnsCorrectData(int id, string description, int languageID, int length, string releaseDate, string title)
         {
             #region Arrange
@@ -448,8 +468,8 @@ namespace UnitTests
             {
                 Description = "Description",
                 LanguageID = 1,
-                Length = 10,
-                ReleaseDate = "10-10-2010",
+                Length = 104,
+                ReleaseDate = "04-10-2010",
                 Title = "Title"
             };
             dbContext.Movies.Add(movie);
@@ -459,10 +479,7 @@ namespace UnitTests
             {
                 ID = id,
                 Description = description,
-                Language = new AdminLanguageModel
-                {
-                    ID = languageID
-                },
+                LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
                 Title = title
@@ -470,15 +487,15 @@ namespace UnitTests
 
             var expectedMovie = new MovieModel
             {
-                ID = id,
-                Description = description,
+                ID = 1,
+                Description = "New Description",
                 Language = new LanguageModel
                 {
-                    ID = languageID
+                    ID = 2
                 },
-                Length = length,
-                ReleaseDate = DateTime.Parse(releaseDate),
-                Title = title
+                Length = 110,
+                ReleaseDate = DateTime.Parse("10-10-2010"),
+                Title = "New Title"
             };
 
             var appMovie = new Movie(dbContext);
@@ -507,25 +524,23 @@ namespace UnitTests
             string releaseDate = "04-10-2010";
             string title = "Title";
 
-            // id = 0
+            // ID = 0
             yield return new object[] { 0, description, languageID, length, releaseDate, title };
-            // id = 2 (does not exist)
+            // ID = 2 (does not exist)
             yield return new object[] { 2, description, languageID, length, releaseDate, title };
-            // description = null
+            // Description = null
             yield return new object[] { id, null, languageID, length, releaseDate, title };
-            // description = empty
+            // Description = empty
             yield return new object[] { id, "", languageID, length, releaseDate, title };
-            // language = null
-            yield return new object[] { id, description, null, length, releaseDate, title };
-            // language = empty
+            // LanguageID = 0
             yield return new object[] { id, description, 0, length, releaseDate, title };
-            // length = null (i.e. 0)
+            // Length = 0
             yield return new object[] { id, description, languageID, 0, releaseDate, title };
-            // releaseDate = null (i.e. "1-1-0001 00:00:00")
+            // ReleaseDate = 1-1-0001 00:00:00
             yield return new object[] { id, description, languageID, length, "1-1-0001 00:00:00", title };
-            // title = null
+            // Title = null
             yield return new object[] { id, description, languageID, length, releaseDate, null };
-            // title = empty
+            // Title = empty
             yield return new object[] { id, description, languageID, length, releaseDate, "" };
         }
 
@@ -564,11 +579,7 @@ namespace UnitTests
             {
                 ID = id,
                 Description = description,
-                Language = new AdminLanguageModel
-                {
-                    ID = languageID,
-                    Name = language.Name
-                },
+                LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
                 Title = title

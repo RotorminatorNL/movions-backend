@@ -6,30 +6,36 @@ using System.Text.Json.Serialization;
 
 namespace Application.AdminModels
 {
-    public class AdminMovieModel
+    public class AdminMovieModel : IValidatableObject
     {
         [JsonPropertyName("id")]
-        [Range(1, int.MaxValue)]
         public int ID { get; set; }
 
         [JsonPropertyName("description")]
-        [Required]
+        [Required(ErrorMessage = "Cannot be null or empty.")]
         public string Description { get; set; }
 
+        [JsonPropertyName("languageId")]
+        [Range(1, int.MaxValue, ErrorMessage = "Must be above 0.")]
+        public int LanguageID { get; set; }
+
         [JsonPropertyName("length")]
-        [Range(1, int.MaxValue)]
+        [Range(1, int.MaxValue, ErrorMessage = "Must be above 0.")]
         public int Length { get; set; }
 
         [JsonPropertyName("releaseDate")]
-        [Required]
         public DateTime ReleaseDate { get; set; }
 
         [JsonPropertyName("title")]
-        [Required]
+        [Required(ErrorMessage = "Cannot be null or empty.")]
         public string Title { get; set; }
 
-        [JsonPropertyName("language")]
-        [Required]
-        public AdminLanguageModel Language { get; set; }
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (ReleaseDate == new DateTime())
+            {
+                yield return new ValidationResult("Must be later than 1-1-0001 00:00:00.", new[] { nameof(ReleaseDate) });
+            }
+        }
     }
 }

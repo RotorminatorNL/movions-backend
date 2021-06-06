@@ -8,7 +8,6 @@ namespace Application.AdminModels
     public class AdminPersonModel
     {
         [JsonPropertyName("id")]
-        [Range(1, int.MaxValue)]
         public int ID { get; set; }
 
         [JsonPropertyName("birthDate")]
