@@ -123,7 +123,7 @@ namespace UnitTests
             dbContext.Movies.Add(newMovie);
             await dbContext.SaveChangesAsync();
 
-            var companyMovie = new AdminCompanyMovieModel
+            var newCompanyMovie = new AdminCompanyMovieModel
             {
                 CompanyID = id,
                 MovieID = movieID
@@ -148,7 +148,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualCompany = await appCompany.ConnectMovie(companyMovie);
+            var actualCompany = await appCompany.ConnectMovie(newCompanyMovie);
             #endregion
 
             #region Assert
@@ -175,21 +175,24 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
-            dbContext.Companies.Add(new Domain.Company());
-            dbContext.Movies.Add(new Domain.Movie());
+            var company = new Domain.Company();
+            dbContext.Companies.Add(company);
+
+            var movie = new Domain.Movie();
+            dbContext.Movies.Add(movie);
 
             if (expectedID == -4)
             {
                 dbContext.CompanyMovies.Add(new Domain.CompanyMovie
                 {
-                    CompanyID = id,
-                    MovieID = movieID
+                    CompanyID = company.ID,
+                    MovieID = movie.ID
                 });
             }
 
             await dbContext.SaveChangesAsync();
 
-            var companyMovie = new AdminCompanyMovieModel
+            var newCompanyMovie = new AdminCompanyMovieModel
             {
                 CompanyID = id,
                 MovieID = movieID
@@ -199,7 +202,7 @@ namespace UnitTests
             #endregion
 
             #region Act
-            var actualCompany = await appCompany.ConnectMovie(companyMovie);
+            var actualCompany = await appCompany.ConnectMovie(newCompanyMovie);
             #endregion
 
             #region Assert
