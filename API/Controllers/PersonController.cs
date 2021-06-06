@@ -4,7 +4,9 @@ using Application.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using PersistenceInterface;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -17,6 +19,8 @@ namespace API.Controllers
 
         public PersonController(IApplicationDbContext applicationDbContext)
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
+
             person = new Person(applicationDbContext);
         }
 
