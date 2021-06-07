@@ -19,8 +19,6 @@ namespace API.Controllers
 
         public PersonController(IApplicationDbContext applicationDbContext)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
-
             person = new Person(applicationDbContext);
         }
 
