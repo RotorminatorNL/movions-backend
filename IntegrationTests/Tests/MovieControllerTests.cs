@@ -18,7 +18,10 @@ namespace IntegrationTests
     public class MovieControllerTests : IntegrationTestSetup
     {
         public MovieControllerTests(ApiFactory<Startup> factory)
-            : base(factory) { }
+            : base(factory) 
+        {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("nl-NL");
+        }
 
         [Theory]
         [InlineData("Description", 1, 104, "04-10-2010", "Title")]
