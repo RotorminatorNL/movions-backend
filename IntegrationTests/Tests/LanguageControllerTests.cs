@@ -183,7 +183,7 @@ namespace IntegrationTests
             });
             await dbContext.SaveChangesAsync();
 
-            int expectedLanguageCount = 2;
+            int expectedCount = 2;
             #endregion
 
             #region Act
@@ -195,7 +195,7 @@ namespace IntegrationTests
             #region Assert
             Assert.NotNull(actualLanguages);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedLanguageCount, actualLanguages.Count());
+            Assert.Equal(expectedCount, actualLanguages.Count());
             #endregion
         }
 

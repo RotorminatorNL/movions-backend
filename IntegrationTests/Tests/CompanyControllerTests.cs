@@ -308,7 +308,7 @@ namespace IntegrationTests
             });
             await dbContext.SaveChangesAsync();
 
-            int expectedCompanyCount = 2;
+            int expectedCount = 2;
             #endregion
 
             #region Act
@@ -320,7 +320,7 @@ namespace IntegrationTests
             #region Assert
             Assert.NotNull(actualCompanies);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedCompanyCount, actualCompanies.Count());
+            Assert.Equal(expectedCount, actualCompanies.Count());
             #endregion
         }
 

@@ -183,7 +183,7 @@ namespace IntegrationTests
             });
             await dbContext.SaveChangesAsync();
 
-            int expectedGenreCount = 2;
+            int expectedCount = 2;
             #endregion
 
             #region Act
@@ -195,7 +195,7 @@ namespace IntegrationTests
             #region Assert
             Assert.NotNull(actualGenres);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedGenreCount, actualGenres.Count());
+            Assert.Equal(expectedCount, actualGenres.Count());
             #endregion
         }
 

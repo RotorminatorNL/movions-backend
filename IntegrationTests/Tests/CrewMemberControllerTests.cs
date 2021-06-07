@@ -433,7 +433,7 @@ namespace IntegrationTests
             });
             await dbContext.SaveChangesAsync();
 
-            int expectedCrewMemberCount = 2;
+            int expectedCount = 2;
             #endregion
 
             #region Act
@@ -445,7 +445,7 @@ namespace IntegrationTests
             #region Assert
             Assert.NotNull(actualCrewMembers);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedCrewMemberCount, actualCrewMembers.Count());
+            Assert.Equal(expectedCount, actualCrewMembers.Count());
             #endregion
         }
 

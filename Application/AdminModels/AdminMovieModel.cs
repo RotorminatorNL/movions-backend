@@ -12,29 +12,45 @@ namespace Application.AdminModels
         public int ID { get; set; }
 
         [JsonPropertyName("description")]
-        [Required(ErrorMessage = "Cannot be null or empty.")]
         public string Description { get; set; }
 
         [JsonPropertyName("languageId")]
-        [Range(1, int.MaxValue, ErrorMessage = "Must be above 0.")]
         public int LanguageID { get; set; }
 
         [JsonPropertyName("length")]
-        [Range(1, int.MaxValue, ErrorMessage = "Must be above 0.")]
         public int Length { get; set; }
 
         [JsonPropertyName("releaseDate")]
         public DateTime ReleaseDate { get; set; }
 
         [JsonPropertyName("title")]
-        [Required(ErrorMessage = "Cannot be null or empty.")]
         public string Title { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            if (Description == null || Description == "")
+            {
+                yield return new ValidationResult("Cannot be null or empty.", new[] { nameof(Description) });
+            }
+
+            if (LanguageID <= 0 )
+            {
+                yield return new ValidationResult("Must be above 0.", new[] { nameof(LanguageID) });
+            }
+
+            if (Length <= 0)
+            {
+                yield return new ValidationResult("Must be above 0.", new[] { nameof(Length) });
+            }
+
             if (ReleaseDate == new DateTime())
             {
                 yield return new ValidationResult("Must be later than 1-1-0001 00:00:00.", new[] { nameof(ReleaseDate) });
+            }
+
+            if (Title == null || Title == "")
+            {
+                yield return new ValidationResult("Cannot be null or empty.", new[] { nameof(Title) });
             }
         }
     }

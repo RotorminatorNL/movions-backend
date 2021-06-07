@@ -189,6 +189,7 @@ namespace IntegrationTests
                     "Description",
                     "LanguageID",
                     "Length",
+                    "ReleaseDate",
                     "Title"
 
                 },
@@ -197,6 +198,7 @@ namespace IntegrationTests
                     "Cannot be null or empty.",
                     "Must be above 0.",
                     "Must be above 0.",
+                    "Must be later than 1-1-0001 00:00:00.",
                     "Cannot be null or empty."
                 }
             };
@@ -231,9 +233,9 @@ namespace IntegrationTests
             #region Act
             var response = await client.PostAsJsonAsync("/api/movie", newMovie);
             var responseBody = await response.Content.ReadAsStreamAsync();
-            var actualCompany = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
+            var actualMovie = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
 
-            var errorProp = actualCompany.GetProperty("errors");
+            var errorProp = actualMovie.GetProperty("errors");
             var errors = errorProp.EnumerateObject();
             #endregion
 
@@ -439,7 +441,7 @@ namespace IntegrationTests
             });
             await dbContext.SaveChangesAsync();
 
-            int expectedCompanyCount = 2;
+            int expectedCount = 2;
             #endregion
 
             #region Act
@@ -451,7 +453,7 @@ namespace IntegrationTests
             #region Assert
             Assert.NotNull(actualMovies);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedCompanyCount, actualMovies.Count());
+            Assert.Equal(expectedCount, actualMovies.Count());
             #endregion
         }
 
@@ -650,13 +652,15 @@ namespace IntegrationTests
                     "Description",
                     "LanguageID",
                     "Length",
-                    "Title",
+                    "ReleaseDate",
+                    "Title"
                 },
                 new string[]
                 {
                     "Cannot be null or empty.",
                     "Must be above 0.",
                     "Must be above 0.",
+                    "Must be later than 1-1-0001 00:00:00.",
                     "Cannot be null or empty."
                 }
             };
