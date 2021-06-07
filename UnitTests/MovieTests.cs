@@ -144,6 +144,44 @@ namespace UnitTests
         }
 
         [Theory]
+        [InlineData("Description", 2, 104, "04-10-2010", "Title", 0)]
+        public async Task Create_LanguageDoesNotExist_ReturnsEmptyMovieModel(string description, int languageID, int length, string releaseDate, string title, int expectedID)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var language = new Domain.Language
+            {
+                Name = "Name"
+            };
+            dbContext.Languages.Add(language);
+
+            await dbContext.SaveChangesAsync();
+
+            var newMovie = new AdminMovieModel
+            {
+                Description = description,
+                LanguageID = languageID,
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
+            };
+
+            var appMovie = new Movie(dbContext);
+            #endregion
+
+            #region Act
+            var actualMovie = await appMovie.Create(newMovie);
+            #endregion
+
+            #region Assert
+            Assert.NotNull(actualMovie);
+            Assert.Equal(expectedID, actualMovie.ID);
+            #endregion
+        }
+
+        [Theory]
         [InlineData(1, 1)]
         public async Task ConnectGenre_ValidInput_ReturnsCorrectData(int id, int genreID)
         {
@@ -545,23 +583,21 @@ namespace UnitTests
             {
                 Name = "Name"
             };
-            var language2 = new Domain.Language
+            dbContext.Languages.Add(language);
+            dbContext.Languages.Add(new Domain.Language
             {
                 Name = "New Name"
-            };
-            dbContext.Languages.Add(language);
-            dbContext.Languages.Add(language2);
+            });
 
             var movie = new Domain.Movie
             {
                 Description = "Description",
-                LanguageID = 1,
+                LanguageID = language.ID,
                 Length = 104,
                 ReleaseDate = "04-10-2010",
                 Title = "Title"
             };
             dbContext.Movies.Add(movie);
-
             await dbContext.SaveChangesAsync();
 
             var newMovie = new AdminMovieModel
@@ -583,6 +619,54 @@ namespace UnitTests
 
             #region Assert
             Assert.Null(actualMovie);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(1, "New Description", 2, 110, "10-10-2010", "New Title", 0)]
+        public async Task Update_LanguageDoesNotExist_ReturnsEmptyMovieModel(int id, string description, int languageID, int length, string releaseDate, string title, int expectedID)
+        {
+            #region Arrange
+            var dbContext = new ApplicationDbContext(_dbContextOptions);
+            await dbContext.Database.EnsureDeletedAsync();
+
+            var language = new Domain.Language
+            {
+                Name = "Name"
+            };
+            dbContext.Languages.Add(language);
+
+            var movie = new Domain.Movie
+            {
+                Description = "Description",
+                LanguageID = language.ID,
+                Length = 104,
+                ReleaseDate = "04-10-2010",
+                Title = "Title"
+            };
+            dbContext.Movies.Add(movie);
+            await dbContext.SaveChangesAsync();
+
+            var newMovie = new AdminMovieModel
+            {
+                ID = id,
+                Description = description,
+                LanguageID = languageID,
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
+            };
+
+            var appMovie = new Movie(dbContext);
+            #endregion
+
+            #region Act
+            var actualMovie = await appMovie.Update(newMovie);
+            #endregion
+
+            #region Assert
+            Assert.NotNull(actualMovie);
+            Assert.Equal(expectedID, actualMovie.ID);
             #endregion
         }
 

@@ -68,7 +68,7 @@ namespace API.Controllers
                 }
 
                 ModelState.AddModelError("LanguageID", "Does not exist.");
-                return NotFound(new NotFoundObjectResult(ModelState));
+                return NotFound(new ValidationProblemDetails(ModelState));
             }
 
             return StatusCode((int)HttpStatusCode.InternalServerError);
@@ -127,7 +127,7 @@ namespace API.Controllers
                 }
 
                 ModelState.AddModelError("LanguageID", "Does not exist.");
-                return NotFound(new NotFoundObjectResult(ModelState));
+                return NotFound(new ValidationProblemDetails(ModelState));
             }
 
             return NotFound();

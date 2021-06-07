@@ -80,7 +80,7 @@ namespace Application
                     return await Read(movie.ID);
                 }
 
-                new MovieModel();
+                return new MovieModel();
             }
 
             return null;

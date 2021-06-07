@@ -248,6 +248,50 @@ namespace IntegrationTests
         }
 
         [Theory]
+        [InlineData("Description", 2, 104, "04-10-2010", "Title", new string[] { "LanguageID" }, new string[] { "Does not exist." })]
+        public async Task Create_LanguageDoesNotExist_ReturnsJsonResponseAndNotFoundWithErrors(string description, int languageID, int length, string releaseDate, string title, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
+        {
+            #region Arrange
+            await DeleteDbContent();
+            var client = GetHttpClient();
+            var dbContext = GetDbContext();
+
+            var language = new Domain.Language
+            {
+                Name = "Name"
+            };
+            dbContext.Languages.Add(language);
+
+            await dbContext.SaveChangesAsync();
+
+            var newMovie = new AdminMovieModel
+            {
+                Description = description,
+                LanguageID = languageID,
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
+            };
+            #endregion
+
+            #region Act
+            var response = await client.PostAsJsonAsync("/api/movie", newMovie);
+            var responseBody = await response.Content.ReadAsStreamAsync();
+            var actualMovie = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
+
+            var errorProp = actualMovie.GetProperty("errors");
+            var errors = errorProp.EnumerateObject();
+            #endregion
+
+            #region Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal(expectedErrorNames.Count(), errors.Count());
+            Assert.All(expectedErrorNames, errorName => Assert.Contains(errorName, errors.Select(prop => prop.Name)));
+            Assert.All(expectedErrorValues, errorValue => Assert.Contains(errorValue, errors.Select(prop => prop.Value[0].ToString())));
+            #endregion
+        }
+
+        [Theory]
         [InlineData(1, 1)]
         public async Task ConnectGenre_ValidRequest_ReturnsJsonResponseAndOk(int id, int genreID)
         {
@@ -492,7 +536,7 @@ namespace IntegrationTests
             var movie = new Domain.Movie
             {
                 Description = "Description",
-                LanguageID = 1,
+                LanguageID = language.ID,
                 Length = 104,
                 ReleaseDate = "04-10-2010",
                 Title = "Title"
@@ -677,14 +721,13 @@ namespace IntegrationTests
 
             var language = new Domain.Language { Name = "Name" };
             dbContext.Languages.Add(language);
-            var language2 = new Domain.Language { Name = "New Name" };
-            dbContext.Languages.Add(language2);
+            dbContext.Languages.Add(new Domain.Language { Name = "New Name" });
             await dbContext.SaveChangesAsync();
 
             var movie = new Domain.Movie
             {
                 Description = "Description",
-                LanguageID = 1,
+                LanguageID = language.ID,
                 Length = 104,
                 ReleaseDate = "04-10-2010",
                 Title = "Title"
@@ -744,6 +787,60 @@ namespace IntegrationTests
 
             #region Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            #endregion
+        }
+
+        [Theory]
+        [InlineData(1, "Description", 2, 104, "04-10-2010", "Title", new string[] { "LanguageID" }, new string[] { "Does not exist." })]
+        public async Task Update_LanguageDoesNotExist_ReturnsJsonResponseAndNotFoundWithErrors(int id, string description, int languageID, int length, string releaseDate, string title, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
+        {
+            #region Arrange
+            await DeleteDbContent();
+            var client = GetHttpClient();
+            var dbContext = GetDbContext();
+
+            var language = new Domain.Language
+            {
+                Name = "Name"
+            };
+            dbContext.Languages.Add(language);
+
+            var movie = new Domain.Movie
+            {
+                Description = "Description",
+                LanguageID = language.ID,
+                Length = 104,
+                ReleaseDate = "04-10-2010",
+                Title = "Title"
+            };
+            dbContext.Movies.Add(movie);
+            await dbContext.SaveChangesAsync();
+
+            var newMovie = new AdminMovieModel
+            {
+                ID = id,
+                Description = description,
+                LanguageID = languageID,
+                Length = length,
+                ReleaseDate = DateTime.Parse(releaseDate),
+                Title = title
+            };
+            #endregion
+
+            #region Act
+            var response = await client.PostAsJsonAsync("/api/movie", newMovie);
+            var responseBody = await response.Content.ReadAsStreamAsync();
+            var actualMovie = await JsonSerializer.DeserializeAsync<JsonElement>(responseBody);
+
+            var errorProp = actualMovie.GetProperty("errors");
+            var errors = errorProp.EnumerateObject();
+            #endregion
+
+            #region Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal(expectedErrorNames.Count(), errors.Count());
+            Assert.All(expectedErrorNames, errorName => Assert.Contains(errorName, errors.Select(prop => prop.Name)));
+            Assert.All(expectedErrorValues, errorValue => Assert.Contains(errorValue, errors.Select(prop => prop.Value[0].ToString())));
             #endregion
         }
 
