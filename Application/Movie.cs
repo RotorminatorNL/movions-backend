@@ -61,19 +61,26 @@ namespace Application
         {
             if (_movieValidation.IsInputValid(adminMovieModel))
             {
-                var movie = new Domain.Movie
+                var language = await _applicationDbContext.Languages.FirstOrDefaultAsync(x => x.ID == adminMovieModel.LanguageID);
+
+                if (language != null)
                 {
-                    Description = adminMovieModel.Description,
-                    LanguageID = adminMovieModel.LanguageID,
-                    Length = adminMovieModel.Length,
-                    ReleaseDate = adminMovieModel.ReleaseDate.ToString("dd-MM-yyyy"),
-                    Title = adminMovieModel.Title
-                };
+                    var movie = new Domain.Movie
+                    {
+                        Description = adminMovieModel.Description,
+                        LanguageID = adminMovieModel.LanguageID,
+                        Length = adminMovieModel.Length,
+                        ReleaseDate = adminMovieModel.ReleaseDate.ToString("dd-MM-yyyy"),
+                        Title = adminMovieModel.Title
+                    };
 
-                _applicationDbContext.Movies.Add(movie);
-                await _applicationDbContext.SaveChangesAsync();
+                    _applicationDbContext.Movies.Add(movie);
+                    await _applicationDbContext.SaveChangesAsync();
 
-                return await Read(movie.ID);
+                    return await Read(movie.ID);
+                }
+
+                new MovieModel();
             }
 
             return null;
@@ -81,12 +88,12 @@ namespace Application
 
         public async Task<MovieModel> ConnectGenre(AdminGenreMovieModel adminGenreMovieModel)
         {
-            var genre = await _applicationDbContext.Genres.FirstOrDefaultAsync(c => c.ID == adminGenreMovieModel.GenreID);
-            var movie = await _applicationDbContext.Movies.FirstOrDefaultAsync(c => c.ID == adminGenreMovieModel.MovieID);
+            var genre = await _applicationDbContext.Genres.FirstOrDefaultAsync(x => x.ID == adminGenreMovieModel.GenreID);
+            var movie = await _applicationDbContext.Movies.FirstOrDefaultAsync(x => x.ID == adminGenreMovieModel.MovieID);
 
             if (genre != null && movie != null)
             {
-                var doesConnectionExist = await _applicationDbContext.GenreMovies.FirstOrDefaultAsync(g => g.GenreID == genre.ID && g.MovieID == movie.ID);
+                var doesConnectionExist = await _applicationDbContext.GenreMovies.FirstOrDefaultAsync(x => x.GenreID == genre.ID && x.MovieID == movie.ID);
 
                 if (doesConnectionExist == null)
                 {
@@ -148,15 +155,22 @@ namespace Application
 
             if (movie != null && _movieValidation.IsInputValid(adminMovieModel))
             {
-                movie.Description = adminMovieModel.Description;
-                movie.Length = adminMovieModel.Length;
-                movie.LanguageID = adminMovieModel.LanguageID;
-                movie.ReleaseDate = adminMovieModel.ReleaseDate.ToString("dd-MM-yyyy");
-                movie.Title = adminMovieModel.Title;
+                var language = await _applicationDbContext.Languages.FirstOrDefaultAsync(x => x.ID == adminMovieModel.LanguageID);
 
-                await _applicationDbContext.SaveChangesAsync();
+                if (language != null)
+                {
+                    movie.Description = adminMovieModel.Description;
+                    movie.Length = adminMovieModel.Length;
+                    movie.LanguageID = adminMovieModel.LanguageID;
+                    movie.ReleaseDate = adminMovieModel.ReleaseDate.ToString("dd-MM-yyyy");
+                    movie.Title = adminMovieModel.Title;
 
-                return await Read(movie.ID);
+                    await _applicationDbContext.SaveChangesAsync();
+
+                    return await Read(movie.ID);
+                }
+
+                return new MovieModel();
             }
 
             return null;
