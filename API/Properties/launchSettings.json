@@ -20,7 +20,7 @@
     "API": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "company/readall",
+      "launchUrl": "api/company",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
