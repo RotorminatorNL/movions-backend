@@ -110,7 +110,7 @@ namespace Application
                 Movies = c.Movies.Select(m => new MovieModel
                 {
                     ID = m.MovieID,
-                    Title = m.Movie.Title
+                    Name = m.Movie.Name
                 })
             }).FirstOrDefaultAsync(c => c.ID == id);
         }

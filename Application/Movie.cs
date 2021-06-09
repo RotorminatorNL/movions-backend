@@ -71,7 +71,7 @@ namespace Application
                         LanguageID = adminMovieModel.LanguageID,
                         Length = adminMovieModel.Length,
                         ReleaseDate = adminMovieModel.ReleaseDate.ToString("dd-MM-yyyy"),
-                        Title = adminMovieModel.Title
+                        Name = adminMovieModel.Name
                     };
 
                     _applicationDbContext.Movies.Add(movie);
@@ -133,7 +133,7 @@ namespace Application
                 },
                 Length = movie.Length,
                 ReleaseDate = DateTime.Parse(movie.ReleaseDate),
-                Title = movie.Title
+                Name = movie.Name
             }).FirstOrDefaultAsync(x => x.ID == id);
         }
 
@@ -145,7 +145,7 @@ namespace Application
                 Description = movie.Description,
                 Length = movie.Length,
                 ReleaseDate = DateTime.Parse(movie.ReleaseDate),
-                Title = movie.Title
+                Name = movie.Name
             }).ToListAsync();
         }
 
@@ -163,7 +163,7 @@ namespace Application
                     movie.Length = adminMovieModel.Length;
                     movie.LanguageID = adminMovieModel.LanguageID;
                     movie.ReleaseDate = adminMovieModel.ReleaseDate.ToString("dd-MM-yyyy");
-                    movie.Title = adminMovieModel.Title;
+                    movie.Name = adminMovieModel.Name;
 
                     await _applicationDbContext.SaveChangesAsync();
 

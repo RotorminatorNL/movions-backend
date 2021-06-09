@@ -21,7 +21,7 @@ namespace IntegrationTests
 
             var movie = new Domain.Movie
             {
-                Title = "Title"
+                Name = "Title"
             };
 
             var person = new Domain.Person
@@ -69,7 +69,7 @@ namespace IntegrationTests
                 Movie = new MovieModel
                 {
                     ID = movie.ID,
-                    Title = movie.Title
+                    Name = movie.Name
                 },
                 Person = new PersonModel
                 {
@@ -92,7 +92,7 @@ namespace IntegrationTests
             Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
             Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
             Assert.Equal(expectedCrewMember.Movie.ID, actualCrewMember.Movie.ID);
-            Assert.Equal(expectedCrewMember.Movie.Title, actualCrewMember.Movie.Title);
+            Assert.Equal(expectedCrewMember.Movie.Name, actualCrewMember.Movie.Name);
             Assert.Equal(expectedCrewMember.Person.ID, actualCrewMember.Person.ID);
             Assert.Equal(expectedCrewMember.Person.FirstName, actualCrewMember.Person.FirstName);
             Assert.Equal(expectedCrewMember.Person.LastName, actualCrewMember.Person.LastName);
@@ -357,7 +357,7 @@ namespace IntegrationTests
                 Movie = new MovieModel
                 {
                     ID = movie.ID,
-                    Title = movie.Title
+                    Name = movie.Name
                 },
                 Person = new PersonModel
                 {
@@ -380,7 +380,7 @@ namespace IntegrationTests
             Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
             Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
             Assert.Equal(expectedCrewMember.Movie.ID, actualCrewMember.Movie.ID);
-            Assert.Equal(expectedCrewMember.Movie.Title, actualCrewMember.Movie.Title);
+            Assert.Equal(expectedCrewMember.Movie.Name, actualCrewMember.Movie.Name);
             Assert.Equal(expectedCrewMember.Person.ID, actualCrewMember.Person.ID);
             Assert.Equal(expectedCrewMember.Person.FirstName, actualCrewMember.Person.FirstName);
             Assert.Equal(expectedCrewMember.Person.LastName, actualCrewMember.Person.LastName);
@@ -505,7 +505,7 @@ namespace IntegrationTests
                 Movie = new MovieModel
                 {
                     ID = movie2.ID,
-                    Title = movie2.Title 
+                    Name = movie2.Name 
                 },
                 Person = new PersonModel
                 {
@@ -528,7 +528,7 @@ namespace IntegrationTests
             Assert.Equal(expectedCrewMember.CharacterName, actualCrewMember.CharacterName);
             Assert.Equal(expectedCrewMember.Role, actualCrewMember.Role);
             Assert.Equal(expectedCrewMember.Movie.ID, actualCrewMember.Movie.ID);
-            Assert.Equal(expectedCrewMember.Movie.Title, actualCrewMember.Movie.Title);
+            Assert.Equal(expectedCrewMember.Movie.Name, actualCrewMember.Movie.Name);
             Assert.Equal(expectedCrewMember.Person.ID, actualCrewMember.Person.ID);
             Assert.Equal(expectedCrewMember.Person.FirstName, actualCrewMember.Person.FirstName);
             Assert.Equal(expectedCrewMember.Person.LastName, actualCrewMember.Person.LastName);

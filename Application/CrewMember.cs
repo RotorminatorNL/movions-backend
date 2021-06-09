@@ -85,7 +85,7 @@ namespace Application
                 Movie = new MovieModel 
                 { 
                     ID = c.Movie.ID,
-                    Title = c.Movie.Title
+                    Name = c.Movie.Name
                 },
                 Person = new PersonModel
                 {
@@ -106,7 +106,7 @@ namespace Application
                 Movie = new MovieModel
                 {
                     ID = c.Movie.ID,
-                    Title = c.Movie.Title
+                    Name = c.Movie.Name
                 },
                 Person = new PersonModel
                 {

@@ -45,7 +45,7 @@ namespace IntegrationTests
                 LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Title = title
+                Name = title
             };
 
             var expectedMovie = new MovieModel
@@ -59,7 +59,7 @@ namespace IntegrationTests
                 },
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Title = title
+                Name = title
             };
             #endregion
 
@@ -77,7 +77,7 @@ namespace IntegrationTests
             Assert.Equal(expectedMovie.Language.Name, actualMovie.Language.Name);
             Assert.Equal(expectedMovie.Length, actualMovie.Length);
             Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
-            Assert.Equal(expectedMovie.Title, actualMovie.Title);
+            Assert.Equal(expectedMovie.Name, actualMovie.Name);
             #endregion
         }
 
@@ -226,7 +226,7 @@ namespace IntegrationTests
                 LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Title = title
+                Name = title
             };
             #endregion
 
@@ -270,7 +270,7 @@ namespace IntegrationTests
                 LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Title = title
+                Name = title
             };
             #endregion
 
@@ -405,7 +405,7 @@ namespace IntegrationTests
                 LanguageID = 1,
                 Length = 104,
                 ReleaseDate = "04-10-2010",
-                Title = "Title"
+                Name = "Title"
             };
             dbContext.Movies.Add(movie);
             await dbContext.SaveChangesAsync();
@@ -421,7 +421,7 @@ namespace IntegrationTests
                 },
                 Length = movie.Length,
                 ReleaseDate = DateTime.Parse(movie.ReleaseDate),
-                Title = movie.Title
+                Name = movie.Name
             };
             #endregion
 
@@ -439,7 +439,7 @@ namespace IntegrationTests
             Assert.Equal(expectedMovie.Language.Name, actualMovie.Language.Name);
             Assert.Equal(expectedMovie.Length, actualMovie.Length);
             Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
-            Assert.Equal(expectedMovie.Title, actualMovie.Title);
+            Assert.Equal(expectedMovie.Name, actualMovie.Name);
             #endregion
         }
 
@@ -539,7 +539,7 @@ namespace IntegrationTests
                 LanguageID = language.ID,
                 Length = 104,
                 ReleaseDate = "04-10-2010",
-                Title = "Title"
+                Name = "Title"
             };
             dbContext.Movies.Add(movie);
             await dbContext.SaveChangesAsync();
@@ -551,7 +551,7 @@ namespace IntegrationTests
                 LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Title = title
+                Name = title
             };
 
             var expectedMovie = new MovieModel
@@ -565,7 +565,7 @@ namespace IntegrationTests
                 },
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Title = title
+                Name = title
             };
             #endregion
 
@@ -583,7 +583,7 @@ namespace IntegrationTests
             Assert.Equal(expectedMovie.Language.Name, actualMovie.Language.Name);
             Assert.Equal(expectedMovie.Length, actualMovie.Length);
             Assert.Equal(expectedMovie.ReleaseDate, actualMovie.ReleaseDate);
-            Assert.Equal(expectedMovie.Title, actualMovie.Title);
+            Assert.Equal(expectedMovie.Name, actualMovie.Name);
             #endregion
         }
 
@@ -730,7 +730,7 @@ namespace IntegrationTests
                 LanguageID = language.ID,
                 Length = 104,
                 ReleaseDate = "04-10-2010",
-                Title = "Title"
+                Name = "Title"
             };
             dbContext.Movies.Add(movie);
             await dbContext.SaveChangesAsync();
@@ -741,7 +741,7 @@ namespace IntegrationTests
                 LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Title = title
+                Name = title
             };
             #endregion
 
@@ -777,7 +777,7 @@ namespace IntegrationTests
                 LanguageID = 1,
                 Length = 104,
                 ReleaseDate = DateTime.Parse("04-10-2010"),
-                Title = "Title"
+                Name = "Title"
             };
             #endregion
 
@@ -811,7 +811,7 @@ namespace IntegrationTests
                 LanguageID = language.ID,
                 Length = 104,
                 ReleaseDate = "04-10-2010",
-                Title = "Title"
+                Name = "Title"
             };
             dbContext.Movies.Add(movie);
             await dbContext.SaveChangesAsync();
@@ -823,7 +823,7 @@ namespace IntegrationTests
                 LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Title = title
+                Name = title
             };
             #endregion
 

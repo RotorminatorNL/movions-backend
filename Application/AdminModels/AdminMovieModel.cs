@@ -20,11 +20,11 @@ namespace Application.AdminModels
         [JsonPropertyName("length")]
         public int Length { get; set; }
 
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
         [JsonPropertyName("releaseDate")]
         public DateTime ReleaseDate { get; set; }
-
-        [JsonPropertyName("title")]
-        public string Title { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -48,9 +48,9 @@ namespace Application.AdminModels
                 yield return new ValidationResult("Must be later than 1-1-0001 00:00:00.", new[] { nameof(ReleaseDate) });
             }
 
-            if (Title == null || Title == "")
+            if (Name == null || Name == "")
             {
-                yield return new ValidationResult("Cannot be null or empty.", new[] { nameof(Title) });
+                yield return new ValidationResult("Cannot be null or empty.", new[] { nameof(Name) });
             }
         }
     }

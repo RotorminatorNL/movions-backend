@@ -16,11 +16,11 @@ namespace Application.ViewModels
         [JsonPropertyName("length")]
         public int Length { get; set; }
 
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
         [JsonPropertyName("releaseDate")]
         public DateTime ReleaseDate { get; set; }
-
-        [JsonPropertyName("title")]
-        public string Title { get; set; }
 
         [JsonPropertyName("companies")]
         public IEnumerable<CompanyModel> Companies { get; set; }
