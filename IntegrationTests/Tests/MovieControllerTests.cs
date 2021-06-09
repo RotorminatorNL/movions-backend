@@ -24,8 +24,8 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData("Description", 1, 104, "04-10-2010", "Title")]
-        public async Task Create_ValidRequest_ReturnsJsonResponseAndCreated(string description, int languageID, int length, string releaseDate, string title)
+        [InlineData("Description", 1, 104, "04-10-2010", "Name")]
+        public async Task Create_ValidRequest_ReturnsJsonResponseAndCreated(string description, int languageID, int length, string releaseDate, string name)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -45,7 +45,7 @@ namespace IntegrationTests
                 LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Name = title
+                Name = name
             };
 
             var expectedMovie = new MovieModel
@@ -59,7 +59,7 @@ namespace IntegrationTests
                 },
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Name = title
+                Name = name
             };
             #endregion
 
@@ -87,12 +87,12 @@ namespace IntegrationTests
             int languageID = 1;
             int length = 104;
             string releaseDate = "04-10-2010";
-            string title = "Title";
+            string name = "Name";
 
             // Description = null
             yield return new object[]
             {
-                null, languageID, length, releaseDate, title,
+                null, languageID, length, releaseDate, name,
                 new string[]
                 {
                     "Description"
@@ -105,7 +105,7 @@ namespace IntegrationTests
             // Description = empty
             yield return new object[]
             {
-                "", languageID, length, releaseDate, title,
+                "", languageID, length, releaseDate, name,
                 new string[]
                 {
                     "Description"
@@ -118,7 +118,7 @@ namespace IntegrationTests
             // LanguageID = 0
             yield return new object[]
             {
-                description, 0, length, releaseDate, title,
+                description, 0, length, releaseDate, name,
                 new string[]
                 {
                     "LanguageID"
@@ -131,7 +131,7 @@ namespace IntegrationTests
             // Length = 0
             yield return new object[]
             {
-                description, languageID, 0, releaseDate, title,
+                description, languageID, 0, releaseDate, name,
                 new string[]
                 {
                     "Length"
@@ -144,7 +144,7 @@ namespace IntegrationTests
             // ReleaseDate = 1-1-0001 00:00:00
             yield return new object[]
             {
-                description, languageID, length, "1-1-0001 00:00:00", title,
+                description, languageID, length, "1-1-0001 00:00:00", name,
                 new string[]
                 {
                     "ReleaseDate"
@@ -154,26 +154,26 @@ namespace IntegrationTests
                     "Must be later than 1-1-0001 00:00:00."
                 }
             };
-            // Title = null
+            // Name = null
             yield return new object[]
             {
                 description, languageID, length, releaseDate, null,
                 new string[]
                 {
-                    "Title"
+                    "Name"
                 },
                 new string[]
                 {
                     "Cannot be null or empty."
                 }
             };
-            // Title = empty
+            // Name = empty
             yield return new object[]
             {
                 description, languageID, length, releaseDate, "",
                 new string[]
                 {
-                    "Title"
+                    "Name"
                 },
                 new string[]
                 {
@@ -190,7 +190,7 @@ namespace IntegrationTests
                     "LanguageID",
                     "Length",
                     "ReleaseDate",
-                    "Title"
+                    "Name"
 
                 },
                 new string[]
@@ -206,7 +206,7 @@ namespace IntegrationTests
 
         [Theory]
         [MemberData(nameof(Data_Create_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors))]
-        public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors(string description, int languageID, int length, string releaseDate, string title, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
+        public async Task Create_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors(string description, int languageID, int length, string releaseDate, string name, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -226,7 +226,7 @@ namespace IntegrationTests
                 LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Name = title
+                Name = name
             };
             #endregion
 
@@ -248,8 +248,8 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData("Description", 2, 104, "04-10-2010", "Title", new string[] { "LanguageID" }, new string[] { "Does not exist." })]
-        public async Task Create_LanguageDoesNotExist_ReturnsJsonResponseAndNotFoundWithErrors(string description, int languageID, int length, string releaseDate, string title, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
+        [InlineData("Description", 2, 104, "04-10-2010", "Name", new string[] { "LanguageID" }, new string[] { "Does not exist." })]
+        public async Task Create_LanguageDoesNotExist_ReturnsJsonResponseAndNotFoundWithErrors(string description, int languageID, int length, string releaseDate, string name, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
         {
             #region Arrange
             await DeleteDbContent();
@@ -270,7 +270,7 @@ namespace IntegrationTests
                 LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Name = title
+                Name = name
             };
             #endregion
 
@@ -405,7 +405,7 @@ namespace IntegrationTests
                 LanguageID = 1,
                 Length = 104,
                 ReleaseDate = "04-10-2010",
-                Name = "Title"
+                Name = "Name"
             };
             dbContext.Movies.Add(movie);
             await dbContext.SaveChangesAsync();
@@ -519,8 +519,8 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(1, "New Description", 2, 110, "10-10-2010", "New Title")]
-        public async Task Update_ValidRequest_ReturnsJsonResponseAndOk(int id, string description, int languageID, int length, string releaseDate, string title)
+        [InlineData(1, "New Description", 2, 110, "10-10-2010", "New Name")]
+        public async Task Update_ValidRequest_ReturnsJsonResponseAndOk(int id, string description, int languageID, int length, string releaseDate, string name)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -539,7 +539,7 @@ namespace IntegrationTests
                 LanguageID = language.ID,
                 Length = 104,
                 ReleaseDate = "04-10-2010",
-                Name = "Title"
+                Name = "Name"
             };
             dbContext.Movies.Add(movie);
             await dbContext.SaveChangesAsync();
@@ -551,7 +551,7 @@ namespace IntegrationTests
                 LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Name = title
+                Name = name
             };
 
             var expectedMovie = new MovieModel
@@ -565,7 +565,7 @@ namespace IntegrationTests
                 },
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Name = title
+                Name = name
             };
             #endregion
 
@@ -594,12 +594,12 @@ namespace IntegrationTests
             int languageID = 2;
             int length = 110;
             string releaseDate = "10-10-2010";
-            string title = "New Title";
+            string name = "New Name";
 
             // Description = null
             yield return new object[]
             {
-                id, null, languageID, length, releaseDate, title,
+                id, null, languageID, length, releaseDate, name,
                 new string[]
                 {
                     "Description"
@@ -612,7 +612,7 @@ namespace IntegrationTests
             // Description = empty
             yield return new object[]
             {
-                id, "", languageID, length, releaseDate, title,
+                id, "", languageID, length, releaseDate, name,
                 new string[]
                 {
                     "Description"
@@ -625,7 +625,7 @@ namespace IntegrationTests
             // LanguageID = 0
             yield return new object[]
             {
-                id, description, 0, length, releaseDate, title,
+                id, description, 0, length, releaseDate, name,
                 new string[]
                 {
                     "LanguageID"
@@ -638,7 +638,7 @@ namespace IntegrationTests
             // Length = 0
             yield return new object[]
             {
-                id, description, languageID, 0, releaseDate, title,
+                id, description, languageID, 0, releaseDate, name,
                 new string[]
                 {
                     "Length"
@@ -651,7 +651,7 @@ namespace IntegrationTests
             // ReleaseDate = 1-1-0001 00:00:00
             yield return new object[]
             {
-                id, description, languageID, length, "1-1-0001 00:00:00", title,
+                id, description, languageID, length, "1-1-0001 00:00:00", name,
                 new string[]
                 {
                     "ReleaseDate"
@@ -661,26 +661,26 @@ namespace IntegrationTests
                     "Must be later than 1-1-0001 00:00:00."
                 }
             };
-            // Title = null
+            // Name = null
             yield return new object[]
             {
                 id, description, languageID, length, releaseDate, null,
                 new string[]
                 {
-                    "Title"
+                    "Name"
                 },
                 new string[]
                 {
                     "Cannot be null or empty."
                 }
             };
-            // Title = empty
+            // Name = empty
             yield return new object[]
             {
                 id, description, languageID, length, releaseDate, "",
                 new string[]
                 {
-                    "Title"
+                    "Name"
                 },
                 new string[]
                 {
@@ -697,7 +697,7 @@ namespace IntegrationTests
                     "LanguageID",
                     "Length",
                     "ReleaseDate",
-                    "Title"
+                    "Name"
                 },
                 new string[]
                 {
@@ -712,7 +712,7 @@ namespace IntegrationTests
 
         [Theory]
         [MemberData(nameof(Data_Update_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors))]
-        public async Task Update_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors(int id, string description, int languageID, int length, string releaseDate, string title, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorMessages)
+        public async Task Update_InvalidRequest_ReturnsJsonResponseAndBadRequestWithErrors(int id, string description, int languageID, int length, string releaseDate, string name, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorMessages)
         {
             #region Arrange 
             await DeleteDbContent();
@@ -730,7 +730,7 @@ namespace IntegrationTests
                 LanguageID = language.ID,
                 Length = 104,
                 ReleaseDate = "04-10-2010",
-                Name = "Title"
+                Name = "Name"
             };
             dbContext.Movies.Add(movie);
             await dbContext.SaveChangesAsync();
@@ -741,7 +741,7 @@ namespace IntegrationTests
                 LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Name = title
+                Name = name
             };
             #endregion
 
@@ -777,7 +777,7 @@ namespace IntegrationTests
                 LanguageID = 1,
                 Length = 104,
                 ReleaseDate = DateTime.Parse("04-10-2010"),
-                Name = "Title"
+                Name = "Name"
             };
             #endregion
 
@@ -791,8 +791,8 @@ namespace IntegrationTests
         }
 
         [Theory]
-        [InlineData(1, "Description", 2, 104, "04-10-2010", "Title", new string[] { "LanguageID" }, new string[] { "Does not exist." })]
-        public async Task Update_LanguageDoesNotExist_ReturnsJsonResponseAndNotFoundWithErrors(int id, string description, int languageID, int length, string releaseDate, string title, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
+        [InlineData(1, "Description", 2, 104, "04-10-2010", "Name", new string[] { "LanguageID" }, new string[] { "Does not exist." })]
+        public async Task Update_LanguageDoesNotExist_ReturnsJsonResponseAndNotFoundWithErrors(int id, string description, int languageID, int length, string releaseDate, string name, IEnumerable<string> expectedErrorNames, IEnumerable<string> expectedErrorValues)
         {
             #region Arrange
             await DeleteDbContent();
@@ -811,7 +811,7 @@ namespace IntegrationTests
                 LanguageID = language.ID,
                 Length = 104,
                 ReleaseDate = "04-10-2010",
-                Name = "Title"
+                Name = "Name"
             };
             dbContext.Movies.Add(movie);
             await dbContext.SaveChangesAsync();
@@ -823,7 +823,7 @@ namespace IntegrationTests
                 LanguageID = languageID,
                 Length = length,
                 ReleaseDate = DateTime.Parse(releaseDate),
-                Name = title
+                Name = name
             };
             #endregion
 
