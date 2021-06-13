@@ -20,7 +20,7 @@ namespace Application.ViewModels
         public string Name { get; set; }
 
         [JsonPropertyName("releaseDate")]
-        public DateTime ReleaseDate { get; set; }
+        public string ReleaseDate { get; set; }
 
         [JsonPropertyName("companies")]
         public IEnumerable<CompanyModel> Companies { get; set; }

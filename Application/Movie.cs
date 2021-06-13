@@ -132,7 +132,7 @@ namespace Application
                     Name = movie.Language.Name
                 },
                 Length = movie.Length,
-                ReleaseDate = DateTime.Parse(movie.ReleaseDate),
+                ReleaseDate = movie.ReleaseDate,
                 Name = movie.Name
             }).FirstOrDefaultAsync(x => x.ID == id);
         }
@@ -143,8 +143,13 @@ namespace Application
             {
                 ID = movie.ID,
                 Description = movie.Description,
+                Language = new LanguageModel
+                {
+                    ID = movie.Language.ID,
+                    Name = movie.Language.Name
+                },
                 Length = movie.Length,
-                ReleaseDate = DateTime.Parse(movie.ReleaseDate),
+                ReleaseDate = movie.ReleaseDate,
                 Name = movie.Name
             }).ToListAsync();
         }
