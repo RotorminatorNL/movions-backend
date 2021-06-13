@@ -60,7 +60,7 @@ namespace UnitTests
                     Name = language.Name
                 },
                 Length = length,
-                ReleaseDate = DateTime.Parse(releaseDate),
+                ReleaseDate = releaseDate,
                 Name = title
             };
 
@@ -239,7 +239,7 @@ namespace UnitTests
                 },
                 Name = "Title",
                 Length = 104,
-                ReleaseDate = DateTime.Parse("04-10-2010")
+                ReleaseDate = "04-10-2010"
             };
 
             var appMovie = new Movie(dbContext);
@@ -369,7 +369,7 @@ namespace UnitTests
                     Name = language.Name
                 },
                 Length = movie.Length,
-                ReleaseDate = DateTime.Parse(movie.ReleaseDate),
+                ReleaseDate = movie.ReleaseDate,
                 Name = movie.Name
             };
 
@@ -420,14 +420,22 @@ namespace UnitTests
             var dbContext = new ApplicationDbContext(_dbContextOptions);
             await dbContext.Database.EnsureDeletedAsync();
 
+            var language = new Domain.Language
+            {
+                Name = "Name"
+            };
+            dbContext.Languages.Add(language);
+            await dbContext.SaveChangesAsync();
+
             int expectedAmount = 2;
 
             dbContext.Movies.AddRange(
                 Enumerable.Range(1, expectedAmount).Select(x => new Domain.Movie { 
                     ID = x, 
                     Description = $"Description {x}", 
+                    LanguageID = language.ID,
                     Length = 114,
-                    ReleaseDate = DateTime.Parse("4-10-2010").ToString("dd-MM-yyyy"),
+                    ReleaseDate = "4-10-2010",
                     Name = $"Title {x}"
                 })
             );
@@ -520,7 +528,7 @@ namespace UnitTests
                     Name = language2.Name
                 },
                 Length = length,
-                ReleaseDate = DateTime.Parse(releaseDate),
+                ReleaseDate = releaseDate,
                 Name = title
             };
 

@@ -58,7 +58,7 @@ namespace IntegrationTests
                     Name = language.Name
                 },
                 Length = length,
-                ReleaseDate = DateTime.Parse(releaseDate),
+                ReleaseDate = releaseDate,
                 Name = name
             };
             #endregion
@@ -420,7 +420,7 @@ namespace IntegrationTests
                     Name = language.Name
                 },
                 Length = movie.Length,
-                ReleaseDate = DateTime.Parse(movie.ReleaseDate),
+                ReleaseDate = movie.ReleaseDate,
                 Name = movie.Name
             };
             #endregion
@@ -564,7 +564,7 @@ namespace IntegrationTests
                     Name = language2.Name
                 },
                 Length = length,
-                ReleaseDate = DateTime.Parse(releaseDate),
+                ReleaseDate = releaseDate,
                 Name = name
             };
             #endregion
