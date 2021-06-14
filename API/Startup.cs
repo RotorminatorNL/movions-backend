@@ -1,12 +1,9 @@
-using Application;
+using Mapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Persistence;
-using PersistenceInterface;
 
 namespace API
 {
@@ -26,24 +23,7 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            if (_isTesting)
-            {
-                services.AddTransient<Company>();
-                services.AddTransient<CrewMember>();
-                services.AddTransient<Genre>();
-                services.AddTransient<Language>();
-                services.AddTransient<Movie>();
-                services.AddTransient<Person>();
-            }
-            else
-            {
-                services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
-                    options => options.UseSqlServer(
-                        Configuration.GetConnectionString("MovionsDB"),
-                        b => b.MigrationsAssembly("Persistence")
-                    )
-                );
-            }
+            services.AddApplicationServices(_isTesting);
 
             services.AddControllers(options =>
             {

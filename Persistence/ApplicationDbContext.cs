@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace Persistence
 {
-    public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext, IDesignTimeDbContextFactory<ApplicationDbContext>
+    public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext 
     {
-        public ApplicationDbContext() { }
+        public ApplicationDbContext()
+            :base() { }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
@@ -23,15 +24,6 @@ namespace Persistence
         public DbSet<Language> Languages { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Person> Persons { get; set; }
-
-        public ApplicationDbContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-
-            optionsBuilder.UseSqlServer("Server=mssql.fhict.local;Database=dbi451244_movionsdb;User Id=dbi451244_movionsdb;Password=MovionsDBW8Woord;");
-
-            return new ApplicationDbContext(optionsBuilder.Options);
-        }
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
