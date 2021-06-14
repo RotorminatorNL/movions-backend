@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -15,26 +14,28 @@ namespace Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.5")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64)
+                .HasAnnotation("ProductVersion", "5.0.5");
 
             modelBuilder.Entity("Domain.Company", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnName("id");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("name");
 
                     b.Property<int>("Type")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("type");
 
-                    b.HasKey("ID");
+                    b.HasKey("ID")
+                        .HasName("pk_companies");
 
-                    b.ToTable("Companies");
+                    b.ToTable("companies");
                 });
 
             modelBuilder.Entity("Domain.CompanyMovie", b =>
@@ -42,21 +43,26 @@ namespace Persistence.Migrations
                     b.Property<int>("CompanyMovieID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnName("company_movie_id");
 
                     b.Property<int>("CompanyID")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("company_id");
 
                     b.Property<int>("MovieID")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("movie_id");
 
-                    b.HasKey("CompanyMovieID");
+                    b.HasKey("CompanyMovieID")
+                        .HasName("pk_company_movies");
 
-                    b.HasIndex("CompanyID");
+                    b.HasIndex("CompanyID")
+                        .HasDatabaseName("ix_company_movies_company_id");
 
-                    b.HasIndex("MovieID");
+                    b.HasIndex("MovieID")
+                        .HasDatabaseName("ix_company_movies_movie_id");
 
-                    b.ToTable("CompanyMovies");
+                    b.ToTable("company_movies");
                 });
 
             modelBuilder.Entity("Domain.CrewMember", b =>
@@ -64,27 +70,34 @@ namespace Persistence.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnName("id");
 
                     b.Property<string>("CharacterName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("character_name");
 
                     b.Property<int>("MovieID")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("movie_id");
 
                     b.Property<int>("PersonID")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("person_id");
 
                     b.Property<int>("Role")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("role");
 
-                    b.HasKey("ID");
+                    b.HasKey("ID")
+                        .HasName("pk_crew_members");
 
-                    b.HasIndex("MovieID");
+                    b.HasIndex("MovieID")
+                        .HasDatabaseName("ix_crew_members_movie_id");
 
-                    b.HasIndex("PersonID");
+                    b.HasIndex("PersonID")
+                        .HasDatabaseName("ix_crew_members_person_id");
 
-                    b.ToTable("CrewMembers");
+                    b.ToTable("crew_members");
                 });
 
             modelBuilder.Entity("Domain.Genre", b =>
@@ -92,14 +105,16 @@ namespace Persistence.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnName("id");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("name");
 
-                    b.HasKey("ID");
+                    b.HasKey("ID")
+                        .HasName("pk_genres");
 
-                    b.ToTable("Genres");
+                    b.ToTable("genres");
                 });
 
             modelBuilder.Entity("Domain.GenreMovie", b =>
@@ -107,21 +122,26 @@ namespace Persistence.Migrations
                     b.Property<int>("GenreMovieID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnName("genre_movie_id");
 
                     b.Property<int>("GenreID")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("genre_id");
 
                     b.Property<int>("MovieID")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("movie_id");
 
-                    b.HasKey("GenreMovieID");
+                    b.HasKey("GenreMovieID")
+                        .HasName("pk_genre_movies");
 
-                    b.HasIndex("GenreID");
+                    b.HasIndex("GenreID")
+                        .HasDatabaseName("ix_genre_movies_genre_id");
 
-                    b.HasIndex("MovieID");
+                    b.HasIndex("MovieID")
+                        .HasDatabaseName("ix_genre_movies_movie_id");
 
-                    b.ToTable("GenreMovies");
+                    b.ToTable("genre_movies");
                 });
 
             modelBuilder.Entity("Domain.Language", b =>
@@ -129,14 +149,16 @@ namespace Persistence.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnName("id");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("name");
 
-                    b.HasKey("ID");
+                    b.HasKey("ID")
+                        .HasName("pk_languages");
 
-                    b.ToTable("Languages");
+                    b.ToTable("languages");
                 });
 
             modelBuilder.Entity("Domain.Movie", b =>
@@ -144,28 +166,35 @@ namespace Persistence.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnName("id");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("description");
 
                     b.Property<int>("LanguageID")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("language_id");
 
                     b.Property<int>("Length")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("length");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("name");
 
                     b.Property<string>("ReleaseDate")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("release_date");
 
-                    b.HasKey("ID");
+                    b.HasKey("ID")
+                        .HasName("pk_movies");
 
-                    b.HasIndex("LanguageID");
+                    b.HasIndex("LanguageID")
+                        .HasDatabaseName("ix_movies_language_id");
 
-                    b.ToTable("Movies");
+                    b.ToTable("movies");
                 });
 
             modelBuilder.Entity("Domain.Person", b =>
@@ -173,51 +202,61 @@ namespace Persistence.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnName("id");
 
                     b.Property<string>("BirthDate")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("birth_date");
 
                     b.Property<string>("BirthPlace")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("birth_place");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("description");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("first_name");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("last_name");
 
-                    b.HasKey("ID");
+                    b.HasKey("ID")
+                        .HasName("pk_persons");
 
-                    b.ToTable("Persons");
+                    b.ToTable("persons");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("id");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("concurrency_stamp");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("name");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("normalized_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_asp_net_roles");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
                 });
@@ -227,21 +266,26 @@ namespace Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnName("id");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("claim_type");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("claim_value");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("role_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_asp_net_role_claims");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_asp_net_role_claims_role_id");
 
                     b.ToTable("AspNetRoleClaims");
                 });
@@ -249,64 +293,79 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("id");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("access_failed_count");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("concurrency_stamp");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("email_confirmed");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("lockout_enabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("lockout_end");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("normalized_email");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("normalized_user_name");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("password_hash");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("phone_number");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("phone_number_confirmed");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("security_stamp");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("two_factor_enabled");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("user_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_asp_net_users");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -316,21 +375,26 @@ namespace Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnName("id");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("claim_type");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("claim_value");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_asp_net_user_claims");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_asp_net_user_claims_user_id");
 
                     b.ToTable("AspNetUserClaims");
                 });
@@ -338,21 +402,27 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("login_provider");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("provider_key");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("provider_display_name");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("LoginProvider", "ProviderKey");
+                    b.HasKey("LoginProvider", "ProviderKey")
+                        .HasName("pk_asp_net_user_logins");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_asp_net_user_logins_user_id");
 
                     b.ToTable("AspNetUserLogins");
                 });
@@ -360,14 +430,18 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("user_id");
 
                     b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("role_id");
 
-                    b.HasKey("UserId", "RoleId");
+                    b.HasKey("UserId", "RoleId")
+                        .HasName("pk_asp_net_user_roles");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_asp_net_user_roles_role_id");
 
                     b.ToTable("AspNetUserRoles");
                 });
@@ -375,18 +449,23 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("user_id");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("login_provider");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
 
                     b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("value");
 
-                    b.HasKey("UserId", "LoginProvider", "Name");
+                    b.HasKey("UserId", "LoginProvider", "Name")
+                        .HasName("pk_asp_net_user_tokens");
 
                     b.ToTable("AspNetUserTokens");
                 });
@@ -396,12 +475,14 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Company", "Company")
                         .WithMany("Movies")
                         .HasForeignKey("CompanyID")
+                        .HasConstraintName("fk_company_movies_companies_company_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Movie", "Movie")
                         .WithMany("Companies")
                         .HasForeignKey("MovieID")
+                        .HasConstraintName("fk_company_movies_movies_movie_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -415,12 +496,14 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Movie", "Movie")
                         .WithMany("Crew")
                         .HasForeignKey("MovieID")
+                        .HasConstraintName("fk_crew_members_movies_movie_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Person", "Person")
                         .WithMany("Roles")
                         .HasForeignKey("PersonID")
+                        .HasConstraintName("fk_crew_members_persons_person_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -434,12 +517,14 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Genre", "Genre")
                         .WithMany("Movies")
                         .HasForeignKey("GenreID")
+                        .HasConstraintName("fk_genre_movies_genres_genre_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Movie", "Movie")
                         .WithMany("Genres")
                         .HasForeignKey("MovieID")
+                        .HasConstraintName("fk_genre_movies_movies_movie_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -453,6 +538,7 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Language", "Language")
                         .WithMany("Movies")
                         .HasForeignKey("LanguageID")
+                        .HasConstraintName("fk_movies_languages_language_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -464,6 +550,7 @@ namespace Persistence.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
+                        .HasConstraintName("fk_asp_net_role_claims_asp_net_roles_role_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -473,6 +560,7 @@ namespace Persistence.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .HasConstraintName("fk_asp_net_user_claims_asp_net_users_user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -482,6 +570,7 @@ namespace Persistence.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .HasConstraintName("fk_asp_net_user_logins_asp_net_users_user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -491,12 +580,14 @@ namespace Persistence.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
+                        .HasConstraintName("fk_asp_net_user_roles_asp_net_roles_role_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .HasConstraintName("fk_asp_net_user_roles_asp_net_users_user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -506,6 +597,7 @@ namespace Persistence.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
