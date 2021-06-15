@@ -35,7 +35,7 @@ namespace API
                 options.AddPolicy(name: AllowFrontend,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:3000")
+                    builder.WithOrigins("https://admin.movions.dotindustries.dev")
                            .AllowAnyHeader()
                            .AllowAnyMethod();
                 });
