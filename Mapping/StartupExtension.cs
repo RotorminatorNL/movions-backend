@@ -12,14 +12,12 @@ namespace Mapping
         {
             if (!isTesting)
             {
-                string conn = "Server=localhost;Uid=root;Database=movionsdb;Pwd=;";
+                string conn = "Server=mssql.fhict.local;Database=dbi451244_movionsdb;User Id=dbi451244_movionsdb;Password=MovionsDBW8Woord;";
                 services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(
-                    options => options.UseMySql(
+                    options => options.UseSqlServer(
                         conn,
-                        ServerVersion.AutoDetect(conn),
-                        mySqlOptions => mySqlOptions.MigrationsAssembly("Persistence")
+                        b => b.MigrationsAssembly("Persistence")
                     )
-                    .UseSnakeCaseNamingConvention()
                 );
             }
 

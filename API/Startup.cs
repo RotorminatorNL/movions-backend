@@ -18,7 +18,7 @@ namespace API
         public IConfiguration Configuration { get; }
 
         private readonly bool _isTesting = false;
-        private readonly string AllowFrontend = "_allowFrontend";
+        private readonly string AllowFrontends = "_allowFrontend";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -32,10 +32,11 @@ namespace API
 
             services.AddCors(options =>
             {
-                options.AddPolicy(name: AllowFrontend,
+                options.AddPolicy(name: AllowFrontends,
                 builder =>
                 {
-                    builder.WithOrigins("https://admin.movions.dotindustries.dev")
+                    builder.WithOrigins("https://admin.movions.dotindustries.dev",
+                                        "http://localhost:3000")
                            .AllowAnyHeader()
                            .AllowAnyMethod();
                 });
@@ -54,7 +55,7 @@ namespace API
 
             app.UseAuthorization();
 
-            app.UseCors(AllowFrontend);
+            app.UseCors(AllowFrontends);
 
             app.UseEndpoints(endpoints =>
             {

@@ -7,14 +7,13 @@ namespace Persistence
     {
         public ApplicationDbContext CreateDbContext(string[] args)
         {
-            string conn = "Server=localhost;Uid=root;Database=movionsdb;Pwd=;";
+            string conn = "Server=mssql.fhict.local;Database=dbi451244_movionsdb;User Id=dbi451244_movionsdb;Password=MovionsDBW8Woord;";
             var optionBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             optionBuilder
-                .UseMySql(
+                .UseSqlServer(
                     conn,
-                    ServerVersion.AutoDetect(conn)
-                )
-                .UseSnakeCaseNamingConvention();
+                    b => b.MigrationsAssembly("Persistence")
+                );
 
             return new ApplicationDbContext(optionBuilder.Options);
         }
