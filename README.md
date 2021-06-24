@@ -11,18 +11,11 @@ method: POST                                | returns: company    | returns: err
 url: /api/company                           |
 
 ### Connect movie:
-Request:
-- expects: ```{ movieId: int }```
-- method: POST
-- url: /api/company/{id}/movies
-
-Response - ok:
-- httpcode: 200 ✔️
-- returns: company
-
-Response - not found:
-- httpcode: 404 ❌
-- returns: errors
+Request:                                    | Response - ok:      | Response - not found: | 
+------------------------------------------- | ------------------- | ----------------------  |
+expects: ```{ movieId: int }```             | httpcode: 200 ✔️    | httpcode: 404 ❌
+method: POST                                | returns: company    | returns: errors
+url: /api/company/{id}/movies               |
 
 ### Get company:
 Request:
