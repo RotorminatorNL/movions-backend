@@ -6,9 +6,9 @@ The backend/API for movions
 ### Create company:
 Request: | Response - created: | Response - bad request: | 
 -------- | ------------------- | ----------------------  |
-- expects: ```{ name: string, type: int }``` | - httpcode: 201 ✔️| - httpcode: 400 ❌
-- method: POST | - returns: company | - returns: errors
-- url: /api/company |
+expects: ```{ name: string, type: int }``` | - httpcode: 201 ✔️| - httpcode: 400 ❌
+method: POST | - returns: company | - returns: errors
+url: /api/company |
 
 ### Connect movie:
 Request:
