@@ -43,35 +43,35 @@ The backend/API for movions
 ### Create crew member:
   - httpcode: 200
   - method: POST
-  - url: /api/crewMember
+  - url: /api/crewmember
   - returns: crew member
 
 
 ### Get crew members:
   - httpcode: 200
   - method: GET
-  - url: /api/crewMember
+  - url: /api/crewmember
   - returns: list of crew members
 
 
 ### Get crew member:
   - httpcode: 200
   - method: GET
-  - url: /api/crewMember/{id}
+  - url: /api/crewmember/{id}
   - returns: crew member
 
 
 ### Update crew member:
   - httpcode: 200
   - method: PUT
-  - url: /api/crewMember/{id}
+  - url: /api/crewmember/{id}
   - returns: crew member
 
 
 ### Delete crew member:
   - httpcode: 200
   - method: DELETE
-  - url: /api/crewMember/{id}
+  - url: /api/crewmember/{id}
   - returns: nothing
 
 
