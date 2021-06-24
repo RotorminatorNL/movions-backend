@@ -8,6 +8,7 @@ The backend/API for movions
   - expects: ```{ name: string, type: int }```
   - method: POST
   - url: /api/company
+  
   Response:
   - httpcode: 200  :white_check_mark:
   - returns: company
