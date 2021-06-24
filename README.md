@@ -65,7 +65,13 @@ The backend/API for movions
 
 
 ### Update crew member:
-  - expects: ```JavaScript { characterName: string, role: int, movieId: int, personId: int } ```
+  - expects: ```JavaScript
+    { 
+      characterName: string, 
+      role: int, 
+      movieId: int, 
+      personId: int 
+    } ```
   - httpcode: 200  :white_check_mark:
   - method: PUT
   - url: /api/crewmember/{id}
