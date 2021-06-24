@@ -3,37 +3,37 @@ The backend/API for movions
 
 # Available API calls:
 Create company: {
-  httpcode: 200
-  method: POST
-  url: /api/company
+  httpcode: 200,
+  method: POST,
+  url: /api/company,
   returns: company
 }
 
 Get companies: {
-  httpcode: 200
-  method: GET
-  url: /api/company
+  httpcode: 200,
+  method: GET,
+  url: /api/company,
   returns: list of companies
 }
 
 Get company: {
-  httpcode: 200
-  method: GET
-  url: /api/company/{id}
+  httpcode: 200,
+  method: GET,
+  url: /api/company/{id},
   returns: company
 }
 
 Update company: {
-  httpcode: 200
-  method: PUT
-  url: /api/company/{id}
+  httpcode: 200,
+  method: PUT,
+  url: /api/company/{id},
   returns: company
 }
 
 Delete company: {
-  httpcode: 200
-  method: DELETE
-  url: /api/company/{id}
+  httpcode: 200,
+  method: DELETE,
+  url: /api/company/{id},
   returns: nothing
 }
 
