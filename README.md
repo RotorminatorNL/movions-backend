@@ -4,7 +4,7 @@ The backend/API for movions
 # Available API calls:
 ## Company
 ### Create company:
-  - httpcode: <span style="color:green">200</span>
+  - httpcode: 200 :white_check_mark:
   - method: POST
   - url: /api/company
   - returns: company
