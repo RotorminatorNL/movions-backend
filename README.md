@@ -4,6 +4,7 @@ The backend/API for movions
 # Available API calls:
 ## Company
 ### Create company:
+  - expects: ```json { name: string, type: int } ```
   - httpcode: 200  :white_check_mark:
   - method: POST
   - url: /api/company
@@ -24,6 +25,7 @@ The backend/API for movions
 
 
 ### Update company:
+  - expects: ```javascript { name: string, type: int } ```
   - httpcode: 200  :white_check_mark:
   - method: PUT
   - url: /api/company/{id}
@@ -41,6 +43,7 @@ The backend/API for movions
 
 ## Crew member
 ### Create crew member:
+  - expects: ```JSON { characterName: string, role: int, movieId: int, personId: int } ```
   - httpcode: 200  :white_check_mark:
   - method: POST
   - url: /api/crewmember
@@ -62,6 +65,7 @@ The backend/API for movions
 
 
 ### Update crew member:
+  - expects: ```JavaScript { characterName: string, role: int, movieId: int, personId: int } ```
   - httpcode: 200  :white_check_mark:
   - method: PUT
   - url: /api/crewmember/{id}
