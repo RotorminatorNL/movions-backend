@@ -38,30 +38,16 @@ method: PUT                                         | returns: company    | retu
 url: /api/company/{id}                              |
 
 ### Delete company:
-Request:
-- method: DELETE
-- url: /api/company/{id}
-
-Response - ok:
-- httpcode: 200 ✔️
-- returns: nothing
-
-Response - not found:
-- httpcode: 404 ❌
-- returns: nothing
+Request:               | Response - ok:      | Response - not found: | 
+---------------------- | ------------------- | --------------------- |
+method: DELETE         | httpcode: 200 ✔️    | httpcode: 404 ❌
+url: /api/company/{id} | returns: nothing    | returns: nothing
 
 ### Disconnect movie:
-Request:
-- method: DELETE
-- url: /api/company/{id}/movies/{movieId}
-
-Response - ok:
-- httpcode: 200 ✔️
-- returns: nothing
-
-Response - not found:
-- httpcode: 404 ❌
-- returns: errors
+Request:                                | Response - ok:      | Response - not found: | 
+--------------------------------------- | ------------------- | --------------------- |
+method: DELETE                          | httpcode: 200 ✔️    | httpcode: 404 ❌
+url: /api/company/{id}/movies/{movieId} | returns: nothing    | returns: errors
 
 --------------------------------------------
 
