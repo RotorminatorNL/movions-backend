@@ -4,10 +4,12 @@ The backend/API for movions
 # Available API calls:
 ## Company
 ### Create company:
+  Request:
   - expects: ```{ name: string, type: int }```
-  - httpcode: 200  :white_check_mark:
   - method: POST
   - url: /api/company
+  Response:
+  - httpcode: 200  :white_check_mark:
   - returns: company
 
 ### Connect movie:
