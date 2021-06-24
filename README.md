@@ -4,11 +4,11 @@ The backend/API for movions
 # Available API calls:
 ## Company
 ### Create company:
-Request: | Response - created: | Response - bad request: | 
--------- | ------------------- | ----------------------  |
-expects: ```{ name: string, type: int }``` | - httpcode: 201 ✔️| - httpcode: 400 ❌
-method: POST | - returns: company | - returns: errors
-url: /api/company |
+Request:                                    | Response - created: | Response - bad request: | 
+------------------------------------------- | ------------------- | ----------------------  |
+expects: ```{ name: string, type: int }```  | httpcode: 201 ✔️    | httpcode: 400 ❌
+method: POST                                | returns: company    | returns: errors
+url: /api/company                           |
 
 ### Connect movie:
 Request:
