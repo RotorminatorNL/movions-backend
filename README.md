@@ -12,53 +12,30 @@ url: /api/company                           |
 
 ### Connect movie:
 Request:                                    | Response - ok:      | Response - not found: | 
-------------------------------------------- | ------------------- | ----------------------  |
-expects: ```{ movieId: int }```             | httpcode: 200 ✔️    | httpcode: 404 ❌
-method: POST                                | returns: company    | returns: errors
-url: /api/company/{id}/movies               |
+------------------------------- | ------------------- | --------------------- |
+expects: ```{ movieId: int }``` | httpcode: 200 ✔️    | httpcode: 404 ❌
+method: POST                    | returns: company    | returns: errors
+url: /api/company/{id}/movies   |
 
 ### Get company:
-Request:
-- method: GET
-- url: /api/company/{id}
+Request:               | Response - ok:      | Response - not found: | 
+---------------------- | ------------------- | --------------------- |
+method: GET            | httpcode: 200 ✔️    | httpcode: 404 ❌
+url: /api/company/{id} | returns: company    | returns: nothing
 
-Response - ok:
-- httpcode: 200 ✔️
-- returns: company
-
-Response - not found:
-- httpcode: 404
-- returns: nothing
 
 ### Get companies:
-Request:
-- method: GET
-- url: /api/company
-
-Response - ok: 
-- httpcode: 200 ✔️
-- returns: list of companies
-
-Response - no content:
-- httpcode: 204 ✔️
-- returns: nothing
+Request:          | Response - ok:             | Response - no content: | 
+----------------- | -------------------------- | ---------------------- |
+method: GET       | httpcode: 200 ✔️           | httpcode: 204 ✔️
+url: /api/company | returns: list of companies | returns: nothing
 
 ### Update company:
-- expects: ```{ id: int, name: string, type: int }```
-- method: PUT
-- url: /api/company/{id}
-
-Response - ok:
-- httpcode: 200 ✔️
-- returns: company
-
-Response - bad request:
-- httpcode: 400 ❌
-- returns: errors
-
-Response - not found:
-- httpcode: 404 ❌
-- returns: nothing
+Request:                                            | Response - ok: | Response - bad request: | Response - not found:
+--------------------------------------------------- | ------------------- | ------------------ | --------------------- |
+expects: ```{ id: int, name: string, type: int }``` | httpcode: 20 ✔️    | httpcode: 400 ❌   | httpcode: 404 ❌
+method: PUT                                         | returns: company    | returns: errors    | returns: nothing
+url: /api/company/{id}                              |
 
 ### Delete company:
 Request:
