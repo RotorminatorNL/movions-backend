@@ -4,7 +4,7 @@ The backend/API for movions
 # Available API calls:
 ## Company
 ### Create company:
-  - httpcode: ```diff + 200 ```
+  - httpcode: <span style="color:green">200</span>
   - method: POST
   - url: /api/company
   - returns: company
