@@ -4,7 +4,7 @@ The backend/API for movions
 # Available API calls:
 ## Company
 ### Create company:
-  - expects: ```json { name: string, type: int } ```
+  - expects: ```{ name: string, type: int }```
   - httpcode: 200  :white_check_mark:
   - method: POST
   - url: /api/company
@@ -25,7 +25,7 @@ The backend/API for movions
 
 
 ### Update company:
-  - expects: ```javascript { name: string, type: int } ```
+  - expects: ```{ id: int, name: string, type: int }```
   - httpcode: 200  :white_check_mark:
   - method: PUT
   - url: /api/company/{id}
@@ -43,7 +43,7 @@ The backend/API for movions
 
 ## Crew member
 ### Create crew member:
-  - expects: ```JSON { characterName: string, role: int, movieId: int, personId: int } ```
+  - expects: ```{ characterName: string, role: int, movieId: int, personId: int }```
   - httpcode: 200  :white_check_mark:
   - method: POST
   - url: /api/crewmember
@@ -65,13 +65,7 @@ The backend/API for movions
 
 
 ### Update crew member:
-  - expects: ```JavaScript
-    { 
-      characterName: string, 
-      role: int, 
-      movieId: int, 
-      personId: int 
-    } ```
+  - expects: ```{ id: int, characterName: string, role: int, movieId: int, personId: int }```
   - httpcode: 200  :white_check_mark:
   - method: PUT
   - url: /api/crewmember/{id}
@@ -89,6 +83,7 @@ The backend/API for movions
 
 ## Genre
 ### Create genre:
+  - expects: ```{ name: string }```
   - httpcode: 200  :white_check_mark:
   - method: POST
   - url: /api/genre
@@ -110,6 +105,7 @@ The backend/API for movions
 
 
 ### Update genre:
+  - expects: ```{ id: int, name: string }```
   - httpcode: 200  :white_check_mark:
   - method: PUT
   - url: /api/genre/{id}
@@ -127,6 +123,7 @@ The backend/API for movions
 
 ## Language
 ### Create language:
+  - expects: ```{ name: string }```
   - httpcode: 200  :white_check_mark:
   - method: POST
   - url: /api/language
@@ -148,6 +145,7 @@ The backend/API for movions
 
 
 ### Update language:
+  - expects: ```{ id: int, name: string }```
   - httpcode: 200  :white_check_mark:
   - method: PUT
   - url: /api/language/{id}
@@ -165,6 +163,7 @@ The backend/API for movions
 
 ## Movie
 ### Create movie:
+  - expects: ```{ description: string, languageId: int, length: int, name: string, releaseDate: date }```
   - httpcode: 200  :white_check_mark:
   - method: POST
   - url: /api/movie
@@ -186,6 +185,7 @@ The backend/API for movions
 
 
 ### Update movie:
+  - expects: ```{ id: int, description: string, languageId: int, length: int, name: string, releaseDate: date }```
   - httpcode: 200  :white_check_mark:
   - method: PUT
   - url: /api/movie/{id}
@@ -203,6 +203,7 @@ The backend/API for movions
 
 ## Person
 ### Create person:
+  - expects: ```{ birthDate: date, birthPlace: string, description: string, firstName: string, lastName: string }```
   - httpcode: 200  :white_check_mark:
   - method: POST
   - url: /api/person
@@ -224,6 +225,7 @@ The backend/API for movions
 
 
 ### Update person:
+  - expects: ```{ id: int, birthDate: date, birthPlace: string, description: string, firstName: string, lastName: string }```
   - httpcode: 200  :white_check_mark:
   - method: PUT
   - url: /api/person/{id}
